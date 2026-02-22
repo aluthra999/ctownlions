@@ -10,36 +10,44 @@
     --green: #1a3d2b;
     --green-mid: #234d37;
     --green-light: #2e6347;
-    --gold: #c9a84c;
-    --gold-light: #e8c96a;
-    --cream: #f5f0e8;
+    --green-accent: #2e6347;
+    --gold: #b8932a;
+    --gold-light: #d4aa40;
+    --gold-pale: #f5e9c8;
+    --cream: #f8f4ed;
+    --cream-dark: #ede8df;
+    --cream-mid: #f2ede4;
+    --off-white: #fdfbf7;
     --dark: #0d1f16;
-    --text: #e8e0d0;
-    --text-muted: #9aab9f;
+    --text-dark: #1a2a1f;
+    --text-mid: #3d5244;
+    --text-muted: #7a9282;
     --red: #c0392b;
     --white: #ffffff;
+    --shadow: 0 4px 24px rgba(26,61,43,0.10);
+    --shadow-lg: 0 8px 40px rgba(26,61,43,0.15);
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
   html { scroll-behavior: smooth; }
 
   body {
     font-family: 'Barlow', sans-serif;
-    background: var(--dark);
-    color: var(--text);
+    background: var(--cream);
+    color: var(--text-dark);
     overflow-x: hidden;
   }
 
   /* ─── NAV ─── */
   nav {
     position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
-    background: rgba(13, 31, 22, 0.95);
+    background: rgba(253, 251, 247, 0.96);
     backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(201, 168, 76, 0.2);
+    border-bottom: 1px solid rgba(184,147,42,0.2);
     padding: 0 2rem;
     display: flex; align-items: center; justify-content: space-between;
     height: 64px;
+    box-shadow: 0 2px 20px rgba(26,61,43,0.08);
   }
 
   .nav-logo {
@@ -49,16 +57,16 @@
 
   .nav-logo-icon {
     width: 40px; height: 40px;
-    background: var(--gold);
+    background: var(--green);
     border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
   }
 
   .nav-logo-text {
     font-family: 'Bebas Neue', sans-serif;
     font-size: 1.4rem;
-    color: var(--gold);
+    color: var(--green);
     letter-spacing: 2px;
   }
 
@@ -68,21 +76,20 @@
 
   .nav-links a {
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     font-weight: 600;
     letter-spacing: 1.5px;
     text-transform: uppercase;
-    color: var(--text-muted);
+    color: var(--text-mid);
     text-decoration: none;
     transition: color 0.2s;
   }
-
-  .nav-links a:hover { color: var(--gold); }
+  .nav-links a:hover { color: var(--green); }
 
   .nav-admin-btn {
     background: transparent;
-    border: 1px solid var(--gold);
-    color: var(--gold);
+    border: 1.5px solid var(--green);
+    color: var(--green);
     font-family: 'Barlow Condensed', sans-serif;
     font-size: 0.8rem;
     font-weight: 600;
@@ -92,16 +99,13 @@
     cursor: pointer;
     transition: all 0.2s;
   }
-  .nav-admin-btn:hover { background: var(--gold); color: var(--dark); }
+  .nav-admin-btn:hover { background: var(--green); color: var(--white); }
 
   .hamburger {
     display: none;
     flex-direction: column; gap: 5px; cursor: pointer; padding: 4px;
   }
-  .hamburger span {
-    display: block; width: 24px; height: 2px;
-    background: var(--gold); transition: all 0.3s;
-  }
+  .hamburger span { display: block; width: 24px; height: 2px; background: var(--green); transition: all 0.3s; }
 
   /* ─── HERO ─── */
   #hero {
@@ -145,15 +149,17 @@
   .hero-badge {
     display: inline-block;
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     font-weight: 600;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--gold);
+    letter-spacing: 2px;
+    color: var(--gold-light);
     border: 1px solid rgba(201,168,76,0.4);
-    padding: 0.3rem 1rem;
+    padding: 0.4rem 1.2rem;
     margin-bottom: 1.5rem;
   }
+
+  .hero-badge a { color: var(--gold-light); text-decoration: none; font-weight: 700; opacity: 0.85; }
+  .hero-badge a:hover { opacity: 1; text-decoration: underline; }
 
   .hero-title {
     font-family: 'Bebas Neue', sans-serif;
@@ -163,16 +169,15 @@
     letter-spacing: 4px;
     margin-bottom: 0.5rem;
   }
-
-  .hero-title span { color: var(--gold); }
+  .hero-title span { color: var(--gold-light); }
 
   .hero-subtitle {
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: clamp(1rem, 3vw, 1.5rem);
+    font-size: clamp(0.9rem, 2.5vw, 1.3rem);
     font-weight: 300;
     letter-spacing: 6px;
     text-transform: uppercase;
-    color: var(--text-muted);
+    color: rgba(255,255,255,0.5);
     margin-bottom: 2.5rem;
   }
 
@@ -180,72 +185,58 @@
     display: inline-flex; gap: 1rem; flex-wrap: wrap; justify-content: center;
   }
 
-  .btn-primary {
-    background: var(--gold);
-    color: var(--dark);
+  .btn-hero-secondary {
+    background: transparent; color: var(--white);
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 0.9rem;
-    font-weight: 700;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    padding: 0.8rem 2rem;
-    border: none; cursor: pointer;
-    text-decoration: none;
-    transition: all 0.2s;
-    display: inline-block;
+    font-size: 0.9rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+    padding: 0.85rem 2rem; border: 1.5px solid rgba(255,255,255,0.4); cursor: pointer;
+    text-decoration: none; transition: all 0.2s; display: inline-block;
   }
-  .btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); }
+  .btn-hero-secondary:hover { border-color: var(--gold-light); color: var(--gold-light); }
+
+  .btn-primary {
+    background: var(--green);
+    color: var(--white);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.9rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+    padding: 0.85rem 2rem; border: none; cursor: pointer;
+    text-decoration: none; transition: all 0.2s; display: inline-block;
+    box-shadow: var(--shadow);
+  }
+  .btn-primary:hover { background: var(--green-mid); transform: translateY(-2px); box-shadow: var(--shadow-lg); }
 
   .btn-secondary {
-    background: transparent;
-    color: var(--text);
+    background: rgba(255,255,255,0.85);
+    color: var(--green);
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 0.9rem;
-    font-weight: 700;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    padding: 0.8rem 2rem;
-    border: 1px solid rgba(255,255,255,0.3);
-    cursor: pointer;
-    text-decoration: none;
-    transition: all 0.2s;
-    display: inline-block;
+    font-size: 0.9rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+    padding: 0.85rem 2rem; border: 1.5px solid var(--green); cursor: pointer;
+    text-decoration: none; transition: all 0.2s; display: inline-block;
+    backdrop-filter: blur(4px);
   }
-  .btn-secondary:hover { border-color: var(--gold); color: var(--gold); }
+  .btn-secondary:hover { background: var(--green); color: var(--white); }
 
   /* ─── SECTIONS ─── */
   section { padding: 5rem 2rem; }
 
-  .section-header {
-    text-align: center;
-    margin-bottom: 3rem;
-  }
+  .section-header { text-align: center; margin-bottom: 3rem; }
 
   .section-label {
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 4px;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 0.5rem;
+    font-size: 0.75rem; font-weight: 600; letter-spacing: 4px; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 0.5rem;
   }
 
   .section-title {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(2.5rem, 6vw, 4rem);
-    letter-spacing: 3px;
-    color: var(--white);
+    font-size: clamp(2.2rem, 5vw, 3.5rem);
+    letter-spacing: 3px; color: var(--green);
   }
 
-  .section-line {
-    width: 60px; height: 3px;
-    background: var(--gold);
-    margin: 1rem auto 0;
-  }
+  .section-line { width: 60px; height: 3px; background: var(--gold); margin: 1rem auto 0; }
 
   /* ─── ROSTER ─── */
-  #roster { background: var(--dark); }
+  #roster { background: var(--off-white); }
 
   .filter-bar {
     display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center;
@@ -254,95 +245,81 @@
 
   .filter-btn {
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 0.8rem;
-    font-weight: 600;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    padding: 0.4rem 1.2rem;
-    border: 1px solid rgba(201,168,76,0.3);
-    background: transparent;
-    color: var(--text-muted);
-    cursor: pointer;
-    transition: all 0.2s;
+    font-size: 0.8rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;
+    padding: 0.45rem 1.2rem;
+    border: 1.5px solid rgba(26,61,43,0.2);
+    background: transparent; color: var(--text-mid); cursor: pointer; transition: all 0.2s;
   }
   .filter-btn:hover, .filter-btn.active {
-    background: var(--gold);
-    color: var(--dark);
-    border-color: var(--gold);
+    background: var(--green); color: var(--white); border-color: var(--green);
   }
 
   .roster-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 1.5rem;
-    max-width: 1200px;
-    margin: 0 auto;
+    gap: 1.5rem; max-width: 1200px; margin: 0 auto;
   }
 
   .player-card {
-    background: var(--green);
-    border: 1px solid rgba(201,168,76,0.15);
-    overflow: hidden;
-    transition: transform 0.2s, border-color 0.2s;
-    cursor: pointer;
+    background: var(--white);
+    border: 1px solid var(--cream-dark);
+    overflow: hidden; transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer; box-shadow: var(--shadow);
   }
-  .player-card:hover { transform: translateY(-4px); border-color: var(--gold); }
+  .player-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
 
   .player-avatar {
     width: 100%; aspect-ratio: 1;
-    background: var(--green-mid);
+    background: var(--cream-mid);
     display: flex; align-items: center; justify-content: center;
-    font-size: 3rem;
-    position: relative;
-    overflow: hidden;
+    font-size: 3.5rem; position: relative; overflow: hidden;
   }
-
-  .player-avatar img {
-    width: 100%; height: 100%; object-fit: cover;
-  }
+  .player-avatar img { width: 100%; height: 100%; object-fit: cover; }
 
   .player-number {
     position: absolute; top: 8px; right: 8px;
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.4rem;
-    color: rgba(201,168,76,0.6);
+    font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem;
+    color: rgba(184,147,42,0.7);
   }
 
-  .player-info {
-    padding: 1rem;
+  .player-flag {
+    position: absolute; bottom: 8px; left: 8px;
+    font-size: 1.3rem;
+    background: rgba(255,255,255,0.85);
+    border-radius: 4px;
+    padding: 1px 4px;
+    line-height: 1.4;
   }
+
+  .player-info { padding: 1rem; }
 
   .player-name {
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 1.1rem;
-    font-weight: 700;
-    letter-spacing: 1px;
-    color: var(--white);
-    margin-bottom: 0.25rem;
+    font-size: 1.1rem; font-weight: 700; letter-spacing: 1px;
+    color: var(--text-dark); margin-bottom: 0.25rem;
   }
 
   .player-role {
-    font-size: 0.8rem;
-    color: var(--gold);
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 0.5rem;
+    font-size: 0.75rem; color: var(--gold); font-weight: 600;
+    text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem;
   }
 
   .player-stats {
-    display: flex; gap: 1rem;
-    font-size: 0.75rem;
-    color: var(--text-muted);
+    display: flex; gap: 1rem; font-size: 0.75rem; color: var(--text-muted);
   }
+  .player-stats span strong { color: var(--text-dark); font-size: 0.9rem; display: block; }
 
-  .player-stats span strong {
-    color: var(--text);
-    font-size: 0.9rem;
+  .player-card-footer {
+    padding: 0.6rem 1rem;
+    background: var(--cream);
+    border-top: 1px solid var(--cream-dark);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.72rem; font-weight: 600; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--green); text-align: center;
   }
 
   /* ─── MATCHES ─── */
-  #matches { background: var(--green); }
+  #matches { background: var(--cream-mid); }
 
   .matches-filters {
     display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;
@@ -351,518 +328,424 @@
 
   .select-styled {
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 0.85rem;
-    font-weight: 600;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    background: var(--green-mid);
-    color: var(--text);
-    border: 1px solid rgba(201,168,76,0.3);
-    padding: 0.5rem 1rem;
-    cursor: pointer;
-    outline: none;
+    font-size: 0.85rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
+    background: var(--white); color: var(--text-dark);
+    border: 1.5px solid rgba(26,61,43,0.2);
+    padding: 0.5rem 1rem; cursor: pointer; outline: none;
   }
-  .select-styled:focus { border-color: var(--gold); }
+  .select-styled:focus { border-color: var(--green); }
 
-  .matches-list {
-    max-width: 900px;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
+  .matches-list { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 1rem; }
 
   .match-card {
-    background: var(--green-mid);
-    border: 1px solid rgba(201,168,76,0.15);
+    background: var(--white); border: 1px solid var(--cream-dark);
     padding: 1.25rem 1.5rem;
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    align-items: center;
-    gap: 1rem;
-    transition: border-color 0.2s;
+    display: grid; grid-template-columns: 1fr auto 1fr;
+    align-items: center; gap: 1rem;
+    box-shadow: var(--shadow); transition: box-shadow 0.2s;
   }
-  .match-card:hover { border-color: rgba(201,168,76,0.4); }
+  .match-card:hover { box-shadow: var(--shadow-lg); }
 
-  .match-team {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 1.1rem;
-    font-weight: 700;
-    letter-spacing: 1px;
-  }
-
+  .match-team { font-family: 'Barlow Condensed', sans-serif; font-size: 1.05rem; font-weight: 700; letter-spacing: 1px; }
   .match-team.home { text-align: right; }
   .match-team.away { text-align: left; }
 
-  .match-score-box {
-    text-align: center;
-    min-width: 140px;
-  }
-
-  .match-score {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.8rem;
-    letter-spacing: 2px;
-    color: var(--gold);
-  }
-
-  .match-meta {
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
+  .match-score-box { text-align: center; min-width: 140px; }
+  .match-score { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; letter-spacing: 2px; color: var(--gold); }
+  .match-meta { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
 
   .match-result-badge {
-    display: inline-block;
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    padding: 0.2rem 0.6rem;
-    margin-top: 0.25rem;
+    display: inline-block; font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.7rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+    padding: 0.2rem 0.6rem; margin-top: 0.25rem;
   }
-  .badge-win { background: rgba(46,163,71,0.2); color: #4caf50; }
-  .badge-loss { background: rgba(192,57,43,0.2); color: #e74c3c; }
-  .badge-upcoming { background: rgba(201,168,76,0.15); color: var(--gold); }
-  .badge-draw { background: rgba(255,255,255,0.1); color: var(--text-muted); }
+  .badge-win { background: rgba(46,163,71,0.12); color: #2a8a3e; border: 1px solid rgba(46,163,71,0.3); }
+  .badge-loss { background: rgba(192,57,43,0.1); color: #c0392b; border: 1px solid rgba(192,57,43,0.3); }
+  .badge-upcoming { background: rgba(184,147,42,0.1); color: var(--gold); border: 1px solid rgba(184,147,42,0.3); }
+  .badge-draw { background: rgba(0,0,0,0.06); color: var(--text-muted); border: 1px solid rgba(0,0,0,0.1); }
 
-  /* ─── GALLERY ─── */
-  #gallery { background: var(--dark); }
+  /* ─── GALLERY PREVIEW ─── */
+  #gallery-preview { background: var(--off-white); }
 
-  .gallery-grid {
+  .gallery-grid-preview {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1rem;
-    max-width: 1200px;
-    margin: 0 auto;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1rem; max-width: 1200px; margin: 0 auto 2.5rem;
   }
 
   .gallery-item {
     aspect-ratio: 4/3;
-    background: var(--green);
-    border: 1px solid rgba(201,168,76,0.1);
-    overflow: hidden;
-    cursor: pointer;
-    position: relative;
+    background: var(--cream-mid);
+    border: 1px solid var(--cream-dark);
+    overflow: hidden; cursor: pointer; position: relative;
     display: flex; align-items: center; justify-content: center;
-    font-size: 3rem;
-    transition: all 0.3s;
+    font-size: 3rem; transition: all 0.3s;
+    box-shadow: var(--shadow);
   }
-
-  .gallery-item img {
-    width: 100%; height: 100%; object-fit: cover;
-    transition: transform 0.4s;
-  }
-
+  .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s; }
   .gallery-item:hover img { transform: scale(1.05); }
 
   .gallery-item-overlay {
     position: absolute; inset: 0;
-    background: linear-gradient(to top, rgba(13,31,22,0.9) 0%, transparent 60%);
+    background: linear-gradient(to top, rgba(13,31,22,0.85) 0%, transparent 60%);
     opacity: 0; transition: opacity 0.3s;
-    display: flex; align-items: flex-end;
-    padding: 1rem;
+    display: flex; align-items: flex-end; padding: 1rem;
   }
   .gallery-item:hover .gallery-item-overlay { opacity: 1; }
 
   .gallery-item-caption {
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 0.9rem;
-    font-weight: 600;
-    letter-spacing: 1px;
-    color: var(--white);
+    font-size: 0.9rem; font-weight: 600; letter-spacing: 1px; color: var(--white);
   }
 
   .gallery-placeholder {
     width: 100%; height: 100%;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 0.5rem;
-    color: var(--text-muted);
-    font-size: 2rem;
+    gap: 0.5rem; color: var(--text-muted); font-size: 2rem;
   }
+  .gallery-placeholder p { font-size: 0.72rem; font-family: 'Barlow Condensed', sans-serif; letter-spacing: 1px; text-transform: uppercase; }
 
-  .gallery-placeholder p {
-    font-size: 0.75rem;
-    font-family: 'Barlow Condensed', sans-serif;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-  }
+  .gallery-more-wrap { text-align: center; }
 
   /* ─── SPONSORS ─── */
-  #sponsors { background: var(--green); }
+  #sponsors { background: var(--cream-mid); }
 
   .sponsors-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 1.5rem;
-    max-width: 1000px;
-    margin: 0 auto;
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    gap: 1.5rem; max-width: 1000px; margin: 0 auto;
   }
 
   .sponsor-card {
-    background: var(--green-mid);
-    border: 1px solid rgba(201,168,76,0.15);
-    padding: 2rem 1.5rem;
-    text-align: center;
-    transition: all 0.2s;
+    background: var(--white); border: 1px solid var(--cream-dark);
+    padding: 2rem 1.5rem; text-align: center;
+    transition: all 0.2s; box-shadow: var(--shadow); text-decoration: none;
+    display: block;
   }
-  .sponsor-card:hover { border-color: var(--gold); transform: translateY(-2px); }
+  .sponsor-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: rgba(184,147,42,0.4); }
 
   .sponsor-logo {
-    width: 80px; height: 80px;
-    background: rgba(201,168,76,0.1);
+    width: 72px; height: 72px;
+    background: var(--cream);
     border-radius: 50%;
     margin: 0 auto 1rem;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 2rem;
+    display: flex; align-items: center; justify-content: center; font-size: 1.8rem;
+    border: 1px solid var(--cream-dark);
   }
 
-  .sponsor-name {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 1rem;
-    font-weight: 700;
-    letter-spacing: 1px;
-    color: var(--white);
-    margin-bottom: 0.25rem;
-  }
-
-  .sponsor-tier {
-    font-size: 0.75rem;
-    color: var(--gold);
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-  }
+  .sponsor-name { font-family: 'Barlow Condensed', sans-serif; font-size: 1rem; font-weight: 700; letter-spacing: 1px; color: var(--text-dark); margin-bottom: 0.25rem; }
+  .sponsor-tier { font-size: 0.72rem; color: var(--gold); text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; }
 
   /* ─── CONTACT ─── */
-  #contact { background: var(--dark); }
+  #contact { background: var(--off-white); }
 
-  .contact-wrapper {
-    max-width: 700px;
-    margin: 0 auto;
-  }
+  .contact-wrapper { max-width: 700px; margin: 0 auto; }
 
   .contact-info {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 3rem;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1.5rem; margin-bottom: 3rem;
   }
 
   .contact-item {
-    text-align: center;
-    padding: 1.5rem;
-    border: 1px solid rgba(201,168,76,0.15);
+    text-align: center; padding: 1.5rem;
+    background: var(--white); border: 1px solid var(--cream-dark);
+    box-shadow: var(--shadow);
   }
 
   .contact-icon { font-size: 1.5rem; margin-bottom: 0.5rem; }
 
   .contact-item h4 {
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 0.8rem;
-    font-weight: 600;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 0.5rem;
+    font-size: 0.78rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 0.5rem;
   }
 
-  .contact-item p {
-    font-size: 0.9rem;
-    color: var(--text-muted);
-    line-height: 1.5;
-  }
+  .contact-item p { font-size: 0.88rem; color: var(--text-mid); line-height: 1.6; }
 
-  .contact-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
+  .contact-form { display: flex; flex-direction: column; gap: 1rem; }
 
   .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 
-  .form-group {
-    display: flex; flex-direction: column; gap: 0.4rem;
-  }
+  .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
 
   .form-group label {
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--text-muted);
+    font-size: 0.75rem; font-weight: 600; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--text-mid);
   }
 
-  .form-group input, .form-group textarea, .form-group select {
-    background: var(--green);
-    border: 1px solid rgba(201,168,76,0.2);
-    color: var(--text);
-    padding: 0.75rem 1rem;
-    font-family: 'Barlow', sans-serif;
-    font-size: 0.9rem;
-    outline: none;
+  .form-group input, .form-group textarea {
+    background: var(--white); border: 1.5px solid var(--cream-dark);
+    color: var(--text-dark); padding: 0.75rem 1rem;
+    font-family: 'Barlow', sans-serif; font-size: 0.9rem; outline: none;
     transition: border-color 0.2s;
   }
-  .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
-    border-color: var(--gold);
-  }
+  .form-group input:focus, .form-group textarea:focus { border-color: var(--green); }
   .form-group textarea { resize: vertical; min-height: 120px; }
 
   /* ─── FOOTER ─── */
   footer {
-    background: var(--dark);
-    border-top: 1px solid rgba(201,168,76,0.2);
-    padding: 2rem;
-    text-align: center;
-    font-size: 0.85rem;
-    color: var(--text-muted);
+    background: var(--green);
+    padding: 2.5rem 2rem; text-align: center;
+    color: rgba(255,255,255,0.7);
   }
+  footer .f-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem; letter-spacing: 3px; color: var(--gold-light);
+    margin-bottom: 0.5rem;
+  }
+  footer p { font-size: 0.85rem; line-height: 1.8; }
+  footer strong { color: rgba(255,255,255,0.9); }
+  footer a { color: var(--gold-light); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
 
-  footer strong { color: var(--gold); }
-
-  /* ─── ADMIN MODAL ─── */
+  /* ─── PLAYER MODAL ─── */
   .modal-overlay {
-    display: none;
-    position: fixed; inset: 0; z-index: 2000;
-    background: rgba(0,0,0,0.8);
-    backdrop-filter: blur(6px);
+    display: none; position: fixed; inset: 0; z-index: 2000;
+    background: rgba(13,31,22,0.7); backdrop-filter: blur(6px);
     align-items: center; justify-content: center;
   }
   .modal-overlay.open { display: flex; }
 
   .modal {
-    background: var(--green);
-    border: 1px solid rgba(201,168,76,0.3);
-    width: 90%;
-    max-width: 900px;
-    max-height: 90vh;
-    overflow-y: auto;
-    animation: fadeUp 0.3s ease;
+    background: var(--white); border: 1px solid var(--cream-dark);
+    width: 90%; max-width: 700px; max-height: 90vh;
+    overflow-y: auto; animation: fadeUp 0.3s ease;
+    box-shadow: var(--shadow-lg);
   }
 
   .modal-header {
     display: flex; align-items: center; justify-content: space-between;
-    padding: 1.5rem;
-    border-bottom: 1px solid rgba(201,168,76,0.2);
-    position: sticky; top: 0;
-    background: var(--green);
+    padding: 1.5rem; border-bottom: 1px solid var(--cream-dark);
+    position: sticky; top: 0; background: var(--white); z-index: 1;
   }
 
   .modal-header h2 {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.8rem;
-    letter-spacing: 2px;
-    color: var(--gold);
+    font-size: 1.8rem; letter-spacing: 2px; color: var(--green);
   }
 
   .modal-close {
     background: none; border: none; color: var(--text-muted);
-    font-size: 1.5rem; cursor: pointer; transition: color 0.2s;
-    line-height: 1;
+    font-size: 1.5rem; cursor: pointer; transition: color 0.2s; line-height: 1;
   }
-  .modal-close:hover { color: var(--gold); }
+  .modal-close:hover { color: var(--green); }
 
   .modal-body { padding: 1.5rem; }
 
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Player Profile Modal Content */
+  .player-profile-header {
+    display: flex; gap: 1.5rem; align-items: flex-start;
+    margin-bottom: 1.5rem; flex-wrap: wrap;
+  }
+
+  .player-profile-avatar {
+    width: 110px; height: 110px; flex-shrink: 0;
+    background: var(--cream-mid);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 3rem; overflow: hidden; position: relative;
+    border: 2px solid var(--cream-dark);
+  }
+  .player-profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+  .player-profile-info { flex: 1; }
+
+  .player-profile-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem; letter-spacing: 2px; color: var(--green); line-height: 1;
+    margin-bottom: 0.25rem;
+  }
+
+  .player-profile-meta {
+    display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;
+    margin-bottom: 0.75rem;
+  }
+
+  .profile-role-badge {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.75rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+    background: var(--green); color: var(--white); padding: 0.2rem 0.7rem;
+  }
+
+  .profile-nat {
+    font-size: 0.85rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.3rem;
+  }
+
+  /* Stats grid */
+  .stats-section-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.75rem; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 0.75rem; padding-bottom: 0.4rem;
+    border-bottom: 1px solid var(--cream-dark);
+  }
+
+  .stats-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 0.75rem; margin-bottom: 1.5rem;
+  }
+
+  .stat-box {
+    background: var(--cream); border: 1px solid var(--cream-dark);
+    padding: 0.75rem; text-align: center;
+  }
+
+  .stat-box-value {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem; letter-spacing: 1px; color: var(--green); line-height: 1;
+  }
+
+  .stat-box-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.65rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--text-muted); margin-top: 0.2rem;
+  }
+
+  /* Match history in modal */
+  .match-history-table {
+    width: 100%; border-collapse: collapse; font-size: 0.82rem;
+  }
+  .match-history-table th {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.7rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--gold); padding: 0.5rem 0.75rem; text-align: left;
+    border-bottom: 1px solid var(--cream-dark); background: var(--cream);
+  }
+  .match-history-table td {
+    padding: 0.6rem 0.75rem; color: var(--text-dark);
+    border-bottom: 1px solid var(--cream-dark);
+  }
+  .match-history-table tr:hover td { background: var(--cream); }
+  .match-history-table tr:last-child td { border-bottom: none; }
+
+  /* ─── ADMIN MODAL ─── */
+  .admin-modal {
+    background: var(--white); border: 1px solid var(--cream-dark);
+    width: 90%; max-width: 960px; max-height: 92vh;
+    overflow-y: auto; animation: fadeUp 0.3s ease;
+    box-shadow: var(--shadow-lg);
+  }
+
+  .admin-modal-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--cream-dark);
+    position: sticky; top: 0; background: var(--green); z-index: 1;
+  }
+
+  .admin-modal-header h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem; letter-spacing: 2px; color: var(--gold-light);
+  }
+
+  .admin-modal-header .modal-close { color: rgba(255,255,255,0.7); }
+  .admin-modal-header .modal-close:hover { color: var(--white); }
+
+  .admin-modal-body { padding: 1.5rem; }
+
   .admin-tabs {
-    display: flex; gap: 0; border-bottom: 1px solid rgba(201,168,76,0.2);
-    margin-bottom: 1.5rem;
-    flex-wrap: wrap;
+    display: flex; gap: 0; border-bottom: 2px solid var(--cream-dark);
+    margin-bottom: 1.5rem; flex-wrap: wrap;
   }
 
   .admin-tab {
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 0.85rem;
-    font-weight: 600;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    padding: 0.75rem 1.25rem;
-    background: none; border: none;
-    color: var(--text-muted);
-    cursor: pointer;
-    border-bottom: 2px solid transparent;
+    font-size: 0.85rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;
+    padding: 0.75rem 1.25rem; background: none; border: none;
+    color: var(--text-muted); cursor: pointer;
+    border-bottom: 2px solid transparent; margin-bottom: -2px;
     transition: all 0.2s;
-    margin-bottom: -1px;
   }
-  .admin-tab:hover { color: var(--text); }
-  .admin-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+  .admin-tab:hover { color: var(--green); }
+  .admin-tab.active { color: var(--green); border-bottom-color: var(--green); }
 
   .admin-panel { display: none; }
   .admin-panel.active { display: block; }
 
-  .admin-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.85rem;
-    margin-bottom: 1rem;
-  }
-
+  .admin-table { width: 100%; border-collapse: collapse; font-size: 0.83rem; margin-bottom: 1rem; }
   .admin-table th {
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--gold);
-    padding: 0.75rem;
-    text-align: left;
-    border-bottom: 1px solid rgba(201,168,76,0.2);
+    font-size: 0.72rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--gold); padding: 0.6rem 0.75rem; text-align: left;
+    border-bottom: 1px solid var(--cream-dark); background: var(--cream);
   }
-
   .admin-table td {
-    padding: 0.75rem;
-    color: var(--text);
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-    vertical-align: middle;
+    padding: 0.65rem 0.75rem; color: var(--text-dark);
+    border-bottom: 1px solid var(--cream-dark); vertical-align: middle;
   }
-
-  .admin-table tr:hover td { background: rgba(255,255,255,0.03); }
+  .admin-table tr:hover td { background: var(--cream); }
 
   .admin-form {
-    background: var(--green-mid);
-    border: 1px solid rgba(201,168,76,0.15);
-    padding: 1.25rem;
-    margin-bottom: 1.5rem;
+    background: var(--cream); border: 1px solid var(--cream-dark);
+    padding: 1.25rem; margin-bottom: 1.5rem;
   }
 
   .admin-form h3 {
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 0.9rem;
-    font-weight: 700;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 1rem;
+    font-size: 0.85rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--green); margin-bottom: 1rem;
   }
 
   .admin-form-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 0.75rem;
-    margin-bottom: 1rem;
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 0.75rem; margin-bottom: 1rem;
   }
 
-  .admin-form-group {
-    display: flex; flex-direction: column; gap: 0.3rem;
-  }
-
+  .admin-form-group { display: flex; flex-direction: column; gap: 0.3rem; }
   .admin-form-group label {
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 0.7rem;
-    font-weight: 600;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
+    font-size: 0.68rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;
     color: var(--text-muted);
   }
-
   .admin-form-group input, .admin-form-group select {
-    background: var(--green);
-    border: 1px solid rgba(201,168,76,0.2);
-    color: var(--text);
-    padding: 0.5rem 0.75rem;
-    font-family: 'Barlow', sans-serif;
-    font-size: 0.85rem;
-    outline: none;
+    background: var(--white); border: 1px solid var(--cream-dark);
+    color: var(--text-dark); padding: 0.5rem 0.75rem;
+    font-family: 'Barlow', sans-serif; font-size: 0.85rem; outline: none;
   }
-  .admin-form-group input:focus, .admin-form-group select:focus { border-color: var(--gold); }
+  .admin-form-group input:focus, .admin-form-group select:focus { border-color: var(--green); }
 
   .btn-sm {
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    padding: 0.35rem 0.8rem;
-    border: none; cursor: pointer; transition: all 0.2s;
+    font-size: 0.75rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+    padding: 0.35rem 0.85rem; border: none; cursor: pointer; transition: all 0.2s;
   }
-  .btn-add { background: var(--gold); color: var(--dark); }
-  .btn-add:hover { background: var(--gold-light); }
-  .btn-delete { background: rgba(192,57,43,0.2); color: #e74c3c; }
-  .btn-delete:hover { background: rgba(192,57,43,0.4); }
+  .btn-add { background: var(--green); color: var(--white); }
+  .btn-add:hover { background: var(--green-mid); }
+  .btn-delete { background: rgba(192,57,43,0.1); color: #c0392b; border: 1px solid rgba(192,57,43,0.2); }
+  .btn-delete:hover { background: rgba(192,57,43,0.2); }
 
-  /* login */
-  .admin-login {
-    max-width: 340px;
-    margin: 0 auto;
-    text-align: center;
-    padding: 2rem 0;
-  }
-
-  .admin-login h3 {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.8rem;
-    letter-spacing: 2px;
-    color: var(--gold);
-    margin-bottom: 0.5rem;
-  }
-
-  .admin-login p {
-    font-size: 0.85rem;
-    color: var(--text-muted);
-    margin-bottom: 1.5rem;
-  }
-
+  /* Admin login */
+  .admin-login { max-width: 340px; margin: 0 auto; text-align: center; padding: 2rem 0; }
+  .admin-login h3 { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 2px; color: var(--green); margin-bottom: 0.5rem; }
+  .admin-login p { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem; }
   .admin-login .form-group { text-align: left; margin-bottom: 1rem; }
-  .admin-login .form-group input {
-    width: 100%;
-    background: var(--green-mid);
-    border: 1px solid rgba(201,168,76,0.2);
-    color: var(--text);
-    padding: 0.75rem 1rem;
-    font-family: 'Barlow', sans-serif;
-    font-size: 0.9rem;
-    outline: none;
-  }
-  .admin-login .form-group input:focus { border-color: var(--gold); }
+  .admin-login .form-group input { width: 100%; background: var(--cream); border: 1.5px solid var(--cream-dark); color: var(--text-dark); padding: 0.75rem 1rem; font-family: 'Barlow', sans-serif; font-size: 0.9rem; outline: none; }
+  .admin-login .form-group input:focus { border-color: var(--green); }
+  .error-msg { color: #c0392b; font-size: 0.8rem; margin-bottom: 0.75rem; }
 
-  .error-msg {
-    color: #e74c3c;
-    font-size: 0.8rem;
-    margin-bottom: 0.75rem;
-  }
-
-  /* lightbox */
-  .lightbox {
-    display: none;
-    position: fixed; inset: 0; z-index: 3000;
-    background: rgba(0,0,0,0.95);
-    align-items: center; justify-content: center;
-  }
-  .lightbox.open { display: flex; }
-  .lightbox img { max-width: 90vw; max-height: 90vh; object-fit: contain; }
-  .lightbox-close {
-    position: absolute; top: 1rem; right: 1rem;
-    background: none; border: none; color: white;
-    font-size: 2rem; cursor: pointer;
-  }
-
-  /* scroll to top */
+  /* scroll top */
   .scroll-top {
     position: fixed; bottom: 2rem; right: 2rem; z-index: 500;
-    width: 44px; height: 44px;
-    background: var(--gold);
-    color: var(--dark);
-    border: none; cursor: pointer;
-    font-size: 1.2rem;
-    display: none; align-items: center; justify-content: center;
-    transition: all 0.2s;
+    width: 44px; height: 44px; background: var(--green); color: var(--white);
+    border: none; cursor: pointer; font-size: 1.2rem;
+    display: none; align-items: center; justify-content: center; transition: all 0.2s;
+    box-shadow: var(--shadow);
   }
   .scroll-top.visible { display: flex; }
-  .scroll-top:hover { background: var(--gold-light); }
+  .scroll-top:hover { background: var(--green-mid); }
 
   /* toast */
   .toast {
     position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%);
-    background: var(--gold); color: var(--dark);
+    background: var(--green); color: var(--white);
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 0.85rem; font-weight: 700; letter-spacing: 1.5px;
-    text-transform: uppercase;
-    padding: 0.75rem 1.5rem;
-    z-index: 4000;
-    opacity: 0; pointer-events: none;
-    transition: opacity 0.3s;
+    font-size: 0.85rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+    padding: 0.75rem 1.5rem; z-index: 4000;
+    opacity: 0; pointer-events: none; transition: opacity 0.3s;
+    box-shadow: var(--shadow-lg);
   }
   .toast.show { opacity: 1; }
 
@@ -873,21 +756,20 @@
     nav.menu-open .nav-links {
       display: flex; flex-direction: column;
       position: absolute; top: 64px; left: 0; right: 0;
-      background: var(--dark);
-      padding: 1rem 2rem;
-      border-bottom: 1px solid rgba(201,168,76,0.2);
-      gap: 1rem;
+      background: var(--off-white); padding: 1rem 2rem;
+      border-bottom: 1px solid var(--cream-dark); gap: 1rem;
     }
     .form-row { grid-template-columns: 1fr; }
     .match-card { grid-template-columns: 1fr; text-align: center; }
     .match-team.home, .match-team.away { text-align: center; }
     .match-score-box { order: -1; }
-    .admin-form-grid { grid-template-columns: 1fr 1fr; }
+    .player-profile-header { flex-direction: column; align-items: center; text-align: center; }
+    .player-profile-meta { justify-content: center; }
   }
 
   @media (max-width: 480px) {
     section { padding: 3rem 1rem; }
-    .admin-form-grid { grid-template-columns: 1fr; }
+    .admin-form-grid { grid-template-columns: 1fr 1fr; }
   }
 </style>
 </head>
@@ -902,7 +784,7 @@
   <ul class="nav-links" id="navLinks">
     <li><a href="#roster">Roster</a></li>
     <li><a href="#matches">Matches</a></li>
-    <li><a href="#gallery">Gallery</a></li>
+    <li><a href="#gallery-preview">Gallery</a></li>
     <li><a href="#sponsors">Sponsors</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
@@ -921,12 +803,12 @@
   <div class="hero-circle"></div>
   <div class="hero-circle"></div>
   <div class="hero-content">
-    <div class="hero-badge">🏏 Official Cricket Club of <a href="https://www.facebook.com/p/PEI-Cricket-Association-100057478210038/">The PEI Cricket Association</a></div>
+    <div class="hero-badge">🏏 Official Cricket Club of <a href="https://www.facebook.com/p/PEI-Cricket-Association-100057478210038/" target="_blank">The PEI Cricket Association</a></div>
     <h1 class="hero-title">C-TOWN<br><span>LIONS</span></h1>
     <p class="hero-subtitle">Prince Edward Island · Canada</p>
     <div class="hero-cta">
       <a href="#roster" class="btn-primary">Meet the Squad</a>
-      <a href="#matches" class="btn-secondary">View Matches</a>
+      <a href="#matches" class="btn-hero-secondary">View Matches</a>
     </div>
   </div>
 </section>
@@ -973,14 +855,17 @@
   <div class="matches-list" id="matchesList"></div>
 </section>
 
-<!-- GALLERY -->
-<section id="gallery">
+<!-- GALLERY PREVIEW -->
+<section id="gallery-preview">
   <div class="section-header">
     <p class="section-label">Moments</p>
     <h2 class="section-title">Gallery</h2>
     <div class="section-line"></div>
   </div>
-  <div class="gallery-grid" id="galleryGrid"></div>
+  <div class="gallery-grid-preview" id="galleryPreviewGrid"></div>
+  <div class="gallery-more-wrap">
+    <a href="gallery.html" class="btn-primary">View Full Gallery →</a>
+  </div>
 </section>
 
 <!-- SPONSORS -->
@@ -1010,7 +895,7 @@
       <div class="contact-item">
         <div class="contact-icon">📧</div>
         <h4>Email</h4>
-        <p>info@ctownlions.ca</p>
+        <p><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b9d0d7dfd6f9dacdd6ced7d5d0d6d7ca97dad8">[email&#160;protected]</a></p>
       </div>
       <div class="contact-item">
         <div class="contact-icon">📱</div>
@@ -1044,21 +929,32 @@
 
 <!-- FOOTER -->
 <footer>
-  <p style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:3px;color:var(--gold);margin-bottom:0.5rem;">CHARLOTTETOWN LIONS CC</p>
-  <p>Proudly based in <strong>Prince Edward Island, Canada</strong> 🍁</p>
-  <p style="margin-top:0.5rem;font-size:0.75rem;">© <span id="year"></span> C-Town Lions Cricket Club. All rights reserved.</p>
+  <div class="f-logo">Charlottetown Lions CC</div>
+  <p>Proudly based in <strong>Prince Edward Island, Canada 🍁</strong></p>
+  <p>Member of <a href="https://www.facebook.com/p/PEI-Cricket-Association-100057478210038/" target="_blank">The PEI Cricket Association</a></p>
+  <p style="margin-top:1rem;font-size:0.75rem;opacity:0.5;">© <span id="year"></span> C-Town Lions Cricket Club. All rights reserved.</p>
 </footer>
+
+<!-- PLAYER PROFILE MODAL -->
+<div class="modal-overlay" id="playerModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="modalPlayerName">Player</h2>
+      <button class="modal-close" onclick="closePlayerModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modalPlayerBody"></div>
+  </div>
+</div>
 
 <!-- ADMIN MODAL -->
 <div class="modal-overlay" id="adminModal">
-  <div class="modal">
-    <div class="modal-header">
+  <div class="admin-modal">
+    <div class="admin-modal-header">
       <h2>⚙ Admin Panel</h2>
       <button class="modal-close" onclick="closeAdmin()">✕</button>
     </div>
-    <div class="modal-body">
+    <div class="admin-modal-body">
 
-      <!-- LOGIN -->
       <div id="adminLogin" class="admin-login">
         <h3>Admin Login</h3>
         <p>Enter your admin password to manage club data.</p>
@@ -1068,10 +964,8 @@
         </div>
         <p class="error-msg" id="loginError" style="display:none;">Incorrect password. Try again.</p>
         <button class="btn-primary" onclick="doLogin()" style="width:100%;">Login</button>
-        <!-- <p style="margin-top:1rem;font-size:0.75rem;color:var(--text-muted);">Default password: <strong style="color:var(--gold)">lions2024</strong></p> -->
       </div>
 
-      <!-- PANEL -->
       <div id="adminContent" style="display:none;">
         <div class="admin-tabs">
           <button class="admin-tab active" onclick="switchTab('players',this)">Players</button>
@@ -1081,38 +975,59 @@
           <button class="admin-tab" onclick="switchTab('settings',this)">Settings</button>
         </div>
 
-        <!-- PLAYERS -->
+        <!-- PLAYERS TAB -->
         <div class="admin-panel active" id="tab-players">
           <div class="admin-form">
             <h3>Add / Edit Player</h3>
             <input type="hidden" id="editPlayerId">
             <div class="admin-form-grid">
-              <div class="admin-form-group"><label>Name</label><input type="text" id="pName" placeholder="Full name"></div>
-              <div class="admin-form-group"><label>Number</label><input type="number" id="pNumber" placeholder="#" min="1" max="99"></div>
+              <div class="admin-form-group"><label>Full Name</label><input type="text" id="pName" placeholder="Full name"></div>
+              <div class="admin-form-group"><label>Jersey #</label><input type="number" id="pNumber" placeholder="#" min="1" max="99"></div>
               <div class="admin-form-group">
                 <label>Role</label>
                 <select id="pRole">
-                  <option>Batsman</option>
-                  <option>Bowler</option>
-                  <option>All-Rounder</option>
-                  <option>Wicket-Keeper</option>
+                  <option>Batsman</option><option>Bowler</option><option>All-Rounder</option><option>Wicket-Keeper</option>
                 </select>
               </div>
-              <div class="admin-form-group"><label>Batting Avg</label><input type="text" id="pBat" placeholder="e.g. 42.5"></div>
-              <div class="admin-form-group"><label>Bowling Avg</label><input type="text" id="pBowl" placeholder="e.g. 28.3"></div>
-              <div class="admin-form-group"><label>Nationality</label><input type="text" id="pNat" placeholder="e.g. Canadian"></div>
+              <div class="admin-form-group">
+                <label>Nationality</label>
+                <select id="pNat">
+                  <option value="Canadian">🇨🇦 Canadian</option>
+                  <option value="Indian">🇮🇳 Indian</option>
+                  <option value="Pakistani">🇵🇰 Pakistani</option>
+                  <option value="Sri Lankan">🇱🇰 Sri Lankan</option>
+                  <option value="Bangladeshi">🇧🇩 Bangladeshi</option>
+                  <option value="West Indian">🏝️ West Indian</option>
+                  <option value="English">🏴󠁧󠁢󠁥󠁮󠁧󠁿 English</option>
+                  <option value="Australian">🇦🇺 Australian</option>
+                  <option value="South African">🇿🇦 South African</option>
+                  <option value="Afghan">🇦🇫 Afghan</option>
+                  <option value="Kenyan">🇰🇪 Kenyan</option>
+                  <option value="Zimbabwean">🇿🇼 Zimbabwean</option>
+                  <option value="Other">🌍 Other</option>
+                </select>
+              </div>
+              <div class="admin-form-group"><label>Total Runs</label><input type="number" id="pRuns" placeholder="e.g. 842"></div>
+              <div class="admin-form-group"><label>Batting Avg</label><input type="text" id="pBatAvg" placeholder="e.g. 42.5"></div>
+              <div class="admin-form-group"><label>Strike Rate</label><input type="text" id="pSR" placeholder="e.g. 118.4"></div>
+              <div class="admin-form-group"><label>High Score</label><input type="text" id="pHS" placeholder="e.g. 87*"></div>
+              <div class="admin-form-group"><label>50s / 100s</label><input type="text" id="p50100" placeholder="e.g. 4 / 1"></div>
+              <div class="admin-form-group"><label>Wickets</label><input type="number" id="pWickets" placeholder="e.g. 24"></div>
+              <div class="admin-form-group"><label>Bowling Avg</label><input type="text" id="pBowlAvg" placeholder="e.g. 21.3"></div>
+              <div class="admin-form-group"><label>Economy Rate</label><input type="text" id="pEcon" placeholder="e.g. 6.2"></div>
+              <div class="admin-form-group"><label>Matches Played</label><input type="number" id="pMatches" placeholder="e.g. 18"></div>
               <div class="admin-form-group" style="grid-column:1/-1"><label>Photo URL (optional)</label><input type="text" id="pPhoto" placeholder="https://…"></div>
             </div>
             <button class="btn-sm btn-add" onclick="savePlayer()">Save Player</button>
-            <button class="btn-sm" onclick="clearPlayerForm()" style="background:transparent;border:1px solid rgba(201,168,76,0.3);color:var(--text-muted);margin-left:0.5rem;">Clear</button>
+            <button class="btn-sm" onclick="clearPlayerForm()" style="background:transparent;border:1px solid var(--cream-dark);color:var(--text-muted);margin-left:0.5rem;">Clear</button>
           </div>
           <table class="admin-table">
-            <thead><tr><th>#</th><th>Name</th><th>Role</th><th>Bat Avg</th><th>Bowl Avg</th><th>Actions</th></tr></thead>
+            <thead><tr><th>#</th><th>Name</th><th>Role</th><th>Nat.</th><th>Runs</th><th>Wkts</th><th>Actions</th></tr></thead>
             <tbody id="playersTableBody"></tbody>
           </table>
         </div>
 
-        <!-- MATCHES -->
+        <!-- MATCHES TAB -->
         <div class="admin-panel" id="tab-matches">
           <div class="admin-form">
             <h3>Add / Edit Match</h3>
@@ -1123,17 +1038,19 @@
               <div class="admin-form-group"><label>Venue</label><input type="text" id="mVenue" placeholder="Ground name"></div>
               <div class="admin-form-group">
                 <label>Result</label>
-                <select id="mResult">
-                  <option>Win</option><option>Loss</option><option>Draw</option><option>Upcoming</option>
-                </select>
+                <select id="mResult"><option>Win</option><option>Loss</option><option>Draw</option><option>Upcoming</option></select>
               </div>
               <div class="admin-form-group"><label>Our Score</label><input type="text" id="mOurScore" placeholder="e.g. 187/6"></div>
               <div class="admin-form-group"><label>Their Score</label><input type="text" id="mTheirScore" placeholder="e.g. 174/8"></div>
               <div class="admin-form-group"><label>Season</label><input type="text" id="mSeason" placeholder="e.g. 2024"></div>
               <div class="admin-form-group"><label>Tournament</label><input type="text" id="mTournament" placeholder="e.g. PEI Summer League"></div>
+              <div class="admin-form-group" style="grid-column:1/-1">
+                <label>Players in this Match (names, comma-separated)</label>
+                <input type="text" id="mPlayers" placeholder="e.g. Arjun Sharma, Dev Patel, Marcus Williams">
+              </div>
             </div>
             <button class="btn-sm btn-add" onclick="saveMatch()">Save Match</button>
-            <button class="btn-sm" onclick="clearMatchForm()" style="background:transparent;border:1px solid rgba(201,168,76,0.3);color:var(--text-muted);margin-left:0.5rem;">Clear</button>
+            <button class="btn-sm" onclick="clearMatchForm()" style="background:transparent;border:1px solid var(--cream-dark);color:var(--text-muted);margin-left:0.5rem;">Clear</button>
           </div>
           <table class="admin-table">
             <thead><tr><th>Date</th><th>Opponent</th><th>Result</th><th>Score</th><th>Tournament</th><th>Actions</th></tr></thead>
@@ -1141,24 +1058,25 @@
           </table>
         </div>
 
-        <!-- GALLERY -->
+        <!-- GALLERY TAB -->
         <div class="admin-panel" id="tab-gallery">
           <div class="admin-form">
-            <h3>Add Gallery Item</h3>
-            <input type="hidden" id="editGalleryId">
+            <h3>Add Gallery Photo</h3>
             <div class="admin-form-grid">
               <div class="admin-form-group" style="grid-column:1/-1"><label>Image URL</label><input type="text" id="gUrl" placeholder="https://… (leave blank for placeholder)"></div>
               <div class="admin-form-group" style="grid-column:1/-1"><label>Caption</label><input type="text" id="gCaption" placeholder="e.g. Season opener vs Halifax CC"></div>
+              <div class="admin-form-group"><label>Album / Tournament</label><input type="text" id="gAlbum" placeholder="e.g. PEI Summer League 2024"></div>
+              <div class="admin-form-group"><label>Tag Players (comma-separated)</label><input type="text" id="gPlayers" placeholder="e.g. Arjun Sharma, Dev Patel"></div>
             </div>
             <button class="btn-sm btn-add" onclick="saveGalleryItem()">Add Photo</button>
           </div>
           <table class="admin-table">
-            <thead><tr><th>Caption</th><th>URL</th><th>Actions</th></tr></thead>
+            <thead><tr><th>Caption</th><th>Album</th><th>Players</th><th>Actions</th></tr></thead>
             <tbody id="galleryTableBody"></tbody>
           </table>
         </div>
 
-        <!-- SPONSORS -->
+        <!-- SPONSORS TAB -->
         <div class="admin-panel" id="tab-sponsors">
           <div class="admin-form">
             <h3>Add / Edit Sponsor</h3>
@@ -1167,12 +1085,10 @@
               <div class="admin-form-group"><label>Company Name</label><input type="text" id="sName" placeholder="Business name"></div>
               <div class="admin-form-group">
                 <label>Tier</label>
-                <select id="sTier">
-                  <option>Gold</option><option>Silver</option><option>Bronze</option><option>Community</option>
-                </select>
+                <select id="sTier"><option>Gold</option><option>Silver</option><option>Bronze</option><option>Community</option></select>
               </div>
               <div class="admin-form-group"><label>Website URL</label><input type="text" id="sUrl" placeholder="https://…"></div>
-              <div class="admin-form-group"><label>Emoji / Icon</label><input type="text" id="sIcon" placeholder="e.g. 🍺 or 🏪"></div>
+              <div class="admin-form-group"><label>Emoji / Icon</label><input type="text" id="sIcon" placeholder="e.g. 🍺"></div>
             </div>
             <button class="btn-sm btn-add" onclick="saveSponsor()">Save Sponsor</button>
           </div>
@@ -1182,7 +1098,7 @@
           </table>
         </div>
 
-        <!-- SETTINGS -->
+        <!-- SETTINGS TAB -->
         <div class="admin-panel" id="tab-settings">
           <div class="admin-form">
             <h3>Change Admin Password</h3>
@@ -1194,8 +1110,8 @@
           </div>
           <div class="admin-form">
             <h3>Reset All Data</h3>
-            <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:1rem;">This will reload all demo data. Use with caution.</p>
-            <button class="btn-sm" onclick="resetData()" style="background:rgba(192,57,43,0.2);color:#e74c3c;">Reset to Demo Data</button>
+            <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:1rem;">Reloads all demo data. Use with caution.</p>
+            <button class="btn-sm" onclick="resetData()" style="background:rgba(192,57,43,0.1);color:#c0392b;border:1px solid rgba(192,57,43,0.2);">Reset to Demo Data</button>
           </div>
         </div>
 
@@ -1204,218 +1120,250 @@
   </div>
 </div>
 
-<!-- LIGHTBOX -->
-<div class="lightbox" id="lightbox" onclick="closeLightbox()">
-  <button class="lightbox-close">✕</button>
-  <img id="lightboxImg" src="" alt="">
-</div>
-
 <!-- SCROLL TOP -->
 <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
-
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
-<script>
-// ─── DATA ───────────────────────────────────────────────────────
-const STORAGE_KEYS = {
-  players: 'ctlions_players',
-  matches: 'ctlions_matches',
-  gallery: 'ctlions_gallery',
-  sponsors: 'ctlions_sponsors',
-  password: 'ctlions_password'
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+// ─── SUPABASE ────────────────────────────────────────────────────
+const SUPABASE_URL = 'https://mtgknrfmtvhkqqdtbxcf.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im10Z2tucmZtdHZoa3FxZHRieGNmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE3MjY3MzMsImV4cCI6MjA4NzMwMjczM30.y04TSrIICBqRwX7AcOILUbIOOhKZlRzVgvdB4Po6tpc';
+const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+// ─── NATIONALITY FLAGS ───────────────────────────────────────────
+const NAT_FLAGS = {
+  'Canadian':'🇨🇦','Indian':'🇮🇳','Pakistani':'🇵🇰','Sri Lankan':'🇱🇰',
+  'Bangladeshi':'🇧🇩','West Indian':'🏝️','English':'🏴󠁧󠁢󠁥󠁮󠁧󠁿','Australian':'🇦🇺',
+  'South African':'🇿🇦','Afghan':'🇦🇫','Kenyan':'🇰🇪','Zimbabwean':'🇿🇼','Other':'🌍'
 };
 
-const DEMO_PLAYERS = [
-  {id:1, name:'Arjun Sharma', number:1, role:'Batsman', bat:'52.4', bowl:'-', nat:'Canadian', photo:''},
-  {id:2, name:'Dev Patel', number:7, role:'All-Rounder', bat:'38.2', bowl:'24.6', nat:'Canadian', photo:''},
-  {id:3, name:'Marcus Williams', number:11, role:'Bowler', bat:'12.1', bowl:'19.3', nat:'Canadian', photo:''},
-  {id:4, name:'Tariq Hussain', number:3, role:'Batsman', bat:'44.7', bowl:'-', nat:'Canadian', photo:''},
-  {id:5, name:'Kyle MacLeod', number:9, role:'Wicket-Keeper', bat:'28.5', bowl:'-', nat:'Canadian', photo:''},
-  {id:6, name:'Ravi Mehta', number:5, role:'All-Rounder', bat:'31.0', bowl:'27.8', nat:'Canadian', photo:''},
-  {id:7, name:'Omar Siddiqui', number:8, role:'Bowler', bat:'9.4', bowl:'21.5', nat:'Canadian', photo:''},
-  {id:8, name:'James Doiron', number:4, role:'Batsman', bat:'47.2', bowl:'-', nat:'Canadian', photo:''},
-];
+// ─── STATE ───────────────────────────────────────────────────────
+let allPlayers = [], allMatches = [], allGallery = [], allSponsors = [];
 
-const DEMO_MATCHES = [
-  {id:1, opponent:'Halifax CC', date:'2024-07-14', venue:'Confederation Centre Field', result:'Win', ourScore:'212/5', theirScore:'198/9', season:'2024', tournament:'PEI Summer League'},
-  {id:2, opponent:'Moncton Marlins', date:'2024-07-21', venue:'UPEI Cricket Ground', result:'Win', ourScore:'187/6', theirScore:'174/8', season:'2024', tournament:'PEI Summer League'},
-  {id:3, opponent:'Fredericton Eagles', date:'2024-08-04', venue:'Fredericton Sports Park', result:'Loss', ourScore:'155/10', theirScore:'156/4', season:'2024', tournament:'Atlantic Cup'},
-  {id:4, opponent:'Summerside Sharks', date:'2024-08-11', venue:'Confederation Centre Field', result:'Win', ourScore:'203/7', theirScore:'189/10', season:'2024', tournament:'PEI Summer League'},
-  {id:5, opponent:'Dartmouth Ducks', date:'2024-08-25', venue:'UPEI Cricket Ground', result:'Draw', ourScore:'178/8', theirScore:'178/6', season:'2024', tournament:'Atlantic Cup'},
-  {id:6, opponent:'Saint John Saints', date:'2025-06-08', venue:'Confederation Centre Field', result:'Upcoming', ourScore:'', theirScore:'', season:'2025', tournament:'PEI Summer League'},
-];
+// ─── MAP DB ROW → APP OBJECT ─────────────────────────────────────
+function mapPlayer(r) {
+  return { id:r.id, name:r.name, number:r.number, role:r.role, nat:r.nat,
+    runs:r.runs, batAvg:r.bat_avg, sr:r.sr, hs:r.hs, half50100:r.half50100,
+    wickets:r.wickets, bowlAvg:r.bowl_avg, econ:r.econ, matches:r.matches, photo:r.photo };
+}
+function mapMatch(r) {
+  return { id:r.id, opponent:r.opponent, date:r.date, venue:r.venue, result:r.result,
+    ourScore:r.our_score, theirScore:r.their_score, season:r.season,
+    tournament:r.tournament, players:r.players };
+}
+function mapGallery(r) {
+  return { id:r.id, url:r.url, caption:r.caption, album:r.album, players:r.players };
+}
+function mapSponsor(r) {
+  return { id:r.id, name:r.name, tier:r.tier, url:r.url, icon:r.icon };
+}
 
-const DEMO_GALLERY = [
-  {id:1, url:'', caption:'Season Opener vs Halifax CC — July 2024'},
-  {id:2, url:'', caption:'Team Photo — 2024 Squad'},
-  {id:3, url:'', caption:'Arjun Sharma century celebration'},
-  {id:4, url:'', caption:'Training session at UPEI'},
-  {id:5, url:'', caption:'Atlantic Cup semifinal'},
-  {id:6, url:'', caption:'Awards night 2024'},
-];
-
-const DEMO_SPONSORS = [
-  {id:1, name:'Island Brew Co.', tier:'Gold', url:'#', icon:'🍺'},
-  {id:2, name:'PEI Sports Centre', tier:'Gold', url:'#', icon:'🏟️'},
-  {id:3, name:'Charlottetown Realty', tier:'Silver', url:'#', icon:'🏠'},
-  {id:4, name:'Maritime Equipment', tier:'Silver', url:'#', icon:'🔧'},
-  {id:5, name:'Red Shores Racetrack', tier:'Bronze', url:'#', icon:'🎰'},
-  {id:6, name:'Island Fresh Foods', tier:'Community', url:'#', icon:'🥗'},
-];
-
-function getData(key) {
+// ─── LOAD FROM SUPABASE ──────────────────────────────────────────
+async function loadData() {
+  showLoading(true);
   try {
-    const d = localStorage.getItem(STORAGE_KEYS[key]);
-    return d ? JSON.parse(d) : null;
-  } catch { return null; }
-}
-
-function setData(key, val) {
-  localStorage.setItem(STORAGE_KEYS[key], JSON.stringify(val));
-}
-
-function loadData() {
-  if (!getData('players')) setData('players', DEMO_PLAYERS);
-  if (!getData('matches')) setData('matches', DEMO_MATCHES);
-  if (!getData('gallery')) setData('gallery', DEMO_GALLERY);
-  if (!getData('sponsors')) setData('sponsors', DEMO_SPONSORS);
-  if (!getData('password')) setData('password', 'lions2024');
-}
-
-function resetData() {
-  if (!confirm('Reset all data to demo content?')) return;
-  setData('players', DEMO_PLAYERS);
-  setData('matches', DEMO_MATCHES);
-  setData('gallery', DEMO_GALLERY);
-  setData('sponsors', DEMO_SPONSORS);
+    const [p, m, g, s] = await Promise.all([
+      sb.from('players').select('*').order('id'),
+      sb.from('matches').select('*').order('date', {ascending: false}),
+      sb.from('gallery').select('*').order('id'),
+      sb.from('sponsors').select('*').order('id'),
+    ]);
+    allPlayers  = (p.data || []).map(mapPlayer);
+    allMatches  = (m.data || []).map(mapMatch);
+    allGallery  = (g.data || []).map(mapGallery);
+    allSponsors = (s.data || []).map(mapSponsor);
+  } catch(e) {
+    showToast('⚠️ Could not connect to database');
+    console.error(e);
+  }
+  showLoading(false);
   renderAll();
-  showToast('Data reset to demo content');
+}
+
+function showLoading(on) {
+  let el = document.getElementById('loadingBar');
+  if(!el) {
+    el = document.createElement('div');
+    el.id = 'loadingBar';
+    el.style.cssText = 'position:fixed;top:64px;left:0;right:0;height:3px;background:var(--gold);z-index:9999;transition:opacity 0.4s;';
+    document.body.appendChild(el);
+  }
+  el.style.opacity = on ? '1' : '0';
 }
 
 // ─── RENDER ALL ──────────────────────────────────────────────────
-function renderAll() {
-  renderRoster();
-  renderMatches();
-  renderGallery();
-  renderSponsors();
-  populateMatchFilters();
-}
+function renderAll() { renderRoster(); renderMatches(); renderGalleryPreview(); renderSponsors(); populateMatchFilters(); }
 
 // ─── ROSTER ─────────────────────────────────────────────────────
-function renderRoster(filter = 'all') {
+function renderRoster(filter='all') {
+  const filtered = filter==='all' ? allPlayers : allPlayers.filter(p=>p.role===filter);
   const grid = document.getElementById('rosterGrid');
-  const players = getData('players') || [];
-  const filtered = filter === 'all' ? players : players.filter(p => p.role === filter);
-  grid.innerHTML = filtered.length ? filtered.map(p => `
-    <div class="player-card">
+  grid.innerHTML = filtered.length ? filtered.map(p => {
+    const flag = NAT_FLAGS[p.nat] || '🌍';
+    return `
+    <div class="player-card" onclick="openPlayerModal(${p.id})">
       <div class="player-avatar">
-        ${p.photo ? `<img src="${p.photo}" alt="${p.name}" onerror="this.style.display='none'">` : ''}
-        ${!p.photo ? '🏏' : ''}
-        <span class="player-number">${p.number || ''}</span>
+        ${p.photo ? `<img src="${p.photo}" alt="${p.name}" onerror="this.style.display='none'">` : '🏏'}
+        <span class="player-number">${p.number||''}</span>
+        <span class="player-flag" title="${p.nat||''}">${flag}</span>
       </div>
       <div class="player-info">
         <div class="player-name">${p.name}</div>
         <div class="player-role">${p.role}</div>
         <div class="player-stats">
-          ${p.bat !== '-' ? `<span><strong>${p.bat}</strong><br>Bat Avg</span>` : ''}
-          ${p.bowl !== '-' ? `<span><strong>${p.bowl}</strong><br>Bowl Avg</span>` : ''}
+          ${p.runs ? `<span><strong>${p.runs}</strong>Runs</span>` : ''}
+          ${p.wickets ? `<span><strong>${p.wickets}</strong>Wkts</span>` : ''}
+          ${p.batAvg && p.batAvg!=='-' ? `<span><strong>${p.batAvg}</strong>Bat Avg</span>` : ''}
         </div>
       </div>
-    </div>
-  `).join('') : '<p style="color:var(--text-muted);text-align:center;grid-column:1/-1;padding:2rem;">No players found.</p>';
+      <div class="player-card-footer">View Full Profile →</div>
+    </div>`;
+  }).join('') : '<p style="color:var(--text-muted);text-align:center;grid-column:1/-1;padding:2rem;">No players found.</p>';
 }
 
 document.getElementById('rosterFilters').addEventListener('click', e => {
   const btn = e.target.closest('.filter-btn');
-  if (!btn) return;
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  if(!btn) return;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   renderRoster(btn.dataset.filter);
 });
 
+// ─── PLAYER MODAL ────────────────────────────────────────────────
+function openPlayerModal(id) {
+  const p = allPlayers.find(pl=>pl.id===id);
+  if(!p) return;
+  const flag = NAT_FLAGS[p.nat]||'🌍';
+  const playerMatches = allMatches.filter(m => {
+    if(!m.players) return false;
+    return m.players.split(',').map(n=>n.trim().toLowerCase()).includes(p.name.toLowerCase());
+  });
+
+  document.getElementById('modalPlayerName').textContent = p.name;
+
+  document.getElementById('modalPlayerBody').innerHTML = `
+    <div class="player-profile-header">
+      <div class="player-profile-avatar">
+        ${p.photo ? `<img src="${p.photo}" alt="${p.name}" onerror="this.parentElement.innerHTML='🏏'">` : '🏏'}
+      </div>
+      <div class="player-profile-info">
+        <div class="player-profile-name">${p.name}</div>
+        <div class="player-profile-meta">
+          <span class="profile-role-badge">${p.role}</span>
+          <span class="profile-nat">${flag} ${p.nat||''}</span>
+          ${p.number ? `<span style="font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--gold);">#${p.number}</span>` : ''}
+        </div>
+        <div style="font-size:0.85rem;color:var(--text-muted);">
+          ${p.matches ? `<span>${p.matches} matches played</span>` : ''}
+        </div>
+      </div>
+    </div>
+
+    <!-- BATTING STATS -->
+    <div class="stats-section-title">⚔️ Batting</div>
+    <div class="stats-grid">
+      <div class="stat-box"><div class="stat-box-value">${p.runs||'—'}</div><div class="stat-box-label">Total Runs</div></div>
+      <div class="stat-box"><div class="stat-box-value">${p.batAvg||'—'}</div><div class="stat-box-label">Average</div></div>
+      <div class="stat-box"><div class="stat-box-value">${p.sr||'—'}</div><div class="stat-box-label">Strike Rate</div></div>
+      <div class="stat-box"><div class="stat-box-value">${p.hs||'—'}</div><div class="stat-box-label">High Score</div></div>
+      <div class="stat-box"><div class="stat-box-value">${p.half50100||'—'}</div><div class="stat-box-label">50s / 100s</div></div>
+    </div>
+
+    <!-- BOWLING STATS -->
+    ${(p.role==='Bowler'||p.role==='All-Rounder') ? `
+    <div class="stats-section-title">🎳 Bowling</div>
+    <div class="stats-grid">
+      <div class="stat-box"><div class="stat-box-value">${p.wickets||'0'}</div><div class="stat-box-label">Wickets</div></div>
+      <div class="stat-box"><div class="stat-box-value">${p.bowlAvg||'—'}</div><div class="stat-box-label">Average</div></div>
+      <div class="stat-box"><div class="stat-box-value">${p.econ||'—'}</div><div class="stat-box-label">Economy</div></div>
+    </div>` : ''}
+
+    <!-- MATCH HISTORY -->
+    <div class="stats-section-title">📋 Match Appearances (${playerMatches.length})</div>
+    ${playerMatches.length ? `
+    <div style="overflow-x:auto;">
+    <table class="match-history-table">
+      <thead><tr><th>Date</th><th>Opponent</th><th>Tournament</th><th>Result</th></tr></thead>
+      <tbody>
+        ${playerMatches.map(m => {
+          const bc = {Win:'badge-win',Loss:'badge-loss',Draw:'badge-draw',Upcoming:'badge-upcoming'}[m.result]||'';
+          const d = m.date ? new Date(m.date+'T12:00:00').toLocaleDateString('en-CA',{day:'numeric',month:'short',year:'numeric'}) : '';
+          return `<tr>
+            <td>${d}</td>
+            <td>${m.opponent}</td>
+            <td>${m.tournament||'-'}</td>
+            <td><span class="match-result-badge ${bc}">${m.result}</span></td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+    </div>` : '<p style="color:var(--text-muted);font-size:0.85rem;">No match records found. Add player names to matches in the admin panel.</p>'}
+  `;
+
+  document.getElementById('playerModal').classList.add('open');
+}
+
+function closePlayerModal() { document.getElementById('playerModal').classList.remove('open'); }
+
 // ─── MATCHES ─────────────────────────────────────────────────────
 function populateMatchFilters() {
-  const matches = getData('matches') || [];
-  const seasons = [...new Set(matches.map(m => m.season).filter(Boolean))].sort().reverse();
-  const tournaments = [...new Set(matches.map(m => m.tournament).filter(Boolean))].sort();
-  const seasonSel = document.getElementById('seasonFilter');
-  const tourSel = document.getElementById('tournamentFilter');
-  const curSeason = seasonSel.value;
-  const curTour = tourSel.value;
-  seasonSel.innerHTML = '<option value="all">All Seasons</option>' + seasons.map(s => `<option value="${s}" ${s===curSeason?'selected':''}>${s}</option>`).join('');
-  tourSel.innerHTML = '<option value="all">All Tournaments</option>' + tournaments.map(t => `<option value="${t}" ${t===curTour?'selected':''}>${t}</option>`).join('');
+  const seasons = [...new Set(allMatches.map(m=>m.season).filter(Boolean))].sort().reverse();
+  const tournaments = [...new Set(allMatches.map(m=>m.tournament).filter(Boolean))].sort();
+  const ss=document.getElementById('seasonFilter'), ts=document.getElementById('tournamentFilter');
+  const cv=ss.value, ct=ts.value;
+  ss.innerHTML='<option value="all">All Seasons</option>'+seasons.map(s=>`<option value="${s}"${s===cv?' selected':''}>${s}</option>`).join('');
+  ts.innerHTML='<option value="all">All Tournaments</option>'+tournaments.map(t=>`<option value="${t}"${t===ct?' selected':''}>${t}</option>`).join('');
 }
 
 function renderMatches() {
-  const matches = getData('matches') || [];
-  const season = document.getElementById('seasonFilter').value;
-  const tournament = document.getElementById('tournamentFilter').value;
-  const result = document.getElementById('resultFilter').value;
-  const filtered = matches.filter(m =>
-    (season === 'all' || m.season === season) &&
-    (tournament === 'all' || m.tournament === tournament) &&
-    (result === 'all' || m.result === result)
-  ).sort((a,b) => new Date(b.date) - new Date(a.date));
+  const season=document.getElementById('seasonFilter').value;
+  const tournament=document.getElementById('tournamentFilter').value;
+  const result=document.getElementById('resultFilter').value;
+  const filtered=allMatches.filter(m=>
+    (season==='all'||m.season===season)&&
+    (tournament==='all'||m.tournament===tournament)&&
+    (result==='all'||m.result===result)
+  );
 
   const list = document.getElementById('matchesList');
   list.innerHTML = filtered.length ? filtered.map(m => {
-    const badgeClass = {Win:'badge-win',Loss:'badge-loss',Draw:'badge-draw',Upcoming:'badge-upcoming'}[m.result]||'';
-    const dateStr = m.date ? new Date(m.date + 'T12:00:00').toLocaleDateString('en-CA', {day:'numeric',month:'short',year:'numeric'}) : '';
-    return `
-    <div class="match-card">
+    const bc = {Win:'badge-win',Loss:'badge-loss',Draw:'badge-draw',Upcoming:'badge-upcoming'}[m.result]||'';
+    const d = m.date ? new Date(m.date+'T12:00:00').toLocaleDateString('en-CA',{day:'numeric',month:'short',year:'numeric'}) : '';
+    return `<div class="match-card">
       <div class="match-team home">
-        <div style="font-size:0.75rem;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;font-family:'Barlow Condensed',sans-serif;">C-Town Lions</div>
-        <div class="match-team-name" style="font-family:'Barlow Condensed',sans-serif;font-size:1.1rem;font-weight:700;">${m.ourScore||'—'}</div>
+        <div style="font-size:0.7rem;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;font-family:'Barlow Condensed',sans-serif;margin-bottom:2px;">C-Town Lions</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:1px;color:var(--green);">${m.ourScore||'—'}</div>
       </div>
       <div class="match-score-box">
-        <div class="match-meta">${dateStr}</div>
-        <div class="match-meta" style="margin-top:2px;">${m.venue||''}</div>
-        <div><span class="match-result-badge ${badgeClass}">${m.result}</span></div>
+        <div class="match-meta">${d}</div>
+        <div class="match-meta">${m.venue||''}</div>
+        <div><span class="match-result-badge ${bc}">${m.result}</span></div>
         <div class="match-meta" style="margin-top:4px;">${m.tournament||''}</div>
       </div>
       <div class="match-team away">
-        <div style="font-size:0.75rem;color:var(--text-muted);letter-spacing:1.5px;text-transform:uppercase;font-family:'Barlow Condensed',sans-serif;">${m.opponent}</div>
-        <div class="match-team-name" style="font-family:'Barlow Condensed',sans-serif;font-size:1.1rem;font-weight:700;">${m.theirScore||'—'}</div>
+        <div style="font-size:0.7rem;color:var(--text-muted);letter-spacing:1.5px;text-transform:uppercase;font-family:'Barlow Condensed',sans-serif;margin-bottom:2px;">${m.opponent}</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:1px;color:var(--text-mid);">${m.theirScore||'—'}</div>
       </div>
     </div>`;
-  }).join('') : '<p style="text-align:center;color:var(--text-muted);padding:3rem;">No matches found for the selected filters.</p>';
+  }).join('') : '<p style="text-align:center;color:var(--text-muted);padding:3rem;">No matches found for these filters.</p>';
 }
 
-// ─── GALLERY ─────────────────────────────────────────────────────
-const EMOJIS = ['🏏','🦁','🏆','🎯','🌿','⭐','🔥','🥇'];
-
-function renderGallery() {
-  const gallery = getData('gallery') || [];
-  const grid = document.getElementById('galleryGrid');
-  grid.innerHTML = gallery.map((g,i) => `
-    <div class="gallery-item" onclick="${g.url ? `openLightbox('${g.url}')` : ''}">
-      ${g.url
-        ? `<img src="${g.url}" alt="${g.caption}" onerror="this.style.display='none'">`
-        : `<div class="gallery-placeholder">${EMOJIS[i%EMOJIS.length]}<p>Photo Coming Soon</p></div>`
-      }
-      <div class="gallery-item-overlay">
-        <span class="gallery-item-caption">${g.caption}</span>
-      </div>
+function renderGalleryPreview() {
+  const gallery = allGallery.slice(0,6);
+  document.getElementById('galleryPreviewGrid').innerHTML = gallery.map((g,i) => `
+    <div class="gallery-item" onclick="${g.url?`window.open('${g.url}','_blank')`:''}">
+      ${g.url ? `<img src="${g.url}" alt="${g.caption}" onerror="this.style.display='none'">` : `<div class="gallery-placeholder">${EMOJIS[i%EMOJIS.length]}<p>Photo Coming Soon</p></div>`}
+      <div class="gallery-item-overlay"><span class="gallery-item-caption">${g.caption}</span></div>
     </div>
   `).join('');
 }
 
-function openLightbox(url) {
-  document.getElementById('lightboxImg').src = url;
-  document.getElementById('lightbox').classList.add('open');
-}
-function closeLightbox() {
-  document.getElementById('lightbox').classList.remove('open');
-}
-
-// ─── SPONSORS ────────────────────────────────────────────────────
 function renderSponsors() {
-  const sponsors = getData('sponsors') || [];
-  const tierOrder = {Gold:0,Silver:1,Bronze:2,Community:3};
-  const sorted = [...sponsors].sort((a,b) => (tierOrder[a.tier]||9)-(tierOrder[b.tier]||9));
-  document.getElementById('sponsorsGrid').innerHTML = sorted.map(s => `
-    <a href="${s.url||'#'}" target="_blank" class="sponsor-card" style="text-decoration:none;">
+  const order={Gold:0,Silver:1,Bronze:2,Community:3};
+  const sorted=[...allSponsors].sort((a,b)=>(order[a.tier]||9)-(order[b.tier]||9));
+  document.getElementById('sponsorsGrid').innerHTML = sorted.map(s=>`
+    <a href="${s.url||'#'}" target="_blank" class="sponsor-card">
       <div class="sponsor-logo">${s.icon||'🏢'}</div>
       <div class="sponsor-name">${s.name}</div>
       <div class="sponsor-tier">${s.tier} Sponsor</div>
@@ -1425,123 +1373,119 @@ function renderSponsors() {
 
 // ─── ADMIN ───────────────────────────────────────────────────────
 let adminLoggedIn = false;
+const EMOJIS = ['🏏','🦁','🏆','🎯','🌿','⭐'];
 
 function openAdmin() {
   document.getElementById('adminModal').classList.add('open');
-  document.getElementById('adminLogin').style.display = adminLoggedIn ? 'none' : 'block';
-  document.getElementById('adminContent').style.display = adminLoggedIn ? 'block' : 'none';
-  if (adminLoggedIn) refreshAdminTables();
+  document.getElementById('adminLogin').style.display = adminLoggedIn?'none':'block';
+  document.getElementById('adminContent').style.display = adminLoggedIn?'block':'none';
+  if(adminLoggedIn) refreshAdminTables();
 }
-
-function closeAdmin() {
-  document.getElementById('adminModal').classList.remove('open');
-}
+function closeAdmin() { document.getElementById('adminModal').classList.remove('open'); }
 
 function doLogin() {
-  const pass = document.getElementById('adminPassword').value;
-  const stored = getData('password') || 'lions2024';
-  if (pass === stored) {
-    adminLoggedIn = true;
-    document.getElementById('adminLogin').style.display = 'none';
-    document.getElementById('adminContent').style.display = 'block';
-    document.getElementById('loginError').style.display = 'none';
+  const pass=document.getElementById('adminPassword').value;
+  const stored=localStorage.getItem('ctlions_password')||'lions2024';
+  if(pass===stored) {
+    adminLoggedIn=true;
+    document.getElementById('adminLogin').style.display='none';
+    document.getElementById('adminContent').style.display='block';
+    document.getElementById('loginError').style.display='none';
     refreshAdminTables();
-  } else {
-    document.getElementById('loginError').style.display = 'block';
-  }
+  } else { document.getElementById('loginError').style.display='block'; }
 }
 
-function switchTab(name, btn) {
-  document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
+function switchTab(name,btn) {
+  document.querySelectorAll('.admin-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.admin-panel').forEach(p=>p.classList.remove('active'));
   btn.classList.add('active');
-  document.getElementById('tab-' + name).classList.add('active');
+  document.getElementById('tab-'+name).classList.add('active');
 }
 
-function refreshAdminTables() {
-  renderPlayersTable();
-  renderMatchesTable();
-  renderGalleryTable();
-  renderSponsorsTable();
-}
+function refreshAdminTables() { renderPlayersTable(); renderMatchesTable(); renderGalleryTable(); renderSponsorsTable(); }
 
-// Players admin
+// ── PLAYERS ──
 function renderPlayersTable() {
-  const players = getData('players') || [];
-  document.getElementById('playersTableBody').innerHTML = players.map(p => `
+  document.getElementById('playersTableBody').innerHTML = allPlayers.map(p=>`
     <tr>
-      <td>${p.number||'-'}</td>
-      <td>${p.name}</td>
-      <td>${p.role}</td>
-      <td>${p.bat||'-'}</td>
-      <td>${p.bowl||'-'}</td>
+      <td>${p.number||'-'}</td><td>${p.name}</td><td>${p.role}</td>
+      <td>${NAT_FLAGS[p.nat]||'🌍'} ${p.nat||''}</td>
+      <td>${p.runs||'-'}</td><td>${p.wickets||'-'}</td>
       <td>
         <button class="btn-sm btn-add" onclick="editPlayer(${p.id})" style="margin-right:4px;">Edit</button>
         <button class="btn-sm btn-delete" onclick="deletePlayer(${p.id})">Del</button>
       </td>
-    </tr>
-  `).join('');
+    </tr>`).join('');
 }
 
-function savePlayer() {
-  const players = getData('players') || [];
+async function savePlayer() {
   const editId = parseInt(document.getElementById('editPlayerId').value);
-  const player = {
-    id: editId || Date.now(),
+  const row = {
     name: document.getElementById('pName').value.trim(),
-    number: document.getElementById('pNumber').value,
+    number: parseInt(document.getElementById('pNumber').value)||null,
     role: document.getElementById('pRole').value,
-    bat: document.getElementById('pBat').value || '-',
-    bowl: document.getElementById('pBowl').value || '-',
     nat: document.getElementById('pNat').value,
-    photo: document.getElementById('pPhoto').value,
+    runs: parseInt(document.getElementById('pRuns').value)||0,
+    bat_avg: document.getElementById('pBatAvg').value||null,
+    sr: document.getElementById('pSR').value||null,
+    hs: document.getElementById('pHS').value||null,
+    half50100: document.getElementById('p50100').value||null,
+    wickets: parseInt(document.getElementById('pWickets').value)||0,
+    bowl_avg: document.getElementById('pBowlAvg').value||null,
+    econ: document.getElementById('pEcon').value||null,
+    matches: parseInt(document.getElementById('pMatches').value)||0,
+    photo: document.getElementById('pPhoto').value||null,
   };
-  if (!player.name) return showToast('Please enter a player name');
-  if (editId) {
-    const idx = players.findIndex(p => p.id === editId);
-    if (idx > -1) players[idx] = player;
-  } else {
-    players.push(player);
-  }
-  setData('players', players);
+  if(!row.name) return showToast('Please enter a player name');
+  const res = editId
+    ? await sb.from('players').update(row).eq('id',editId).select()
+    : await sb.from('players').insert(row).select();
+  if(res.error) return showToast('❌ '+res.error.message);
   clearPlayerForm();
-  renderPlayersTable();
-  renderRoster();
-  showToast(editId ? 'Player updated!' : 'Player added!');
+  const {data} = await sb.from('players').select('*').order('id');
+  allPlayers = (data||[]).map(mapPlayer);
+  renderPlayersTable(); renderRoster();
+  showToast(editId?'Player updated!':'Player added!');
 }
 
 function editPlayer(id) {
-  const p = (getData('players')||[]).find(p => p.id === id);
-  if (!p) return;
-  document.getElementById('editPlayerId').value = p.id;
-  document.getElementById('pName').value = p.name;
-  document.getElementById('pNumber').value = p.number;
-  document.getElementById('pRole').value = p.role;
-  document.getElementById('pBat').value = p.bat === '-' ? '' : p.bat;
-  document.getElementById('pBowl').value = p.bowl === '-' ? '' : p.bowl;
-  document.getElementById('pNat').value = p.nat || '';
-  document.getElementById('pPhoto').value = p.photo || '';
+  const p=allPlayers.find(p=>p.id===id); if(!p) return;
+  document.getElementById('editPlayerId').value=p.id;
+  document.getElementById('pName').value=p.name;
+  document.getElementById('pNumber').value=p.number||'';
+  document.getElementById('pRole').value=p.role;
+  document.getElementById('pNat').value=p.nat||'Canadian';
+  document.getElementById('pRuns').value=p.runs||'';
+  document.getElementById('pBatAvg').value=(!p.batAvg||p.batAvg==='-')?'':p.batAvg;
+  document.getElementById('pSR').value=(!p.sr||p.sr==='-')?'':p.sr;
+  document.getElementById('pHS').value=(!p.hs||p.hs==='-')?'':p.hs;
+  document.getElementById('p50100').value=(!p.half50100||p.half50100==='-')?'':p.half50100;
+  document.getElementById('pWickets').value=p.wickets||'';
+  document.getElementById('pBowlAvg').value=(!p.bowlAvg||p.bowlAvg==='-')?'':p.bowlAvg;
+  document.getElementById('pEcon').value=(!p.econ||p.econ==='-')?'':p.econ;
+  document.getElementById('pMatches').value=p.matches||'';
+  document.getElementById('pPhoto').value=p.photo||'';
 }
 
-function deletePlayer(id) {
-  if (!confirm('Delete this player?')) return;
-  setData('players', (getData('players')||[]).filter(p => p.id !== id));
-  renderPlayersTable(); renderRoster();
-  showToast('Player deleted');
+async function deletePlayer(id) {
+  if(!confirm('Delete this player?')) return;
+  const {error} = await sb.from('players').delete().eq('id',id);
+  if(error) return showToast('❌ '+error.message);
+  const {data} = await sb.from('players').select('*').order('id');
+  allPlayers = (data||[]).map(mapPlayer);
+  renderPlayersTable(); renderRoster(); showToast('Player deleted');
 }
 
 function clearPlayerForm() {
-  ['editPlayerId','pName','pNumber','pBat','pBowl','pNat','pPhoto'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('pRole').value = 'Batsman';
+  ['editPlayerId','pName','pNumber','pRuns','pBatAvg','pSR','pHS','p50100','pWickets','pBowlAvg','pEcon','pMatches','pPhoto'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('pRole').value='Batsman'; document.getElementById('pNat').value='Canadian';
 }
 
-// Matches admin
+// ── MATCHES ──
 function renderMatchesTable() {
-  const matches = getData('matches') || [];
-  document.getElementById('matchesTableBody').innerHTML = matches.map(m => `
+  document.getElementById('matchesTableBody').innerHTML = allMatches.map(m=>`
     <tr>
-      <td>${m.date||''}</td>
-      <td>${m.opponent}</td>
+      <td>${m.date||''}</td><td>${m.opponent}</td>
       <td><span class="match-result-badge ${{Win:'badge-win',Loss:'badge-loss',Draw:'badge-draw',Upcoming:'badge-upcoming'}[m.result]||''}">${m.result}</span></td>
       <td>${m.ourScore||'-'} / ${m.theirScore||'-'}</td>
       <td>${m.tournament||'-'}</td>
@@ -1549,206 +1493,200 @@ function renderMatchesTable() {
         <button class="btn-sm btn-add" onclick="editMatch(${m.id})" style="margin-right:4px;">Edit</button>
         <button class="btn-sm btn-delete" onclick="deleteMatch(${m.id})">Del</button>
       </td>
-    </tr>
-  `).join('');
+    </tr>`).join('');
 }
 
-function saveMatch() {
-  const matches = getData('matches') || [];
+async function saveMatch() {
   const editId = parseInt(document.getElementById('editMatchId').value);
-  const match = {
-    id: editId || Date.now(),
+  const row = {
     opponent: document.getElementById('mOpponent').value.trim(),
-    date: document.getElementById('mDate').value,
-    venue: document.getElementById('mVenue').value,
+    date: document.getElementById('mDate').value||null,
+    venue: document.getElementById('mVenue').value||null,
     result: document.getElementById('mResult').value,
-    ourScore: document.getElementById('mOurScore').value,
-    theirScore: document.getElementById('mTheirScore').value,
-    season: document.getElementById('mSeason').value,
-    tournament: document.getElementById('mTournament').value,
+    our_score: document.getElementById('mOurScore').value||null,
+    their_score: document.getElementById('mTheirScore').value||null,
+    season: document.getElementById('mSeason').value||null,
+    tournament: document.getElementById('mTournament').value||null,
+    players: document.getElementById('mPlayers').value||null,
   };
-  if (!match.opponent) return showToast('Please enter opponent name');
-  if (editId) {
-    const idx = matches.findIndex(m => m.id === editId);
-    if (idx > -1) matches[idx] = match;
-  } else {
-    matches.push(match);
-  }
-  setData('matches', matches);
+  if(!row.opponent) return showToast('Please enter opponent name');
+  const res = editId
+    ? await sb.from('matches').update(row).eq('id',editId).select()
+    : await sb.from('matches').insert(row).select();
+  if(res.error) return showToast('❌ '+res.error.message);
   clearMatchForm();
-  renderMatchesTable();
-  populateMatchFilters();
-  renderMatches();
-  showToast(editId ? 'Match updated!' : 'Match added!');
+  const {data} = await sb.from('matches').select('*').order('date',{ascending:false});
+  allMatches = (data||[]).map(mapMatch);
+  renderMatchesTable(); populateMatchFilters(); renderMatches();
+  showToast(editId?'Match updated!':'Match added!');
 }
 
 function editMatch(id) {
-  const m = (getData('matches')||[]).find(m => m.id === id);
-  if (!m) return;
-  document.getElementById('editMatchId').value = m.id;
-  document.getElementById('mOpponent').value = m.opponent;
-  document.getElementById('mDate').value = m.date;
-  document.getElementById('mVenue').value = m.venue;
-  document.getElementById('mResult').value = m.result;
-  document.getElementById('mOurScore').value = m.ourScore;
-  document.getElementById('mTheirScore').value = m.theirScore;
-  document.getElementById('mSeason').value = m.season;
-  document.getElementById('mTournament').value = m.tournament;
+  const m=allMatches.find(m=>m.id===id); if(!m) return;
+  document.getElementById('editMatchId').value=m.id;
+  document.getElementById('mOpponent').value=m.opponent;
+  document.getElementById('mDate').value=m.date||'';
+  document.getElementById('mVenue').value=m.venue||'';
+  document.getElementById('mResult').value=m.result;
+  document.getElementById('mOurScore').value=m.ourScore||'';
+  document.getElementById('mTheirScore').value=m.theirScore||'';
+  document.getElementById('mSeason').value=m.season||'';
+  document.getElementById('mTournament').value=m.tournament||'';
+  document.getElementById('mPlayers').value=m.players||'';
 }
 
-function deleteMatch(id) {
-  if (!confirm('Delete this match?')) return;
-  setData('matches', (getData('matches')||[]).filter(m => m.id !== id));
-  renderMatchesTable(); populateMatchFilters(); renderMatches();
-  showToast('Match deleted');
+async function deleteMatch(id) {
+  if(!confirm('Delete this match?')) return;
+  const {error} = await sb.from('matches').delete().eq('id',id);
+  if(error) return showToast('❌ '+error.message);
+  const {data} = await sb.from('matches').select('*').order('date',{ascending:false});
+  allMatches = (data||[]).map(mapMatch);
+  renderMatchesTable(); populateMatchFilters(); renderMatches(); showToast('Match deleted');
 }
 
 function clearMatchForm() {
-  ['editMatchId','mOpponent','mDate','mVenue','mOurScore','mTheirScore','mSeason','mTournament'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('mResult').value = 'Win';
+  ['editMatchId','mOpponent','mDate','mVenue','mOurScore','mTheirScore','mSeason','mTournament','mPlayers'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('mResult').value='Win';
 }
 
-// Gallery admin
+// ── GALLERY ──
 function renderGalleryTable() {
-  const gallery = getData('gallery') || [];
-  document.getElementById('galleryTableBody').innerHTML = gallery.map(g => `
+  document.getElementById('galleryTableBody').innerHTML = allGallery.map(g=>`
     <tr>
-      <td>${g.caption}</td>
-      <td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${g.url||'(placeholder)'}</td>
+      <td>${g.caption}</td><td>${g.album||'-'}</td>
+      <td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;">${g.players||'-'}</td>
       <td><button class="btn-sm btn-delete" onclick="deleteGalleryItem(${g.id})">Del</button></td>
-    </tr>
-  `).join('');
+    </tr>`).join('');
 }
 
-function saveGalleryItem() {
-  const gallery = getData('gallery') || [];
-  const item = {
-    id: Date.now(),
-    url: document.getElementById('gUrl').value.trim(),
-    caption: document.getElementById('gCaption').value.trim() || 'Photo',
+async function saveGalleryItem() {
+  const row = {
+    url: document.getElementById('gUrl').value.trim()||null,
+    caption: document.getElementById('gCaption').value.trim()||'Photo',
+    album: document.getElementById('gAlbum').value.trim()||null,
+    players: document.getElementById('gPlayers').value.trim()||null,
   };
-  gallery.push(item);
-  setData('gallery', gallery);
-  document.getElementById('gUrl').value = '';
-  document.getElementById('gCaption').value = '';
-  renderGalleryTable(); renderGallery();
-  showToast('Photo added!');
+  const {error} = await sb.from('gallery').insert(row);
+  if(error) return showToast('❌ '+error.message);
+  ['gUrl','gCaption','gAlbum','gPlayers'].forEach(id=>document.getElementById(id).value='');
+  const {data} = await sb.from('gallery').select('*').order('id');
+  allGallery = (data||[]).map(mapGallery);
+  renderGalleryTable(); renderGalleryPreview(); showToast('Photo added!');
 }
 
-function deleteGalleryItem(id) {
-  if (!confirm('Delete this photo?')) return;
-  setData('gallery', (getData('gallery')||[]).filter(g => g.id !== id));
-  renderGalleryTable(); renderGallery();
-  showToast('Photo deleted');
+async function deleteGalleryItem(id) {
+  if(!confirm('Delete this photo?')) return;
+  const {error} = await sb.from('gallery').delete().eq('id',id);
+  if(error) return showToast('❌ '+error.message);
+  const {data} = await sb.from('gallery').select('*').order('id');
+  allGallery = (data||[]).map(mapGallery);
+  renderGalleryTable(); renderGalleryPreview(); showToast('Photo deleted');
 }
 
-// Sponsors admin
+// ── SPONSORS ──
 function renderSponsorsTable() {
-  const sponsors = getData('sponsors') || [];
-  document.getElementById('sponsorsTableBody').innerHTML = sponsors.map(s => `
+  document.getElementById('sponsorsTableBody').innerHTML = allSponsors.map(s=>`
     <tr>
-      <td>${s.icon||''} ${s.name}</td>
-      <td>${s.tier}</td>
+      <td>${s.icon||''} ${s.name}</td><td>${s.tier}</td>
       <td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;">${s.url||'-'}</td>
       <td>
         <button class="btn-sm btn-add" onclick="editSponsor(${s.id})" style="margin-right:4px;">Edit</button>
         <button class="btn-sm btn-delete" onclick="deleteSponsor(${s.id})">Del</button>
       </td>
-    </tr>
-  `).join('');
+    </tr>`).join('');
 }
 
-function saveSponsor() {
-  const sponsors = getData('sponsors') || [];
+async function saveSponsor() {
   const editId = parseInt(document.getElementById('editSponsorId').value);
-  const sponsor = {
-    id: editId || Date.now(),
+  const row = {
     name: document.getElementById('sName').value.trim(),
     tier: document.getElementById('sTier').value,
-    url: document.getElementById('sUrl').value,
-    icon: document.getElementById('sIcon').value,
+    url: document.getElementById('sUrl').value||null,
+    icon: document.getElementById('sIcon').value||null,
   };
-  if (!sponsor.name) return showToast('Please enter sponsor name');
-  if (editId) {
-    const idx = sponsors.findIndex(s => s.id === editId);
-    if (idx > -1) sponsors[idx] = sponsor;
-  } else {
-    sponsors.push(sponsor);
-  }
-  setData('sponsors', sponsors);
+  if(!row.name) return showToast('Please enter sponsor name');
+  const res = editId
+    ? await sb.from('sponsors').update(row).eq('id',editId).select()
+    : await sb.from('sponsors').insert(row).select();
+  if(res.error) return showToast('❌ '+res.error.message);
   clearSponsorForm();
+  const {data} = await sb.from('sponsors').select('*').order('id');
+  allSponsors = (data||[]).map(mapSponsor);
   renderSponsorsTable(); renderSponsors();
-  showToast(editId ? 'Sponsor updated!' : 'Sponsor added!');
+  showToast(editId?'Sponsor updated!':'Sponsor added!');
 }
 
 function editSponsor(id) {
-  const s = (getData('sponsors')||[]).find(s => s.id === id);
-  if (!s) return;
-  document.getElementById('editSponsorId').value = s.id;
-  document.getElementById('sName').value = s.name;
-  document.getElementById('sTier').value = s.tier;
-  document.getElementById('sUrl').value = s.url || '';
-  document.getElementById('sIcon').value = s.icon || '';
+  const s=allSponsors.find(s=>s.id===id); if(!s) return;
+  document.getElementById('editSponsorId').value=s.id;
+  document.getElementById('sName').value=s.name;
+  document.getElementById('sTier').value=s.tier;
+  document.getElementById('sUrl').value=s.url||'';
+  document.getElementById('sIcon').value=s.icon||'';
 }
 
-function deleteSponsor(id) {
-  if (!confirm('Delete this sponsor?')) return;
-  setData('sponsors', (getData('sponsors')||[]).filter(s => s.id !== id));
-  renderSponsorsTable(); renderSponsors();
-  showToast('Sponsor deleted');
+async function deleteSponsor(id) {
+  if(!confirm('Delete this sponsor?')) return;
+  const {error} = await sb.from('sponsors').delete().eq('id',id);
+  if(error) return showToast('❌ '+error.message);
+  const {data} = await sb.from('sponsors').select('*').order('id');
+  allSponsors = (data||[]).map(mapSponsor);
+  renderSponsorsTable(); renderSponsors(); showToast('Sponsor deleted');
 }
 
 function clearSponsorForm() {
-  ['editSponsorId','sName','sUrl','sIcon'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('sTier').value = 'Gold';
+  ['editSponsorId','sName','sUrl','sIcon'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('sTier').value='Gold';
 }
 
-// Settings
+// ── SETTINGS ──
 function changePassword() {
-  const np = document.getElementById('newPass').value;
-  const cp = document.getElementById('confirmPass').value;
-  if (!np) return showToast('Enter a new password');
-  if (np !== cp) return showToast('Passwords do not match');
-  setData('password', np);
-  document.getElementById('newPass').value = '';
-  document.getElementById('confirmPass').value = '';
+  const np=document.getElementById('newPass').value;
+  const cp=document.getElementById('confirmPass').value;
+  if(!np) return showToast('Enter a new password');
+  if(np!==cp) return showToast('Passwords do not match');
+  localStorage.setItem('ctlions_password',np);
+  document.getElementById('newPass').value=''; document.getElementById('confirmPass').value='';
   showToast('Password updated!');
 }
 
-// ─── CONTACT FORM ────────────────────────────────────────────────
+// ─── CONTACT ─────────────────────────────────────────────────────
 function submitContact(e) {
   e.preventDefault();
-  showToast('Message sent! We\'ll get back to you soon. 🏏');
+  showToast("Message sent! We'll be in touch soon. 🏏");
   e.target.reset();
 }
 
 // ─── UTILS ───────────────────────────────────────────────────────
 function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3000);
+  const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3500);
 }
 
-function toggleMenu() {
-  document.getElementById('mainNav').classList.toggle('menu-open');
-}
+function toggleMenu() { document.getElementById('mainNav').classList.toggle('menu-open'); }
 
-window.addEventListener('scroll', () => {
-  const st = document.getElementById('scrollTop');
-  st.classList.toggle('visible', window.scrollY > 400);
+window.addEventListener('scroll',()=>{
+  document.getElementById('scrollTop').classList.toggle('visible',window.scrollY>400);
 });
 
+document.getElementById('playerModal').addEventListener('click',e=>{ if(e.target===document.getElementById('playerModal')) closePlayerModal(); });
+document.getElementById('adminModal').addEventListener('click',e=>{ if(e.target===document.getElementById('adminModal')) closeAdmin(); });
 document.getElementById('year').textContent = new Date().getFullYear();
 
-// close modals on overlay click
-document.getElementById('adminModal').addEventListener('click', e => {
-  if (e.target === document.getElementById('adminModal')) closeAdmin();
-});
+// expose functions called from HTML onclick attributes
+window.openAdmin=openAdmin; window.closeAdmin=closeAdmin; window.doLogin=doLogin;
+window.switchTab=switchTab; window.savePlayer=savePlayer; window.editPlayer=editPlayer;
+window.deletePlayer=deletePlayer; window.clearPlayerForm=clearPlayerForm;
+window.saveMatch=saveMatch; window.editMatch=editMatch; window.deleteMatch=deleteMatch;
+window.clearMatchForm=clearMatchForm; window.saveGalleryItem=saveGalleryItem;
+window.deleteGalleryItem=deleteGalleryItem; window.saveSponsor=saveSponsor;
+window.editSponsor=editSponsor; window.deleteSponsor=deleteSponsor;
+window.changePassword=changePassword; window.submitContact=submitContact;
+window.toggleMenu=toggleMenu; window.openPlayerModal=openPlayerModal;
+window.closePlayerModal=closePlayerModal; window.renderMatches=renderMatches;
 
 // ─── INIT ────────────────────────────────────────────────────────
 loadData();
-renderAll();
 </script>
 </body>
 </html>
