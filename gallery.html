@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gallery — Charlottetown Lions Cricket Club</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,300;0,400;0,600;0,700;1,300&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #1a3d2b;
+    --green-mid: #234d37;
+    --green-light: #2e6347;
+    --gold: #b8932a;
+    --gold-light: #d4aa40;
+    --gold-pale: #f5e9c8;
+    --cream: #f8f4ed;
+    --cream-dark: #ede8df;
+    --cream-mid: #f2ede4;
+    --off-white: #fdfbf7;
+    --dark: #0d1f16;
+    --text-dark: #1a2a1f;
+    --text-mid: #3d5244;
+    --text-muted: #7a9282;
+    --white: #ffffff;
+    --shadow: 0 4px 24px rgba(26,61,43,0.10);
+    --shadow-lg: 0 8px 40px rgba(26,61,43,0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Barlow', sans-serif;
+    background: var(--off-white);
+    color: var(--text-dark);
+    overflow-x: hidden;
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    background: rgba(253,251,247,0.96);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(184,147,42,0.2);
+    padding: 0 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 64px;
+    box-shadow: 0 2px 20px rgba(26,61,43,0.08);
+  }
+
+  .nav-logo { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; }
+  .nav-logo-icon { width: 40px; height: 40px; background: var(--green); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
+  .nav-logo-text { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; color: var(--green); letter-spacing: 2px; }
+
+  .nav-back {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.85rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--text-mid); text-decoration: none; transition: color 0.2s;
+    display: flex; align-items: center; gap: 0.4rem;
+  }
+  .nav-back:hover { color: var(--green); }
+
+  /* ─── HERO ─── */
+  .gallery-hero {
+    padding: 120px 2rem 3rem;
+    background: linear-gradient(to bottom, var(--cream) 0%, var(--off-white) 100%);
+    text-align: center;
+    border-bottom: 1px solid var(--cream-dark);
+  }
+
+  .section-label { font-family: 'Barlow Condensed', sans-serif; font-size: 0.75rem; font-weight: 600; letter-spacing: 4px; text-transform: uppercase; color: var(--gold); margin-bottom: 0.5rem; }
+  .page-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.5rem, 6vw, 4rem); letter-spacing: 3px; color: var(--green); }
+  .section-line { width: 60px; height: 3px; background: var(--gold); margin: 1rem auto 0; }
+
+  /* ─── FILTER BAR ─── */
+  .gallery-controls {
+    padding: 2rem;
+    background: var(--white);
+    border-bottom: 1px solid var(--cream-dark);
+    position: sticky; top: 64px; z-index: 100;
+    box-shadow: 0 2px 12px rgba(26,61,43,0.06);
+  }
+
+  .gallery-controls-inner {
+    max-width: 1200px; margin: 0 auto;
+    display: flex; flex-direction: column; gap: 1rem;
+  }
+
+  .filter-row { display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; }
+
+  .filter-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--text-muted); min-width: 60px;
+  }
+
+  .filter-chips { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+
+  .chip {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.78rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
+    padding: 0.3rem 0.9rem;
+    border: 1.5px solid rgba(26,61,43,0.2);
+    background: transparent; color: var(--text-mid); cursor: pointer; transition: all 0.2s;
+    border-radius: 2px; white-space: nowrap;
+  }
+  .chip:hover, .chip.active { background: var(--green); color: var(--white); border-color: var(--green); }
+
+  .search-box {
+    font-family: 'Barlow', sans-serif; font-size: 0.9rem;
+    background: var(--cream); border: 1.5px solid var(--cream-dark);
+    color: var(--text-dark); padding: 0.5rem 1rem; outline: none; flex: 1; min-width: 200px;
+    max-width: 320px; transition: border-color 0.2s;
+  }
+  .search-box:focus { border-color: var(--green); }
+
+  .results-count {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.8rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  /* ─── GALLERY GRID ─── */
+  .gallery-main { max-width: 1200px; margin: 0 auto; padding: 2.5rem 2rem; }
+
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+  }
+
+  .gallery-item {
+    aspect-ratio: 4/3;
+    background: var(--cream-mid);
+    border: 1px solid var(--cream-dark);
+    overflow: hidden; cursor: pointer; position: relative;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 3rem; transition: all 0.3s;
+    box-shadow: var(--shadow);
+  }
+  .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s; }
+  .gallery-item:hover { box-shadow: var(--shadow-lg); }
+  .gallery-item:hover img { transform: scale(1.05); }
+
+  .gallery-item-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(13,31,22,0.9) 0%, rgba(13,31,22,0.2) 60%, transparent 100%);
+    opacity: 0; transition: opacity 0.3s;
+    display: flex; flex-direction: column; justify-content: flex-end; padding: 1rem;
+  }
+  .gallery-item:hover .gallery-item-overlay { opacity: 1; }
+
+  .gallery-item-caption { font-family: 'Barlow Condensed', sans-serif; font-size: 0.95rem; font-weight: 700; letter-spacing: 0.5px; color: var(--white); margin-bottom: 0.4rem; }
+
+  .gallery-tags { display: flex; gap: 0.35rem; flex-wrap: wrap; }
+
+  .gallery-tag {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.65rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+    padding: 0.15rem 0.5rem;
+    border-radius: 2px;
+  }
+  .tag-album { background: rgba(184,147,42,0.7); color: var(--white); }
+  .tag-player { background: rgba(26,61,43,0.7); color: rgba(255,255,255,0.9); }
+
+  .gallery-placeholder {
+    width: 100%; height: 100%;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 0.5rem; color: var(--text-muted);
+  }
+  .gallery-placeholder p { font-size: 0.72rem; font-family: 'Barlow Condensed', sans-serif; letter-spacing: 1px; text-transform: uppercase; }
+
+  /* Empty state */
+  .empty-state {
+    text-align: center; padding: 5rem 2rem; color: var(--text-muted);
+    grid-column: 1/-1;
+  }
+  .empty-state .empty-icon { font-size: 3rem; margin-bottom: 1rem; }
+  .empty-state h3 { font-family: 'Barlow Condensed', sans-serif; font-size: 1.2rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--text-mid); margin-bottom: 0.5rem; }
+  .empty-state p { font-size: 0.9rem; }
+
+  /* ─── LIGHTBOX ─── */
+  .lightbox {
+    display: none; position: fixed; inset: 0; z-index: 3000;
+    background: rgba(0,0,0,0.93); align-items: center; justify-content: center;
+    flex-direction: column; gap: 1rem; padding: 2rem;
+  }
+  .lightbox.open { display: flex; }
+
+  .lightbox-img-wrap { position: relative; max-width: 90vw; max-height: 80vh; }
+  .lightbox-img-wrap img { max-width: 90vw; max-height: 78vh; object-fit: contain; display: block; }
+
+  .lightbox-caption {
+    text-align: center;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1rem; font-weight: 600; letter-spacing: 1px; color: rgba(255,255,255,0.9);
+  }
+
+  .lightbox-meta {
+    display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center;
+    margin-top: 0.3rem;
+  }
+
+  .lightbox-close {
+    position: absolute; top: 1rem; right: 1rem;
+    background: rgba(255,255,255,0.1); border: none; color: white;
+    font-size: 1.5rem; cursor: pointer; width: 40px; height: 40px;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s; border-radius: 2px;
+  }
+  .lightbox-close:hover { background: rgba(255,255,255,0.2); }
+
+  .lightbox-nav {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    background: rgba(255,255,255,0.1); border: none; color: white;
+    font-size: 1.5rem; cursor: pointer; width: 44px; height: 44px;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s;
+  }
+  .lightbox-nav:hover { background: rgba(255,255,255,0.2); }
+  .lightbox-prev { left: -54px; }
+  .lightbox-next { right: -54px; }
+
+  /* ─── FOOTER ─── */
+  footer {
+    background: var(--green); padding: 2rem;
+    text-align: center; color: rgba(255,255,255,0.6);
+    font-size: 0.85rem;
+  }
+  footer a { color: var(--gold-light); text-decoration: none; }
+
+  /* ─── SCROLL TOP ─── */
+  .scroll-top {
+    position: fixed; bottom: 2rem; right: 2rem; z-index: 500;
+    width: 44px; height: 44px; background: var(--green); color: var(--white);
+    border: none; cursor: pointer; font-size: 1.2rem;
+    display: none; align-items: center; justify-content: center;
+    box-shadow: var(--shadow);
+  }
+  .scroll-top.visible { display: flex; }
+  .scroll-top:hover { background: var(--green-mid); }
+
+  @media (max-width: 768px) {
+    .lightbox-prev { left: 0.5rem; top: auto; bottom: 6rem; transform: none; }
+    .lightbox-next { right: 0.5rem; top: auto; bottom: 6rem; transform: none; }
+    .gallery-controls { position: relative; top: auto; }
+  }
+
+  @media (max-width: 480px) {
+    .gallery-main { padding: 1.5rem 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">
+    <div class="nav-logo-icon">🦁</div>
+    <span class="nav-logo-text">C-Town Lions</span>
+  </a>
+  <a href="index.html" class="nav-back">← Back to Home</a>
+</nav>
+
+<!-- HERO -->
+<div class="gallery-hero">
+  <p class="section-label">Club Moments</p>
+  <h1 class="page-title">Photo Gallery</h1>
+  <div class="section-line"></div>
+</div>
+
+<!-- FILTER CONTROLS -->
+<div class="gallery-controls">
+  <div class="gallery-controls-inner">
+    <div class="filter-row">
+      <span class="filter-label">Album</span>
+      <div class="filter-chips" id="albumChips">
+        <button class="chip active" data-album="all">All Photos</button>
+      </div>
+    </div>
+    <div class="filter-row">
+      <span class="filter-label">Player</span>
+      <div class="filter-chips" id="playerChips">
+        <button class="chip active" data-player="all">All Players</button>
+      </div>
+    </div>
+    <div class="filter-row" style="justify-content:space-between;">
+      <input type="text" class="search-box" id="gallerySearch" placeholder="Search captions…" oninput="filterGallery()">
+      <span class="results-count" id="resultsCount"></span>
+    </div>
+  </div>
+</div>
+
+<!-- GALLERY GRID -->
+<div class="gallery-main">
+  <div class="gallery-grid" id="galleryGrid"></div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <p>© <span id="year"></span> <a href="index.html">Charlottetown Lions Cricket Club</a> · Prince Edward Island, Canada 🍁</p>
+</footer>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <div class="lightbox-img-wrap">
+    <button class="lightbox-nav lightbox-prev" onclick="navLightbox(-1)">‹</button>
+    <img id="lightboxImg" src="" alt="">
+    <button class="lightbox-nav lightbox-next" onclick="navLightbox(1)">›</button>
+  </div>
+  <div class="lightbox-caption" id="lightboxCaption"></div>
+  <div class="lightbox-meta" id="lightboxMeta"></div>
+</div>
+
+<!-- SCROLL TOP -->
+<button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+const sb = createClient(
+  'https://mtgknrfmtvhkqqdtbxcf.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im10Z2tucmZtdHZoa3FxZHRieGNmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE3MjY3MzMsImV4cCI6MjA4NzMwMjczM30.y04TSrIICBqRwX7AcOILUbIOOhKZlRzVgvdB4Po6tpc'
+);
+
+const EMOJIS = ['🏏','🦁','🏆','🎯','🌿','⭐','🔥','🥇','🏅','📸'];
+
+let currentFilter = { album: 'all', player: 'all', search: '' };
+let filteredPhotos = [];
+let lightboxIndex = 0;
+
+function buildFilters(gallery) {
+  // Albums
+  const albums = [...new Set(gallery.map(g=>g.album).filter(Boolean))].sort();
+  const albumContainer = document.getElementById('albumChips');
+  albumContainer.innerHTML = `<button class="chip active" data-album="all" onclick="setAlbum('all',this)">All Photos</button>`;
+  albums.forEach(a => {
+    const btn = document.createElement('button');
+    btn.className = 'chip'; btn.dataset.album = a;
+    btn.textContent = a; btn.onclick = ()=>setAlbum(a,btn);
+    albumContainer.appendChild(btn);
+  });
+
+  // Players
+  const allPlayerNames = new Set();
+  gallery.forEach(g => {
+    if(g.players) g.players.split(',').forEach(p=>{ const t=p.trim(); if(t) allPlayerNames.add(t); });
+  });
+  const playerContainer = document.getElementById('playerChips');
+  playerContainer.innerHTML = `<button class="chip active" data-player="all" onclick="setPlayer('all',this)">All Players</button>`;
+  [...allPlayerNames].sort().forEach(p => {
+    const btn = document.createElement('button');
+    btn.className = 'chip'; btn.dataset.player = p;
+    btn.textContent = p; btn.onclick = ()=>setPlayer(p,btn);
+    playerContainer.appendChild(btn);
+  });
+}
+
+function setAlbum(album, btn) {
+  currentFilter.album = album;
+  document.querySelectorAll('[data-album]').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  filterGallery();
+}
+
+function setPlayer(player, btn) {
+  currentFilter.player = player;
+  document.querySelectorAll('[data-player]').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  filterGallery();
+}
+
+function filterGallery() {
+  currentFilter.search = document.getElementById('gallerySearch').value.toLowerCase();
+  const gallery = getData('gallery')||[];
+
+  filteredPhotos = gallery.filter(g => {
+    const albumMatch = currentFilter.album==='all' || g.album===currentFilter.album;
+    const playerMatch = currentFilter.player==='all' ||
+      (g.players && g.players.split(',').map(p=>p.trim()).includes(currentFilter.player));
+    const searchMatch = !currentFilter.search ||
+      g.caption.toLowerCase().includes(currentFilter.search) ||
+      (g.album||'').toLowerCase().includes(currentFilter.search) ||
+      (g.players||'').toLowerCase().includes(currentFilter.search);
+    return albumMatch && playerMatch && searchMatch;
+  });
+
+  renderGrid();
+}
+
+function renderGrid() {
+  const grid = document.getElementById('galleryGrid');
+  const count = document.getElementById('resultsCount');
+  const total = (getData('gallery')||[]).length;
+  count.textContent = `${filteredPhotos.length} of ${total} photos`;
+
+  if(!filteredPhotos.length) {
+    grid.innerHTML = `<div class="empty-state">
+      <div class="empty-icon">📷</div>
+      <h3>No Photos Found</h3>
+      <p>Try a different filter or search term.</p>
+    </div>`;
+    return;
+  }
+
+  grid.innerHTML = filteredPhotos.map((g,i) => {
+    const playerTags = g.players ? g.players.split(',').map(p=>p.trim()).filter(Boolean)
+      .map(p=>`<span class="gallery-tag tag-player">👤 ${p}</span>`).join('') : '';
+    const albumTag = g.album ? `<span class="gallery-tag tag-album">📁 ${g.album}</span>` : '';
+    return `
+    <div class="gallery-item" onclick="openLightbox(${i})">
+      ${g.url
+        ? `<img src="${g.url}" alt="${g.caption}" onerror="this.style.display='none'">`
+        : `<div class="gallery-placeholder">${EMOJIS[i%EMOJIS.length]}<p>Photo Coming Soon</p></div>`
+      }
+      <div class="gallery-item-overlay">
+        <div class="gallery-item-caption">${g.caption}</div>
+        <div class="gallery-tags">${albumTag}${playerTags}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openLightbox(idx) {
+  lightboxIndex = idx;
+  showLightboxItem();
+  document.getElementById('lightbox').classList.add('open');
+  document.addEventListener('keydown', lightboxKey);
+}
+
+function showLightboxItem() {
+  const g = filteredPhotos[lightboxIndex];
+  if(!g) return;
+  const img = document.getElementById('lightboxImg');
+  if(g.url) {
+    img.src = g.url; img.style.display='block';
+  } else {
+    img.src=''; img.style.display='none';
+  }
+  document.getElementById('lightboxCaption').textContent = g.caption;
+  const playerTags = g.players ? g.players.split(',').map(p=>p.trim()).filter(Boolean)
+    .map(p=>`<span class="gallery-tag tag-player" style="font-size:0.75rem;padding:0.2rem 0.6rem;">👤 ${p}</span>`).join('') : '';
+  const albumTag = g.album ? `<span class="gallery-tag tag-album" style="font-size:0.75rem;padding:0.2rem 0.6rem;">📁 ${g.album}</span>` : '';
+  document.getElementById('lightboxMeta').innerHTML = albumTag + playerTags;
+}
+
+function navLightbox(dir) {
+  lightboxIndex = (lightboxIndex + dir + filteredPhotos.length) % filteredPhotos.length;
+  showLightboxItem();
+}
+
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.removeEventListener('keydown', lightboxKey);
+}
+
+function lightboxKey(e) {
+  if(e.key==='ArrowLeft') navLightbox(-1);
+  if(e.key==='ArrowRight') navLightbox(1);
+  if(e.key==='Escape') closeLightbox();
+}
+
+document.getElementById('lightbox').addEventListener('click', e => {
+  if(e.target===document.getElementById('lightbox')) closeLightbox();
+});
+
+window.addEventListener('scroll', ()=>{
+  document.getElementById('scrollTop').classList.toggle('visible', window.scrollY>400);
+});
+
+document.getElementById('year').textContent = new Date().getFullYear();
+
+// ─── INIT ────────────────────────────────────────────────────────
+async function init() {
+  const {data} = await sb.from('gallery').select('*').order('id');
+  const gallery = data || [];
+  buildFilters(gallery);
+  filteredPhotos = [...gallery];
+  renderGrid();
+}
+
+init();
+</script>
+</body>
+</html>
