@@ -875,7 +875,8 @@ let allPlayers = [], allMatches = [], allGallery = [], allSponsors = [];
 // ─── MAP DB ROW → APP OBJECT ─────────────────────────────────────
 function mapPlayer(r) {
   return { id:r.id, name:r.name, number:r.number, role:r.role, nat:r.nat,
-    runs:r.runs, batAvg:r.bat_avg, sr:r.sr, hs:r.hs, half50100:r.half50100,
+    runs:r.runs, batAvg:r.bat_avg, sr:r.sr, hs:r.hs,
+    fifties:r.fifties, hundreds:r.hundreds, hatTricks:r.hat_tricks,
     wickets:r.wickets, bowlAvg:r.bowl_avg, econ:r.econ, matches:r.matches, photo:r.photo };
 }
 function mapMatch(r) {
@@ -998,7 +999,8 @@ function openPlayerModal(id) {
       <div class="stat-box"><div class="stat-box-value">${p.batAvg||'—'}</div><div class="stat-box-label">Average</div></div>
       <div class="stat-box"><div class="stat-box-value">${p.sr||'—'}</div><div class="stat-box-label">Strike Rate</div></div>
       <div class="stat-box"><div class="stat-box-value">${p.hs||'—'}</div><div class="stat-box-label">High Score</div></div>
-      <div class="stat-box"><div class="stat-box-value">${p.half50100||'—'}</div><div class="stat-box-label">50s / 100s</div></div>
+      <div class="stat-box"><div class="stat-box-value">${p.fifties??'—'}</div><div class="stat-box-label">Half Centuries</div></div>
+      <div class="stat-box"><div class="stat-box-value">${p.hundreds??'—'}</div><div class="stat-box-label">Centuries</div></div>
     </div>
 
     <!-- BOWLING STATS -->
@@ -1008,6 +1010,7 @@ function openPlayerModal(id) {
       <div class="stat-box"><div class="stat-box-value">${p.wickets||'0'}</div><div class="stat-box-label">Wickets</div></div>
       <div class="stat-box"><div class="stat-box-value">${p.bowlAvg||'—'}</div><div class="stat-box-label">Average</div></div>
       <div class="stat-box"><div class="stat-box-value">${p.econ||'—'}</div><div class="stat-box-label">Economy</div></div>
+      ${p.hatTricks ? `<div class="stat-box"><div class="stat-box-value">${p.hatTricks}</div><div class="stat-box-label">Hat-Tricks</div></div>` : ''}
     </div>` : ''}
 
     <!-- MATCH HISTORY -->
