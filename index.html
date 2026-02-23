@@ -412,6 +412,59 @@
   /* ─── SPONSORS ─── */
   #sponsors { background: var(--cream-mid); }
 
+  /* ─── DEALS ─── */
+  #deals { background: var(--green); }
+  #deals .section-label { color: rgba(255,255,255,0.5); }
+  #deals .section-title { color: var(--gold-light); }
+  #deals .section-line { background: var(--gold); }
+  .deals-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.25rem;
+    padding: 0 2rem 3rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .deal-card {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    padding: 1.5rem;
+    position: relative;
+    transition: all 0.25s;
+  }
+  .deal-card:hover { background: rgba(255,255,255,0.1); border-color: rgba(184,147,42,0.4); transform: translateY(-2px); }
+  .deal-sponsor-logo {
+    width: 48px; height: 48px; object-fit: contain;
+    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1);
+    margin-bottom: 0.75rem;
+  }
+  .deal-sponsor-emoji { font-size: 2rem; margin-bottom: 0.5rem; display: block; }
+  .deal-sponsor-name {
+    font-family: 'Barlow Condensed', sans-serif; font-size: 0.68rem;
+    font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--gold-light); margin-bottom: 0.35rem;
+  }
+  .deal-title {
+    font-family: 'Barlow Condensed', sans-serif; font-size: 1.15rem;
+    font-weight: 700; letter-spacing: 1px; color: var(--white);
+    margin-bottom: 0.35rem; line-height: 1.3;
+  }
+  .deal-desc { font-size: 0.84rem; color: rgba(255,255,255,0.6); line-height: 1.5; margin-bottom: 0.85rem; }
+  .deal-code-wrap { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+  .deal-code {
+    font-family: 'Barlow Condensed', sans-serif; font-size: 0.88rem;
+    font-weight: 700; letter-spacing: 3px; color: var(--dark);
+    background: var(--gold-light); padding: 0.25rem 0.75rem;
+    border: none; cursor: pointer; transition: all 0.2s;
+  }
+  .deal-code:hover { background: var(--white); }
+  .deal-code-copied { background: #2a8a3e !important; color: var(--white) !important; }
+  .deal-expiry {
+    font-size: 0.72rem; color: rgba(255,255,255,0.4);
+    font-family: 'Barlow Condensed', sans-serif; letter-spacing: 1px;
+  }
+  .deal-expiry.soon { color: #f0a500; }
+
   .sponsors-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
@@ -684,6 +737,7 @@
     <li><a href="#matches">Matches</a></li>
     <li><a href="#gallery-preview">Gallery</a></li>
     <li><a href="#sponsors">Sponsors</a></li>
+    <li><a href="#deals" id="dealsNavItem" style="display:none;">Deals</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
   <div style="display:flex;align-items:center;gap:1rem;">
@@ -774,6 +828,16 @@
     <div class="section-line"></div>
   </div>
   <div class="sponsors-grid" id="sponsorsGrid"></div>
+</section>
+
+<!-- DEALS (hidden until deals exist) -->
+<section id="deals" style="display:none;">
+  <div class="section-header">
+    <p class="section-label">Exclusive Offers</p>
+    <h2 class="section-title">Deals from Our Sponsors</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="deals-grid" id="dealsGrid"></div>
 </section>
 
 <!-- CONTACT -->
@@ -870,7 +934,7 @@ const ROLE_ICONS = {
 };
 
 // ─── STATE ───────────────────────────────────────────────────────
-let allPlayers = [], allMatches = [], allGallery = [], allSponsors = [];
+let allPlayers = [], allMatches = [], allGallery = [], allSponsors = [], allDeals = [];
 
 // ─── MAP DB ROW → APP OBJECT ─────────────────────────────────────
 function mapPlayer(r) {
@@ -895,16 +959,18 @@ function mapSponsor(r) {
 async function loadData() {
   showLoading(true);
   try {
-    const [p, m, g, s] = await Promise.all([
+    const [p, m, g, s, d] = await Promise.all([
       sb.from('players').select('*').order('id'),
       sb.from('matches').select('*').order('date', {ascending: false}),
       sb.from('gallery').select('*').order('id'),
       sb.from('sponsors').select('*').order('id'),
+      sb.from('deals').select('*,sponsors(name,logo,icon,url)').order('expiry',{ascending:true}),
     ]);
     allPlayers  = (p.data || []).map(mapPlayer);
     allMatches  = (m.data || []).map(mapMatch);
     allGallery  = (g.data || []).map(mapGallery);
     allSponsors = (s.data || []).map(mapSponsor);
+    allDeals    = (d.data || []).map(r=>({id:r.id,sponsorId:r.sponsor_id,sponsorName:r.sponsors?.name||'',sponsorLogo:r.sponsors?.logo||null,sponsorIcon:r.sponsors?.icon||null,sponsorUrl:r.sponsors?.url||null,title:r.title,description:r.description,code:r.code,expiry:r.expiry}));
   } catch(e) {
     showToast('⚠️ Could not connect to database');
     console.error(e);
@@ -925,7 +991,7 @@ function showLoading(on) {
 }
 
 // ─── RENDER ALL ──────────────────────────────────────────────────
-function renderAll() { renderRoster(); renderMatches(); renderGalleryPreview(); renderSponsors(); populateMatchFilters(); }
+function renderAll() { renderRoster(); renderMatches(); renderGalleryPreview(); renderSponsors(); renderDeals(); populateMatchFilters(); }
 
 // ─── ROSTER ─────────────────────────────────────────────────────
 function renderRoster(filter='all') {
@@ -1105,7 +1171,64 @@ function renderSponsors() {
   `).join('');
 }
 
-// ─── CONTACT ─────────────────────────────────────────────────────
+// ─── DEALS ───────────────────────────────────────────────────────
+function renderDeals() {
+  const today = new Date().toISOString().slice(0,10);
+  // Only show non-expired deals (no expiry = always show)
+  const active = allDeals.filter(d => !d.expiry || d.expiry >= today);
+  const section = document.getElementById('deals');
+  const navItem = document.getElementById('dealsNavItem');
+
+  if(!active.length) {
+    section.style.display = 'none';
+    navItem.style.display = 'none';
+    return;
+  }
+  section.style.display = 'block';
+  navItem.style.display = 'block';
+
+  document.getElementById('dealsGrid').innerHTML = active.map(d => {
+    // Expiry display + urgency
+    let expiryHtml = '';
+    if(d.expiry) {
+      const daysLeft = Math.ceil((new Date(d.expiry) - new Date()) / 86400000);
+      const soon = daysLeft <= 7;
+      const expiryStr = new Date(d.expiry+'T12:00:00').toLocaleDateString('en-CA',{day:'numeric',month:'short',year:'numeric'});
+      expiryHtml = `<span class="deal-expiry${soon?' soon':''}">⏳ Expires ${expiryStr}${soon?' ('+daysLeft+' day'+(daysLeft!==1?'s':'')+' left!)':''}</span>`;
+    }
+
+    const logoHtml = d.sponsorLogo
+      ? `<img src="${d.sponsorLogo}" alt="${d.sponsorName}" class="deal-sponsor-logo">`
+      : `<span class="deal-sponsor-emoji">${d.sponsorIcon||'🤝'}</span>`;
+
+    const codeHtml = d.code
+      ? `<button class="deal-code" onclick="copyDealCode(this,'${d.code.replace(/'/g,"\\'")}')">📋 ${d.code}</button>`
+      : '';
+
+    return `
+    <div class="deal-card">
+      ${logoHtml}
+      <div class="deal-sponsor-name">${d.sponsorName}</div>
+      <div class="deal-title">${d.title}</div>
+      ${d.description ? `<div class="deal-desc">${d.description}</div>` : ''}
+      <div class="deal-code-wrap">
+        ${codeHtml}
+        ${expiryHtml}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function copyDealCode(btn, code) {
+  navigator.clipboard.writeText(code).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = '✓ Copied!';
+    btn.classList.add('deal-code-copied');
+    setTimeout(() => { btn.textContent = orig; btn.classList.remove('deal-code-copied'); }, 2000);
+  }).catch(() => {
+    btn.textContent = code; // fallback: just show the code
+  });
+}
 function submitContact(e) {
   e.preventDefault();
   showToast("Message sent! We'll be in touch soon. 🏏");
