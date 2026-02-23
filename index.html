@@ -98,6 +98,8 @@
     padding: 0.4rem 1rem;
     cursor: pointer;
     transition: all 0.2s;
+    text-decoration: none;
+    display: inline-block;
   }
   .nav-admin-btn:hover { background: var(--green); color: var(--white); }
 
@@ -622,110 +624,6 @@
   .match-history-table tr:hover td { background: var(--cream); }
   .match-history-table tr:last-child td { border-bottom: none; }
 
-  /* ─── ADMIN MODAL ─── */
-  .admin-modal {
-    background: var(--white); border: 1px solid var(--cream-dark);
-    width: 90%; max-width: 960px; max-height: 92vh;
-    overflow-y: auto; animation: fadeUp 0.3s ease;
-    box-shadow: var(--shadow-lg);
-  }
-
-  .admin-modal-header {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--cream-dark);
-    position: sticky; top: 0; background: var(--green); z-index: 1;
-  }
-
-  .admin-modal-header h2 {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.6rem; letter-spacing: 2px; color: var(--gold-light);
-  }
-
-  .admin-modal-header .modal-close { color: rgba(255,255,255,0.7); }
-  .admin-modal-header .modal-close:hover { color: var(--white); }
-
-  .admin-modal-body { padding: 1.5rem; }
-
-  .admin-tabs {
-    display: flex; gap: 0; border-bottom: 2px solid var(--cream-dark);
-    margin-bottom: 1.5rem; flex-wrap: wrap;
-  }
-
-  .admin-tab {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 0.85rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;
-    padding: 0.75rem 1.25rem; background: none; border: none;
-    color: var(--text-muted); cursor: pointer;
-    border-bottom: 2px solid transparent; margin-bottom: -2px;
-    transition: all 0.2s;
-  }
-  .admin-tab:hover { color: var(--green); }
-  .admin-tab.active { color: var(--green); border-bottom-color: var(--green); }
-
-  .admin-panel { display: none; }
-  .admin-panel.active { display: block; }
-
-  .admin-table { width: 100%; border-collapse: collapse; font-size: 0.83rem; margin-bottom: 1rem; }
-  .admin-table th {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 0.72rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
-    color: var(--gold); padding: 0.6rem 0.75rem; text-align: left;
-    border-bottom: 1px solid var(--cream-dark); background: var(--cream);
-  }
-  .admin-table td {
-    padding: 0.65rem 0.75rem; color: var(--text-dark);
-    border-bottom: 1px solid var(--cream-dark); vertical-align: middle;
-  }
-  .admin-table tr:hover td { background: var(--cream); }
-
-  .admin-form {
-    background: var(--cream); border: 1px solid var(--cream-dark);
-    padding: 1.25rem; margin-bottom: 1.5rem;
-  }
-
-  .admin-form h3 {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 0.85rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
-    color: var(--green); margin-bottom: 1rem;
-  }
-
-  .admin-form-grid {
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
-    gap: 0.75rem; margin-bottom: 1rem;
-  }
-
-  .admin-form-group { display: flex; flex-direction: column; gap: 0.3rem; }
-  .admin-form-group label {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 0.68rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;
-    color: var(--text-muted);
-  }
-  .admin-form-group input, .admin-form-group select {
-    background: var(--white); border: 1px solid var(--cream-dark);
-    color: var(--text-dark); padding: 0.5rem 0.75rem;
-    font-family: 'Barlow', sans-serif; font-size: 0.85rem; outline: none;
-  }
-  .admin-form-group input:focus, .admin-form-group select:focus { border-color: var(--green); }
-
-  .btn-sm {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 0.75rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
-    padding: 0.35rem 0.85rem; border: none; cursor: pointer; transition: all 0.2s;
-  }
-  .btn-add { background: var(--green); color: var(--white); }
-  .btn-add:hover { background: var(--green-mid); }
-  .btn-delete { background: rgba(192,57,43,0.1); color: #c0392b; border: 1px solid rgba(192,57,43,0.2); }
-  .btn-delete:hover { background: rgba(192,57,43,0.2); }
-
-  /* Admin login */
-  .admin-login { max-width: 340px; margin: 0 auto; text-align: center; padding: 2rem 0; }
-  .admin-login h3 { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 2px; color: var(--green); margin-bottom: 0.5rem; }
-  .admin-login p { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem; }
-  .admin-login .form-group { text-align: left; margin-bottom: 1rem; }
-  .admin-login .form-group input { width: 100%; background: var(--cream); border: 1.5px solid var(--cream-dark); color: var(--text-dark); padding: 0.75rem 1rem; font-family: 'Barlow', sans-serif; font-size: 0.9rem; outline: none; }
-  .admin-login .form-group input:focus { border-color: var(--green); }
-  .error-msg { color: #c0392b; font-size: 0.8rem; margin-bottom: 0.75rem; }
-
   /* scroll top */
   .scroll-top {
     position: fixed; bottom: 2rem; right: 2rem; z-index: 500;
@@ -789,7 +687,7 @@
     <li><a href="#contact">Contact</a></li>
   </ul>
   <div style="display:flex;align-items:center;gap:1rem;">
-    <button class="nav-admin-btn" onclick="openAdmin()">⚙ Admin</button>
+    <a href="admin.html" class="nav-admin-btn">⚙ Admin</a>
     <div class="hamburger" id="hamburger" onclick="toggleMenu()">
       <span></span><span></span><span></span>
     </div>
@@ -932,6 +830,9 @@
   <div class="f-logo">Charlottetown Lions CC</div>
   <p>Proudly based in <strong>Prince Edward Island, Canada 🍁</strong></p>
   <p>Member of <a href="https://www.facebook.com/p/PEI-Cricket-Association-100057478210038/" target="_blank">The PEI Cricket Association</a></p>
+  <p style="margin-top:1.25rem;">
+    <a href="admin.html" style="font-family:'Barlow Condensed',sans-serif;font-size:0.78rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.35);text-decoration:none;border:1px solid rgba(255,255,255,0.15);padding:0.35rem 1rem;transition:all 0.2s;" onmouseover="this.style.color='rgba(255,255,255,0.7)';this.style.borderColor='rgba(255,255,255,0.4)'" onmouseout="this.style.color='rgba(255,255,255,0.35)';this.style.borderColor='rgba(255,255,255,0.15)'">⚙ Member Dashboard</a>
+  </p>
   <p style="margin-top:1rem;font-size:0.75rem;opacity:0.5;">© <span id="year"></span> C-Town Lions Cricket Club. All rights reserved.</p>
 </footer>
 
@@ -943,180 +844,6 @@
       <button class="modal-close" onclick="closePlayerModal()">✕</button>
     </div>
     <div class="modal-body" id="modalPlayerBody"></div>
-  </div>
-</div>
-
-<!-- ADMIN MODAL -->
-<div class="modal-overlay" id="adminModal">
-  <div class="admin-modal">
-    <div class="admin-modal-header">
-      <h2>⚙ Admin Panel</h2>
-      <button class="modal-close" onclick="closeAdmin()">✕</button>
-    </div>
-    <div class="admin-modal-body">
-
-      <div id="adminLogin" class="admin-login">
-        <h3>Admin Login</h3>
-        <p>Enter your admin password to manage club data.</p>
-        <div class="form-group">
-          <label>Password</label>
-          <input type="password" id="adminPassword" placeholder="Enter password" onkeydown="if(event.key==='Enter')doLogin()">
-        </div>
-        <p class="error-msg" id="loginError" style="display:none;">Incorrect password. Try again.</p>
-        <button class="btn-primary" onclick="doLogin()" style="width:100%;">Login</button>
-      </div>
-
-      <div id="adminContent" style="display:none;">
-        <div class="admin-tabs">
-          <button class="admin-tab active" onclick="switchTab('players',this)">Players</button>
-          <button class="admin-tab" onclick="switchTab('matches',this)">Matches</button>
-          <button class="admin-tab" onclick="switchTab('gallery',this)">Gallery</button>
-          <button class="admin-tab" onclick="switchTab('sponsors',this)">Sponsors</button>
-          <button class="admin-tab" onclick="switchTab('settings',this)">Settings</button>
-        </div>
-
-        <!-- PLAYERS TAB -->
-        <div class="admin-panel active" id="tab-players">
-          <div class="admin-form">
-            <h3>Add / Edit Player</h3>
-            <input type="hidden" id="editPlayerId">
-            <div class="admin-form-grid">
-              <div class="admin-form-group"><label>Full Name</label><input type="text" id="pName" placeholder="Full name"></div>
-              <div class="admin-form-group"><label>Jersey #</label><input type="number" id="pNumber" placeholder="#" min="1" max="99"></div>
-              <div class="admin-form-group">
-                <label>Role</label>
-                <select id="pRole">
-                  <option>Batsman</option><option>Bowler</option><option>All-Rounder</option><option>Wicket-Keeper</option>
-                </select>
-              </div>
-              <div class="admin-form-group">
-                <label>Nationality</label>
-                <select id="pNat">
-                  <option value="Canadian">🇨🇦 Canadian</option>
-                  <option value="Indian">🇮🇳 Indian</option>
-                  <option value="Pakistani">🇵🇰 Pakistani</option>
-                  <option value="Sri Lankan">🇱🇰 Sri Lankan</option>
-                  <option value="Bangladeshi">🇧🇩 Bangladeshi</option>
-                  <option value="West Indian">🏝️ West Indian</option>
-                  <option value="English">🏴󠁧󠁢󠁥󠁮󠁧󠁿 English</option>
-                  <option value="Australian">🇦🇺 Australian</option>
-                  <option value="South African">🇿🇦 South African</option>
-                  <option value="Afghan">🇦🇫 Afghan</option>
-                  <option value="Kenyan">🇰🇪 Kenyan</option>
-                  <option value="Zimbabwean">🇿🇼 Zimbabwean</option>
-                  <option value="Other">🌍 Other</option>
-                </select>
-              </div>
-              <div class="admin-form-group"><label>Total Runs</label><input type="number" id="pRuns" placeholder="e.g. 842"></div>
-              <div class="admin-form-group"><label>Batting Avg</label><input type="text" id="pBatAvg" placeholder="e.g. 42.5"></div>
-              <div class="admin-form-group"><label>Strike Rate</label><input type="text" id="pSR" placeholder="e.g. 118.4"></div>
-              <div class="admin-form-group"><label>High Score</label><input type="text" id="pHS" placeholder="e.g. 87*"></div>
-              <div class="admin-form-group"><label>50s / 100s</label><input type="text" id="p50100" placeholder="e.g. 4 / 1"></div>
-              <div class="admin-form-group"><label>Wickets</label><input type="number" id="pWickets" placeholder="e.g. 24"></div>
-              <div class="admin-form-group"><label>Bowling Avg</label><input type="text" id="pBowlAvg" placeholder="e.g. 21.3"></div>
-              <div class="admin-form-group"><label>Economy Rate</label><input type="text" id="pEcon" placeholder="e.g. 6.2"></div>
-              <div class="admin-form-group"><label>Matches Played</label><input type="number" id="pMatches" placeholder="e.g. 18"></div>
-              <div class="admin-form-group" style="grid-column:1/-1"><label>Photo URL (optional)</label><input type="text" id="pPhoto" placeholder="https://…"></div>
-            </div>
-            <button class="btn-sm btn-add" onclick="savePlayer()">Save Player</button>
-            <button class="btn-sm" onclick="clearPlayerForm()" style="background:transparent;border:1px solid var(--cream-dark);color:var(--text-muted);margin-left:0.5rem;">Clear</button>
-          </div>
-          <table class="admin-table">
-            <thead><tr><th>#</th><th>Name</th><th>Role</th><th>Nat.</th><th>Runs</th><th>Wkts</th><th>Actions</th></tr></thead>
-            <tbody id="playersTableBody"></tbody>
-          </table>
-        </div>
-
-        <!-- MATCHES TAB -->
-        <div class="admin-panel" id="tab-matches">
-          <div class="admin-form">
-            <h3>Add / Edit Match</h3>
-            <input type="hidden" id="editMatchId">
-            <div class="admin-form-grid">
-              <div class="admin-form-group"><label>Opponent</label><input type="text" id="mOpponent" placeholder="Team name"></div>
-              <div class="admin-form-group"><label>Date</label><input type="date" id="mDate"></div>
-              <div class="admin-form-group"><label>Venue</label><input type="text" id="mVenue" placeholder="Ground name"></div>
-              <div class="admin-form-group">
-                <label>Result</label>
-                <select id="mResult"><option>Win</option><option>Loss</option><option>Draw</option><option>Upcoming</option></select>
-              </div>
-              <div class="admin-form-group"><label>Our Score</label><input type="text" id="mOurScore" placeholder="e.g. 187/6"></div>
-              <div class="admin-form-group"><label>Their Score</label><input type="text" id="mTheirScore" placeholder="e.g. 174/8"></div>
-              <div class="admin-form-group"><label>Season</label><input type="text" id="mSeason" placeholder="e.g. 2024"></div>
-              <div class="admin-form-group"><label>Tournament</label><input type="text" id="mTournament" placeholder="e.g. PEI Summer League"></div>
-              <div class="admin-form-group" style="grid-column:1/-1">
-                <label>Players in this Match (names, comma-separated)</label>
-                <input type="text" id="mPlayers" placeholder="e.g. Arjun Sharma, Dev Patel, Marcus Williams">
-              </div>
-            </div>
-            <button class="btn-sm btn-add" onclick="saveMatch()">Save Match</button>
-            <button class="btn-sm" onclick="clearMatchForm()" style="background:transparent;border:1px solid var(--cream-dark);color:var(--text-muted);margin-left:0.5rem;">Clear</button>
-          </div>
-          <table class="admin-table">
-            <thead><tr><th>Date</th><th>Opponent</th><th>Result</th><th>Score</th><th>Tournament</th><th>Actions</th></tr></thead>
-            <tbody id="matchesTableBody"></tbody>
-          </table>
-        </div>
-
-        <!-- GALLERY TAB -->
-        <div class="admin-panel" id="tab-gallery">
-          <div class="admin-form">
-            <h3>Add Gallery Photo</h3>
-            <div class="admin-form-grid">
-              <div class="admin-form-group" style="grid-column:1/-1"><label>Image URL</label><input type="text" id="gUrl" placeholder="https://… (leave blank for placeholder)"></div>
-              <div class="admin-form-group" style="grid-column:1/-1"><label>Caption</label><input type="text" id="gCaption" placeholder="e.g. Season opener vs Halifax CC"></div>
-              <div class="admin-form-group"><label>Album / Tournament</label><input type="text" id="gAlbum" placeholder="e.g. PEI Summer League 2024"></div>
-              <div class="admin-form-group"><label>Tag Players (comma-separated)</label><input type="text" id="gPlayers" placeholder="e.g. Arjun Sharma, Dev Patel"></div>
-            </div>
-            <button class="btn-sm btn-add" onclick="saveGalleryItem()">Add Photo</button>
-          </div>
-          <table class="admin-table">
-            <thead><tr><th>Caption</th><th>Album</th><th>Players</th><th>Actions</th></tr></thead>
-            <tbody id="galleryTableBody"></tbody>
-          </table>
-        </div>
-
-        <!-- SPONSORS TAB -->
-        <div class="admin-panel" id="tab-sponsors">
-          <div class="admin-form">
-            <h3>Add / Edit Sponsor</h3>
-            <input type="hidden" id="editSponsorId">
-            <div class="admin-form-grid">
-              <div class="admin-form-group"><label>Company Name</label><input type="text" id="sName" placeholder="Business name"></div>
-              <div class="admin-form-group">
-                <label>Tier</label>
-                <select id="sTier"><option>Gold</option><option>Silver</option><option>Bronze</option><option>Community</option></select>
-              </div>
-              <div class="admin-form-group"><label>Website URL</label><input type="text" id="sUrl" placeholder="https://…"></div>
-              <div class="admin-form-group"><label>Emoji / Icon</label><input type="text" id="sIcon" placeholder="e.g. 🍺"></div>
-            </div>
-            <button class="btn-sm btn-add" onclick="saveSponsor()">Save Sponsor</button>
-          </div>
-          <table class="admin-table">
-            <thead><tr><th>Name</th><th>Tier</th><th>Website</th><th>Actions</th></tr></thead>
-            <tbody id="sponsorsTableBody"></tbody>
-          </table>
-        </div>
-
-        <!-- SETTINGS TAB -->
-        <div class="admin-panel" id="tab-settings">
-          <div class="admin-form">
-            <h3>Change Admin Password</h3>
-            <div class="admin-form-grid" style="max-width:400px">
-              <div class="admin-form-group"><label>New Password</label><input type="password" id="newPass" placeholder="New password"></div>
-              <div class="admin-form-group"><label>Confirm Password</label><input type="password" id="confirmPass" placeholder="Repeat password"></div>
-            </div>
-            <button class="btn-sm btn-add" onclick="changePassword()">Update Password</button>
-          </div>
-          <div class="admin-form">
-            <h3>Reset All Data</h3>
-            <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:1rem;">Reloads all demo data. Use with caution.</p>
-            <button class="btn-sm" onclick="resetData()" style="background:rgba(192,57,43,0.1);color:#c0392b;border:1px solid rgba(192,57,43,0.2);">Reset to Demo Data</button>
-          </div>
-        </div>
-
-      </div>
-    </div>
   </div>
 </div>
 
@@ -1138,6 +865,10 @@ const NAT_FLAGS = {
   'South African':'🇿🇦','Afghan':'🇦🇫','Kenyan':'🇰🇪','Zimbabwean':'🇿🇼','Other':'🌍'
 };
 
+const ROLE_ICONS = {
+  'Batsman':'🪃','Bowler':'🎳','Wicket-Keeper':'🧤','All-Rounder':'🏏'
+};
+
 // ─── STATE ───────────────────────────────────────────────────────
 let allPlayers = [], allMatches = [], allGallery = [], allSponsors = [];
 
@@ -1156,7 +887,7 @@ function mapGallery(r) {
   return { id:r.id, url:r.url, caption:r.caption, album:r.album, players:r.players };
 }
 function mapSponsor(r) {
-  return { id:r.id, name:r.name, tier:r.tier, url:r.url, icon:r.icon };
+  return { id:r.id, name:r.name, tier:r.tier, url:r.url, icon:r.icon, logo:r.logo };
 }
 
 // ─── LOAD FROM SUPABASE ──────────────────────────────────────────
@@ -1204,7 +935,7 @@ function renderRoster(filter='all') {
     return `
     <div class="player-card" onclick="openPlayerModal(${p.id})">
       <div class="player-avatar">
-        ${p.photo ? `<img src="${p.photo}" alt="${p.name}" onerror="this.style.display='none'">` : '🏏'}
+        ${p.photo ? `<img src="${p.photo}" alt="${p.name}" onerror="this.style.display='none'">` : `<span style="font-size:3.5rem;">${ROLE_ICONS[p.role]||'🏏'}</span>`}
         <span class="player-number">${p.number||''}</span>
         <span class="player-flag" title="${p.nat||''}">${flag}</span>
       </div>
@@ -1245,7 +976,7 @@ function openPlayerModal(id) {
   document.getElementById('modalPlayerBody').innerHTML = `
     <div class="player-profile-header">
       <div class="player-profile-avatar">
-        ${p.photo ? `<img src="${p.photo}" alt="${p.name}" onerror="this.parentElement.innerHTML='🏏'">` : '🏏'}
+        ${p.photo ? `<img src="${p.photo}" alt="${p.name}" onerror="this.parentElement.innerHTML='${ROLE_ICONS[p.role]||'🏏'}'">` : `<span style="font-size:3rem;">${ROLE_ICONS[p.role]||'🏏'}</span>`}
       </div>
       <div class="player-profile-info">
         <div class="player-profile-name">${p.name}</div>
@@ -1364,290 +1095,11 @@ function renderSponsors() {
   const sorted=[...allSponsors].sort((a,b)=>(order[a.tier]||9)-(order[b.tier]||9));
   document.getElementById('sponsorsGrid').innerHTML = sorted.map(s=>`
     <a href="${s.url||'#'}" target="_blank" class="sponsor-card">
-      <div class="sponsor-logo">${s.icon||'🏢'}</div>
+      <div class="sponsor-logo">${s.logo ? `<img src="${s.logo}" alt="${s.name}" style="max-width:80px;max-height:60px;object-fit:contain;" onerror="this.parentElement.textContent='${(s.icon||'🏢').replace(/'/g,"\\'")}'">`  : (s.icon||'🏢')}</div>
       <div class="sponsor-name">${s.name}</div>
       <div class="sponsor-tier">${s.tier} Sponsor</div>
     </a>
   `).join('');
-}
-
-// ─── ADMIN ───────────────────────────────────────────────────────
-let adminLoggedIn = false;
-const EMOJIS = ['🏏','🦁','🏆','🎯','🌿','⭐'];
-
-function openAdmin() {
-  document.getElementById('adminModal').classList.add('open');
-  document.getElementById('adminLogin').style.display = adminLoggedIn?'none':'block';
-  document.getElementById('adminContent').style.display = adminLoggedIn?'block':'none';
-  if(adminLoggedIn) refreshAdminTables();
-}
-function closeAdmin() { document.getElementById('adminModal').classList.remove('open'); }
-
-function doLogin() {
-  const pass=document.getElementById('adminPassword').value;
-  const stored=localStorage.getItem('ctlions_password')||'lions2024';
-  if(pass===stored) {
-    adminLoggedIn=true;
-    document.getElementById('adminLogin').style.display='none';
-    document.getElementById('adminContent').style.display='block';
-    document.getElementById('loginError').style.display='none';
-    refreshAdminTables();
-  } else { document.getElementById('loginError').style.display='block'; }
-}
-
-function switchTab(name,btn) {
-  document.querySelectorAll('.admin-tab').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.admin-panel').forEach(p=>p.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('tab-'+name).classList.add('active');
-}
-
-function refreshAdminTables() { renderPlayersTable(); renderMatchesTable(); renderGalleryTable(); renderSponsorsTable(); }
-
-// ── PLAYERS ──
-function renderPlayersTable() {
-  document.getElementById('playersTableBody').innerHTML = allPlayers.map(p=>`
-    <tr>
-      <td>${p.number||'-'}</td><td>${p.name}</td><td>${p.role}</td>
-      <td>${NAT_FLAGS[p.nat]||'🌍'} ${p.nat||''}</td>
-      <td>${p.runs||'-'}</td><td>${p.wickets||'-'}</td>
-      <td>
-        <button class="btn-sm btn-add" onclick="editPlayer(${p.id})" style="margin-right:4px;">Edit</button>
-        <button class="btn-sm btn-delete" onclick="deletePlayer(${p.id})">Del</button>
-      </td>
-    </tr>`).join('');
-}
-
-async function savePlayer() {
-  const editId = parseInt(document.getElementById('editPlayerId').value);
-  const row = {
-    name: document.getElementById('pName').value.trim(),
-    number: parseInt(document.getElementById('pNumber').value)||null,
-    role: document.getElementById('pRole').value,
-    nat: document.getElementById('pNat').value,
-    runs: parseInt(document.getElementById('pRuns').value)||0,
-    bat_avg: document.getElementById('pBatAvg').value||null,
-    sr: document.getElementById('pSR').value||null,
-    hs: document.getElementById('pHS').value||null,
-    half50100: document.getElementById('p50100').value||null,
-    wickets: parseInt(document.getElementById('pWickets').value)||0,
-    bowl_avg: document.getElementById('pBowlAvg').value||null,
-    econ: document.getElementById('pEcon').value||null,
-    matches: parseInt(document.getElementById('pMatches').value)||0,
-    photo: document.getElementById('pPhoto').value||null,
-  };
-  if(!row.name) return showToast('Please enter a player name');
-  const res = editId
-    ? await sb.from('players').update(row).eq('id',editId).select()
-    : await sb.from('players').insert(row).select();
-  if(res.error) return showToast('❌ '+res.error.message);
-  clearPlayerForm();
-  const {data} = await sb.from('players').select('*').order('id');
-  allPlayers = (data||[]).map(mapPlayer);
-  renderPlayersTable(); renderRoster();
-  showToast(editId?'Player updated!':'Player added!');
-}
-
-function editPlayer(id) {
-  const p=allPlayers.find(p=>p.id===id); if(!p) return;
-  document.getElementById('editPlayerId').value=p.id;
-  document.getElementById('pName').value=p.name;
-  document.getElementById('pNumber').value=p.number||'';
-  document.getElementById('pRole').value=p.role;
-  document.getElementById('pNat').value=p.nat||'Canadian';
-  document.getElementById('pRuns').value=p.runs||'';
-  document.getElementById('pBatAvg').value=(!p.batAvg||p.batAvg==='-')?'':p.batAvg;
-  document.getElementById('pSR').value=(!p.sr||p.sr==='-')?'':p.sr;
-  document.getElementById('pHS').value=(!p.hs||p.hs==='-')?'':p.hs;
-  document.getElementById('p50100').value=(!p.half50100||p.half50100==='-')?'':p.half50100;
-  document.getElementById('pWickets').value=p.wickets||'';
-  document.getElementById('pBowlAvg').value=(!p.bowlAvg||p.bowlAvg==='-')?'':p.bowlAvg;
-  document.getElementById('pEcon').value=(!p.econ||p.econ==='-')?'':p.econ;
-  document.getElementById('pMatches').value=p.matches||'';
-  document.getElementById('pPhoto').value=p.photo||'';
-}
-
-async function deletePlayer(id) {
-  if(!confirm('Delete this player?')) return;
-  const {error} = await sb.from('players').delete().eq('id',id);
-  if(error) return showToast('❌ '+error.message);
-  const {data} = await sb.from('players').select('*').order('id');
-  allPlayers = (data||[]).map(mapPlayer);
-  renderPlayersTable(); renderRoster(); showToast('Player deleted');
-}
-
-function clearPlayerForm() {
-  ['editPlayerId','pName','pNumber','pRuns','pBatAvg','pSR','pHS','p50100','pWickets','pBowlAvg','pEcon','pMatches','pPhoto'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('pRole').value='Batsman'; document.getElementById('pNat').value='Canadian';
-}
-
-// ── MATCHES ──
-function renderMatchesTable() {
-  document.getElementById('matchesTableBody').innerHTML = allMatches.map(m=>`
-    <tr>
-      <td>${m.date||''}</td><td>${m.opponent}</td>
-      <td><span class="match-result-badge ${{Win:'badge-win',Loss:'badge-loss',Draw:'badge-draw',Upcoming:'badge-upcoming'}[m.result]||''}">${m.result}</span></td>
-      <td>${m.ourScore||'-'} / ${m.theirScore||'-'}</td>
-      <td>${m.tournament||'-'}</td>
-      <td>
-        <button class="btn-sm btn-add" onclick="editMatch(${m.id})" style="margin-right:4px;">Edit</button>
-        <button class="btn-sm btn-delete" onclick="deleteMatch(${m.id})">Del</button>
-      </td>
-    </tr>`).join('');
-}
-
-async function saveMatch() {
-  const editId = parseInt(document.getElementById('editMatchId').value);
-  const row = {
-    opponent: document.getElementById('mOpponent').value.trim(),
-    date: document.getElementById('mDate').value||null,
-    venue: document.getElementById('mVenue').value||null,
-    result: document.getElementById('mResult').value,
-    our_score: document.getElementById('mOurScore').value||null,
-    their_score: document.getElementById('mTheirScore').value||null,
-    season: document.getElementById('mSeason').value||null,
-    tournament: document.getElementById('mTournament').value||null,
-    players: document.getElementById('mPlayers').value||null,
-  };
-  if(!row.opponent) return showToast('Please enter opponent name');
-  const res = editId
-    ? await sb.from('matches').update(row).eq('id',editId).select()
-    : await sb.from('matches').insert(row).select();
-  if(res.error) return showToast('❌ '+res.error.message);
-  clearMatchForm();
-  const {data} = await sb.from('matches').select('*').order('date',{ascending:false});
-  allMatches = (data||[]).map(mapMatch);
-  renderMatchesTable(); populateMatchFilters(); renderMatches();
-  showToast(editId?'Match updated!':'Match added!');
-}
-
-function editMatch(id) {
-  const m=allMatches.find(m=>m.id===id); if(!m) return;
-  document.getElementById('editMatchId').value=m.id;
-  document.getElementById('mOpponent').value=m.opponent;
-  document.getElementById('mDate').value=m.date||'';
-  document.getElementById('mVenue').value=m.venue||'';
-  document.getElementById('mResult').value=m.result;
-  document.getElementById('mOurScore').value=m.ourScore||'';
-  document.getElementById('mTheirScore').value=m.theirScore||'';
-  document.getElementById('mSeason').value=m.season||'';
-  document.getElementById('mTournament').value=m.tournament||'';
-  document.getElementById('mPlayers').value=m.players||'';
-}
-
-async function deleteMatch(id) {
-  if(!confirm('Delete this match?')) return;
-  const {error} = await sb.from('matches').delete().eq('id',id);
-  if(error) return showToast('❌ '+error.message);
-  const {data} = await sb.from('matches').select('*').order('date',{ascending:false});
-  allMatches = (data||[]).map(mapMatch);
-  renderMatchesTable(); populateMatchFilters(); renderMatches(); showToast('Match deleted');
-}
-
-function clearMatchForm() {
-  ['editMatchId','mOpponent','mDate','mVenue','mOurScore','mTheirScore','mSeason','mTournament','mPlayers'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('mResult').value='Win';
-}
-
-// ── GALLERY ──
-function renderGalleryTable() {
-  document.getElementById('galleryTableBody').innerHTML = allGallery.map(g=>`
-    <tr>
-      <td>${g.caption}</td><td>${g.album||'-'}</td>
-      <td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;">${g.players||'-'}</td>
-      <td><button class="btn-sm btn-delete" onclick="deleteGalleryItem(${g.id})">Del</button></td>
-    </tr>`).join('');
-}
-
-async function saveGalleryItem() {
-  const row = {
-    url: document.getElementById('gUrl').value.trim()||null,
-    caption: document.getElementById('gCaption').value.trim()||'Photo',
-    album: document.getElementById('gAlbum').value.trim()||null,
-    players: document.getElementById('gPlayers').value.trim()||null,
-  };
-  const {error} = await sb.from('gallery').insert(row);
-  if(error) return showToast('❌ '+error.message);
-  ['gUrl','gCaption','gAlbum','gPlayers'].forEach(id=>document.getElementById(id).value='');
-  const {data} = await sb.from('gallery').select('*').order('id');
-  allGallery = (data||[]).map(mapGallery);
-  renderGalleryTable(); renderGalleryPreview(); showToast('Photo added!');
-}
-
-async function deleteGalleryItem(id) {
-  if(!confirm('Delete this photo?')) return;
-  const {error} = await sb.from('gallery').delete().eq('id',id);
-  if(error) return showToast('❌ '+error.message);
-  const {data} = await sb.from('gallery').select('*').order('id');
-  allGallery = (data||[]).map(mapGallery);
-  renderGalleryTable(); renderGalleryPreview(); showToast('Photo deleted');
-}
-
-// ── SPONSORS ──
-function renderSponsorsTable() {
-  document.getElementById('sponsorsTableBody').innerHTML = allSponsors.map(s=>`
-    <tr>
-      <td>${s.icon||''} ${s.name}</td><td>${s.tier}</td>
-      <td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;">${s.url||'-'}</td>
-      <td>
-        <button class="btn-sm btn-add" onclick="editSponsor(${s.id})" style="margin-right:4px;">Edit</button>
-        <button class="btn-sm btn-delete" onclick="deleteSponsor(${s.id})">Del</button>
-      </td>
-    </tr>`).join('');
-}
-
-async function saveSponsor() {
-  const editId = parseInt(document.getElementById('editSponsorId').value);
-  const row = {
-    name: document.getElementById('sName').value.trim(),
-    tier: document.getElementById('sTier').value,
-    url: document.getElementById('sUrl').value||null,
-    icon: document.getElementById('sIcon').value||null,
-  };
-  if(!row.name) return showToast('Please enter sponsor name');
-  const res = editId
-    ? await sb.from('sponsors').update(row).eq('id',editId).select()
-    : await sb.from('sponsors').insert(row).select();
-  if(res.error) return showToast('❌ '+res.error.message);
-  clearSponsorForm();
-  const {data} = await sb.from('sponsors').select('*').order('id');
-  allSponsors = (data||[]).map(mapSponsor);
-  renderSponsorsTable(); renderSponsors();
-  showToast(editId?'Sponsor updated!':'Sponsor added!');
-}
-
-function editSponsor(id) {
-  const s=allSponsors.find(s=>s.id===id); if(!s) return;
-  document.getElementById('editSponsorId').value=s.id;
-  document.getElementById('sName').value=s.name;
-  document.getElementById('sTier').value=s.tier;
-  document.getElementById('sUrl').value=s.url||'';
-  document.getElementById('sIcon').value=s.icon||'';
-}
-
-async function deleteSponsor(id) {
-  if(!confirm('Delete this sponsor?')) return;
-  const {error} = await sb.from('sponsors').delete().eq('id',id);
-  if(error) return showToast('❌ '+error.message);
-  const {data} = await sb.from('sponsors').select('*').order('id');
-  allSponsors = (data||[]).map(mapSponsor);
-  renderSponsorsTable(); renderSponsors(); showToast('Sponsor deleted');
-}
-
-function clearSponsorForm() {
-  ['editSponsorId','sName','sUrl','sIcon'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('sTier').value='Gold';
-}
-
-// ── SETTINGS ──
-function changePassword() {
-  const np=document.getElementById('newPass').value;
-  const cp=document.getElementById('confirmPass').value;
-  if(!np) return showToast('Enter a new password');
-  if(np!==cp) return showToast('Passwords do not match');
-  localStorage.setItem('ctlions_password',np);
-  document.getElementById('newPass').value=''; document.getElementById('confirmPass').value='';
-  showToast('Password updated!');
 }
 
 // ─── CONTACT ─────────────────────────────────────────────────────
@@ -1670,20 +1122,10 @@ window.addEventListener('scroll',()=>{
 });
 
 document.getElementById('playerModal').addEventListener('click',e=>{ if(e.target===document.getElementById('playerModal')) closePlayerModal(); });
-document.getElementById('adminModal').addEventListener('click',e=>{ if(e.target===document.getElementById('adminModal')) closeAdmin(); });
 document.getElementById('year').textContent = new Date().getFullYear();
 
-// expose functions called from HTML onclick attributes
-window.openAdmin=openAdmin; window.closeAdmin=closeAdmin; window.doLogin=doLogin;
-window.switchTab=switchTab; window.savePlayer=savePlayer; window.editPlayer=editPlayer;
-window.deletePlayer=deletePlayer; window.clearPlayerForm=clearPlayerForm;
-window.saveMatch=saveMatch; window.editMatch=editMatch; window.deleteMatch=deleteMatch;
-window.clearMatchForm=clearMatchForm; window.saveGalleryItem=saveGalleryItem;
-window.deleteGalleryItem=deleteGalleryItem; window.saveSponsor=saveSponsor;
-window.editSponsor=editSponsor; window.deleteSponsor=deleteSponsor;
-window.changePassword=changePassword; window.submitContact=submitContact;
-window.toggleMenu=toggleMenu; window.openPlayerModal=openPlayerModal;
-window.closePlayerModal=closePlayerModal; window.renderMatches=renderMatches;
+window.openPlayerModal=openPlayerModal; window.closePlayerModal=closePlayerModal;
+window.renderMatches=renderMatches; window.submitContact=submitContact; window.toggleMenu=toggleMenu;
 
 // ─── INIT ────────────────────────────────────────────────────────
 loadData();
