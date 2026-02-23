@@ -311,14 +311,23 @@ body{font-family:'Barlow',sans-serif;background:var(--cream);color:var(--text-da
               <div class="form-group"><label>Batting Avg</label><input type="text" id="pBatAvg" placeholder="42.5"></div>
               <div class="form-group"><label>Strike Rate</label><input type="text" id="pSR" placeholder="118.4"></div>
               <div class="form-group"><label>High Score</label><input type="text" id="pHS" placeholder="87*"></div>
-              <div class="form-group"><label>50s / 100s</label><input type="text" id="p50100" placeholder="4/1"></div>
+              <div class="form-group"><label>Half Centuries (50s)</label><input type="number" id="pFifties" placeholder="4" min="0"></div>
+              <div class="form-group"><label>Centuries (100s)</label><input type="number" id="pHundreds" placeholder="1" min="0"></div>
               <div class="form-group"><label>Wickets</label><input type="number" id="pWickets" placeholder="24"></div>
+              <div class="form-group"><label>Hat-Tricks</label><input type="number" id="pHatTricks" placeholder="0" min="0"></div>
               <div class="form-group"><label>Bowling Avg</label><input type="text" id="pBowlAvg" placeholder="21.3"></div>
               <div class="form-group"><label>Economy</label><input type="text" id="pEcon" placeholder="6.2"></div>
               <div class="form-group"><label>Matches Played</label><input type="number" id="pMatches" placeholder="18"></div>
             </div>
             <div style="margin-bottom:1rem;">
               <div class="form-group" style="margin-bottom:0.5rem;"><label>Player Photo</label></div>
+              <div id="playerCurrentPhoto" style="display:none;margin-bottom:0.5rem;padding:0.6rem 0.85rem;background:var(--cream);border:1.5px solid var(--cream-dark);display:flex;align-items:center;justify-content:space-between;gap:1rem;">
+                <div style="display:flex;align-items:center;gap:0.75rem;">
+                  <img id="playerCurrentThumb" src="" alt="" style="width:40px;height:40px;object-fit:cover;border:1px solid var(--cream-dark);">
+                  <span style="font-family:'Barlow Condensed',sans-serif;font-size:0.75rem;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);">Current photo</span>
+                </div>
+                <button type="button" class="btn-sm btn-sm-del" onclick="removePlayerPhoto()">✕ Remove</button>
+              </div>
               <div class="avatar-tabs">
                 <button class="avatar-tab active" data-target="avatarUpload" onclick="switchTab(this,'player')">📁 Upload</button>
                 <button class="avatar-tab" data-target="avatarUrl" onclick="switchTab(this,'player')">🔗 URL</button>
@@ -330,6 +339,7 @@ body{font-family:'Barlow',sans-serif;background:var(--cream);color:var(--text-da
                 <input type="text" id="pPhotoUrl" placeholder="https://…" style="width:100%;background:var(--cream);border:1.5px solid var(--cream-dark);padding:0.55rem 0.85rem;font-family:'Barlow',sans-serif;font-size:0.88rem;outline:none;" oninput="previewUrl(this.value,'playerUrlPreview')">
                 <img class="photo-preview" id="playerUrlPreview" src="" alt="" style="margin-top:0.5rem;">
               </div>
+              <input type="hidden" id="playerPhotoRemoved" value="false">
             </div>
             <div class="btn-row">
               <button class="btn btn-save" onclick="savePlayer()">💾 Save Player</button>
@@ -429,6 +439,13 @@ body{font-family:'Barlow',sans-serif;background:var(--cream);color:var(--text-da
             </div>
             <div style="margin-bottom:1rem;">
               <div class="form-group" style="margin-bottom:0.5rem;"><label>Sponsor Logo</label></div>
+              <div id="sponsorCurrentLogo" style="display:none;margin-bottom:0.5rem;padding:0.6rem 0.85rem;background:var(--cream);border:1.5px solid var(--cream-dark);display:flex;align-items:center;justify-content:space-between;gap:1rem;">
+                <div style="display:flex;align-items:center;gap:0.75rem;">
+                  <img id="sponsorCurrentThumb" src="" alt="" style="width:40px;height:40px;object-fit:contain;background:white;border:1px solid var(--cream-dark);">
+                  <span style="font-family:'Barlow Condensed',sans-serif;font-size:0.75rem;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);">Current logo</span>
+                </div>
+                <button type="button" class="btn-sm btn-sm-del" onclick="removeSponsorLogo()">✕ Remove</button>
+              </div>
               <div class="avatar-tabs">
                 <button class="avatar-tab active" data-target="sponsorAvatarUpload" onclick="switchTab(this,'sponsor')">📁 Upload</button>
                 <button class="avatar-tab" data-target="sponsorAvatarUrl" onclick="switchTab(this,'sponsor')">🔗 URL</button>
@@ -440,6 +457,7 @@ body{font-family:'Barlow',sans-serif;background:var(--cream);color:var(--text-da
                 <input type="text" id="sLogoUrl" placeholder="https://example.com/logo.png" style="width:100%;background:var(--cream);border:1.5px solid var(--cream-dark);padding:0.55rem 0.85rem;font-family:'Barlow',sans-serif;font-size:0.88rem;outline:none;" oninput="previewUrl(this.value,'sponsorUrlPreview')">
                 <img class="photo-preview" id="sponsorUrlPreview" src="" alt="" style="margin-top:0.5rem;">
               </div>
+              <input type="hidden" id="sponsorLogoRemoved" value="false">
             </div>
             <div class="btn-row"><button class="btn btn-save" onclick="saveSponsor()">💾 Save Sponsor</button><button class="btn btn-clear" onclick="clearSponsorForm()">Clear</button></div>
           </div>
@@ -515,7 +533,7 @@ let galleryUploadFiles=[];
 let playerAvatarMode='upload',sponsorLogoMode='upload';
 
 // ── MAP ──
-const mapPlayer=r=>({id:r.id,name:r.name,number:r.number,role:r.role,nat:r.nat,runs:r.runs,batAvg:r.bat_avg,sr:r.sr,hs:r.hs,half50100:r.half50100,wickets:r.wickets,bowlAvg:r.bowl_avg,econ:r.econ,matches:r.matches,photo:r.photo});
+const mapPlayer=r=>({id:r.id,name:r.name,number:r.number,role:r.role,nat:r.nat,runs:r.runs,batAvg:r.bat_avg,sr:r.sr,hs:r.hs,fifties:r.fifties,hundreds:r.hundreds,wickets:r.wickets,hatTricks:r.hat_tricks,bowlAvg:r.bowl_avg,econ:r.econ,matches:r.matches,photo:r.photo});
 const mapMatch=r=>({id:r.id,opponent:r.opponent,date:r.date,venue:r.venue,result:r.result,ourScore:r.our_score,theirScore:r.their_score,season:r.season,tournament:r.tournament,players:r.players});
 const mapGallery=r=>({id:r.id,url:r.url,caption:r.caption,album:r.album,players:r.players});
 const mapSponsor=r=>({id:r.id,name:r.name,tier:r.tier,url:r.url,icon:r.icon,logo:r.logo});
@@ -773,7 +791,10 @@ async function savePlayer(){
   if(!CAN_EDIT.includes(currentRole))return toast('No permission','error');
   const editId=parseInt(document.getElementById('editPlayerId').value)||0;
   let photoUrl=null;
-  if(playerAvatarMode==='upload'){
+  const removed=document.getElementById('playerPhotoRemoved').value==='true';
+  if(removed){
+    photoUrl=null; // explicitly cleared
+  } else if(playerAvatarMode==='upload'){
     const file=document.getElementById('playerPhotoFile').files[0];
     if(file){try{loading(true);photoUrl=await uploadPhoto(file,'players');}catch(e){toast('Upload failed: '+e.message,'error');loading(false);return;}loading(false);}
     else if(editId)photoUrl=allPlayers.find(p=>p.id===editId)?.photo||null;
@@ -781,7 +802,7 @@ async function savePlayer(){
     photoUrl=document.getElementById('pPhotoUrl').value.trim()||null;
     if(editId&&!photoUrl)photoUrl=allPlayers.find(p=>p.id===editId)?.photo||null;
   }
-  const row={name:document.getElementById('pName').value.trim(),number:parseInt(document.getElementById('pNumber').value)||null,role:document.getElementById('pRole').value,nat:document.getElementById('pNat').value,runs:parseInt(document.getElementById('pRuns').value)||0,bat_avg:document.getElementById('pBatAvg').value||null,sr:document.getElementById('pSR').value||null,hs:document.getElementById('pHS').value||null,half50100:document.getElementById('p50100').value||null,wickets:parseInt(document.getElementById('pWickets').value)||0,bowl_avg:document.getElementById('pBowlAvg').value||null,econ:document.getElementById('pEcon').value||null,matches:parseInt(document.getElementById('pMatches').value)||0,photo:photoUrl};
+  const row={name:document.getElementById('pName').value.trim(),number:parseInt(document.getElementById('pNumber').value)||null,role:document.getElementById('pRole').value,nat:document.getElementById('pNat').value,runs:parseInt(document.getElementById('pRuns').value)||0,bat_avg:document.getElementById('pBatAvg').value||null,sr:document.getElementById('pSR').value||null,hs:document.getElementById('pHS').value||null,fifties:parseInt(document.getElementById('pFifties').value)||0,hundreds:parseInt(document.getElementById('pHundreds').value)||0,wickets:parseInt(document.getElementById('pWickets').value)||0,hat_tricks:parseInt(document.getElementById('pHatTricks').value)||0,bowl_avg:document.getElementById('pBowlAvg').value||null,econ:document.getElementById('pEcon').value||null,matches:parseInt(document.getElementById('pMatches').value)||0,photo:photoUrl};
   if(!row.name)return toast('Enter player name','error');
   loading(true);
   const res=editId?await sb.from('players').update(row).eq('id',editId).select():await sb.from('players').insert(row).select();
@@ -796,13 +817,21 @@ async function savePlayer(){
 function editPlayer(id){
   const p=allPlayers.find(p=>p.id===id);if(!p)return;
   document.getElementById('editPlayerId').value=p.id;
-  ['pName','pNumber','pRuns','pBatAvg','pSR','pHS','p50100','pWickets','pBowlAvg','pEcon','pMatches'].forEach(fid=>{
-    const key={pName:'name',pNumber:'number',pRuns:'runs',pBatAvg:'batAvg',pSR:'sr',pHS:'hs',p50100:'half50100',pWickets:'wickets',pBowlAvg:'bowlAvg',pEcon:'econ',pMatches:'matches'}[fid];
+  document.getElementById('playerPhotoRemoved').value='false';
+  ['pName','pNumber','pRuns','pBatAvg','pSR','pHS','pFifties','pHundreds','pWickets','pHatTricks','pBowlAvg','pEcon','pMatches'].forEach(fid=>{
+    const key={pName:'name',pNumber:'number',pRuns:'runs',pBatAvg:'batAvg',pSR:'sr',pHS:'hs',pFifties:'fifties',pHundreds:'hundreds',pWickets:'wickets',pHatTricks:'hatTricks',pBowlAvg:'bowlAvg',pEcon:'econ',pMatches:'matches'}[fid];
     document.getElementById(fid).value=p[key]||'';
   });
   document.getElementById('pRole').value=p.role;
   document.getElementById('pNat').value=p.nat||'Canadian';
-  if(p.photo){document.getElementById('playerPhotoPreview').src=p.photo;document.getElementById('playerPhotoPreview').classList.add('show');}
+  // Show current photo with remove button
+  const currentDiv=document.getElementById('playerCurrentPhoto');
+  if(p.photo){
+    document.getElementById('playerCurrentThumb').src=p.photo;
+    currentDiv.style.display='flex';
+  }else{
+    currentDiv.style.display='none';
+  }
   document.getElementById('playerFormTitle').textContent='Edit Player: '+p.name;
   showSection('players',document.querySelector('.sidebar-link[onclick*="players"]'));
   window.scrollTo({top:0,behavior:'smooth'});
@@ -820,12 +849,14 @@ async function deletePlayer(id){
 
 function clearPlayerForm(){
   document.getElementById('editPlayerId').value='';
+  document.getElementById('playerPhotoRemoved').value='false';
   document.getElementById('playerFormTitle').textContent='Add New Player';
-  ['pName','pNumber','pRuns','pBatAvg','pSR','pHS','p50100','pWickets','pBowlAvg','pEcon','pMatches','pPhotoUrl'].forEach(id=>document.getElementById(id).value='');
+  ['pName','pNumber','pRuns','pBatAvg','pSR','pHS','pFifties','pHundreds','pWickets','pHatTricks','pBowlAvg','pEcon','pMatches','pPhotoUrl'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('pRole').value='Batsman';document.getElementById('pNat').value='Canadian';
   document.getElementById('playerPhotoFile').value='';
   document.getElementById('playerPhotoPreview').classList.remove('show');
   document.getElementById('playerUrlPreview').classList.remove('show');
+  document.getElementById('playerCurrentPhoto').style.display='none';
 }
 
 // ── MATCHES ──
@@ -984,7 +1015,10 @@ async function saveSponsor(){
   if(currentRole!=='Admin')return toast('Admin only','error');
   const editId=parseInt(document.getElementById('editSponsorId').value)||0;
   let logoUrl=null;
-  if(sponsorLogoMode==='upload'){
+  const removed=document.getElementById('sponsorLogoRemoved').value==='true';
+  if(removed){
+    logoUrl=null;
+  } else if(sponsorLogoMode==='upload'){
     const file=document.getElementById('sponsorLogoFile').files[0];
     if(file){try{loading(true);logoUrl=await uploadPhoto(file,'sponsors');}catch(e){toast('Upload failed: '+e.message,'error');loading(false);return;}loading(false);}
     else if(editId)logoUrl=allSponsors.find(s=>s.id===editId)?.logo||null;
@@ -1006,9 +1040,16 @@ async function saveSponsor(){
 function editSponsor(id){
   const s=allSponsors.find(s=>s.id===id);if(!s)return;
   document.getElementById('editSponsorId').value=s.id;
+  document.getElementById('sponsorLogoRemoved').value='false';
   document.getElementById('sName').value=s.name;document.getElementById('sTier').value=s.tier;
   document.getElementById('sUrl').value=s.url||'';document.getElementById('sIcon').value=s.icon||'';
-  if(s.logo){document.getElementById('sponsorLogoPreview').src=s.logo;document.getElementById('sponsorLogoPreview').classList.add('show');}
+  const currentDiv=document.getElementById('sponsorCurrentLogo');
+  if(s.logo){
+    document.getElementById('sponsorCurrentThumb').src=s.logo;
+    currentDiv.style.display='flex';
+  }else{
+    currentDiv.style.display='none';
+  }
   document.getElementById('sponsorFormTitle').textContent='Edit Sponsor: '+s.name;
   showSection('sponsors',document.querySelector('.sidebar-link[onclick*="sponsors"]'));
   window.scrollTo({top:0,behavior:'smooth'});
@@ -1026,11 +1067,13 @@ async function deleteSponsor(id){
 
 function clearSponsorForm(){
   document.getElementById('editSponsorId').value='';document.getElementById('sponsorFormTitle').textContent='Add New Sponsor';
+  document.getElementById('sponsorLogoRemoved').value='false';
   ['sName','sUrl','sIcon','sLogoUrl'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('sTier').value='Gold';
   document.getElementById('sponsorLogoFile').value='';
   document.getElementById('sponsorLogoPreview').classList.remove('show');
   document.getElementById('sponsorUrlPreview').classList.remove('show');
+  document.getElementById('sponsorCurrentLogo').style.display='none';
 }
 
 // ── USERS ──
@@ -1172,6 +1215,27 @@ async function checkSession(){
   if(session?.user)await enterDashboard(session.user);
 }
 
+// ── REMOVE PHOTOS ──
+function removePlayerPhoto(){
+  document.getElementById('playerPhotoRemoved').value='true';
+  document.getElementById('playerCurrentPhoto').style.display='none';
+  document.getElementById('playerPhotoFile').value='';
+  document.getElementById('playerPhotoPreview').classList.remove('show');
+  document.getElementById('pPhotoUrl').value='';
+  document.getElementById('playerUrlPreview').classList.remove('show');
+  toast('Photo will be removed on save','info');
+}
+
+function removeSponsorLogo(){
+  document.getElementById('sponsorLogoRemoved').value='true';
+  document.getElementById('sponsorCurrentLogo').style.display='none';
+  document.getElementById('sponsorLogoFile').value='';
+  document.getElementById('sponsorLogoPreview').classList.remove('show');
+  document.getElementById('sLogoUrl').value='';
+  document.getElementById('sponsorUrlPreview').classList.remove('show');
+  toast('Logo will be removed on save','info');
+}
+
 // ── EXPOSE ──
 window.doLogin=doLogin;window.logout=logout;window.showForgot=showForgot;window.showLogin=showLogin;window.doForgotPassword=doForgotPassword;
 window.resolveConfirm=resolveConfirm;window.openSidebar=openSidebar;window.closeSidebar=closeSidebar;
@@ -1185,6 +1249,7 @@ window.saveGalleryUrl=saveGalleryUrl;window.deleteGalleryItem=deleteGalleryItem;
 window.showAlbumSuggestions=showAlbumSuggestions;window.showPlayerSuggestions=showPlayerSuggestions;window.showGalleryPlayerSuggestions=showGalleryPlayerSuggestions;
 window.handleTagKey=handleTagKey;window.removeTag=removeTag;window.addTag=addTag;
 window.saveSponsor=saveSponsor;window.editSponsor=editSponsor;window.deleteSponsor=deleteSponsor;window.clearSponsorForm=clearSponsorForm;
+window.removePlayerPhoto=removePlayerPhoto;window.removeSponsorLogo=removeSponsorLogo;
 window.createUser=createUser;window.deleteUser=deleteUser;
 window.approveDeleteRequest=approveDeleteRequest;window.rejectDeleteRequest=rejectDeleteRequest;window.sendDeleteRequest=sendDeleteRequest;
 window.searchTable=searchTable;window.changePassword=changePassword;
