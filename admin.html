@@ -378,6 +378,31 @@ body{font-family:'Barlow',sans-serif;background:var(--cream);color:var(--text-da
             </div>
             <div class="btn-row"><button class="btn btn-save" onclick="saveMatch()">💾 Save Match</button><button class="btn btn-clear" onclick="clearMatchForm()">Clear</button></div>
           </div>
+
+          <!-- EXCEL IMPORT -->
+          <div class="form-card" style="border-top:3px solid var(--gold);">
+            <h3>📥 Import Schedule from Excel</h3>
+            <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:1rem;line-height:1.6;">Upload an <strong>.xlsx</strong> or <strong>.csv</strong> file with columns in this order: <strong>Date · Opponent · Venue · Time · Tournament · Season</strong>. First row is treated as a header and skipped. All imported matches are set to <em>Upcoming</em> — update results manually afterward.</p>
+            <div class="photo-upload-area" id="excelUploadArea" style="padding:1.5rem;">
+              <input type="file" id="excelFile" accept=".xlsx,.xls,.csv" onchange="previewExcel(this)">
+              <div class="upload-icon">📊</div>
+              <div class="upload-text">Click or drag Excel / CSV file</div>
+              <div class="upload-sub">.xlsx · .xls · .csv supported</div>
+            </div>
+            <div id="excelPreviewWrap" style="display:none;margin-top:1rem;">
+              <div style="font-family:'Barlow Condensed',sans-serif;font-size:0.7rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.5rem;">Preview (<span id="excelRowCount">0</span> matches)</div>
+              <div style="overflow-x:auto;max-height:280px;overflow-y:auto;">
+                <table class="data-table" id="excelPreviewTable">
+                  <thead><tr><th>Date</th><th>Opponent</th><th>Venue</th><th>Time</th><th>Tournament</th><th>Season</th></tr></thead>
+                  <tbody id="excelPreviewBody"></tbody>
+                </table>
+              </div>
+              <div class="btn-row" style="margin-top:1rem;">
+                <button class="btn btn-save" onclick="importExcelMatches()">☁️ Import All</button>
+                <button class="btn btn-clear" onclick="clearExcelImport()">Clear</button>
+              </div>
+            </div>
+          </div>
         </div>
         <div class="table-card">
           <div class="table-header"><h3>All Matches (<span id="matchCount">0</span>)</h3><input type="text" class="table-search" placeholder="Search…" oninput="searchTable('matchesBody',this.value,1)"></div>
@@ -466,6 +491,35 @@ body{font-family:'Barlow',sans-serif;background:var(--cream);color:var(--text-da
           <div class="table-header"><h3>All Sponsors (<span id="sponsorCount">0</span>)</h3></div>
           <div style="overflow-x:auto;"><table class="data-table"><thead><tr><th>Logo</th><th>Name</th><th>Tier</th><th>Website</th><th>Actions</th></tr></thead><tbody id="sponsorsBody"></tbody></table></div>
         </div>
+
+        <!-- DEALS -->
+        <div id="dealsFormWrap">
+          <div class="form-card" style="border-top:3px solid var(--gold);">
+            <h3 id="dealFormTitle">➕ Add Sponsor Deal</h3>
+            <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:1rem;line-height:1.6;">Deals appear in a dedicated section on the homepage. Only active (non-expired) deals are shown publicly.</p>
+            <input type="hidden" id="editDealId">
+            <div class="form-grid">
+              <div class="form-group"><label>Sponsor *</label>
+                <select id="dSponsor"><option value="">— Select sponsor —</option></select>
+              </div>
+              <div class="form-group"><label>Deal Title *</label><input type="text" id="dTitle" placeholder="e.g. 10% off all pints!"></div>
+              <div class="form-group full"><label>Description</label><input type="text" id="dDesc" placeholder="e.g. Show your Lions CC membership card at the bar"></div>
+              <div class="form-group"><label>Discount / Code</label><input type="text" id="dCode" placeholder="e.g. LIONS10 or 15% off"></div>
+              <div class="form-group"><label>Expiry Date</label><input type="date" id="dExpiry"></div>
+            </div>
+            <div class="btn-row">
+              <button class="btn btn-save" onclick="saveDeal()">💾 Save Deal</button>
+              <button class="btn btn-clear" onclick="clearDealForm()">Clear</button>
+            </div>
+          </div>
+        </div>
+        <div class="table-card">
+          <div class="table-header"><h3>All Deals (<span id="dealCount">0</span>)</h3></div>
+          <div style="overflow-x:auto;"><table class="data-table">
+            <thead><tr><th>Sponsor</th><th>Title</th><th>Code</th><th>Expires</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="dealsBody"></tbody>
+          </table></div>
+        </div>
       </div>
 
       <!-- USERS (Admin only) -->
@@ -514,6 +568,7 @@ body{font-family:'Barlow',sans-serif;background:var(--cream);color:var(--text-da
     </div>
   </div>
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script type="module">
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 const SUPABASE_URL='https://mtgknrfmtvhkqqdtbxcf.supabase.co';
@@ -527,16 +582,18 @@ const CAN_EDIT=['Admin','Captain','Vice-Captain'];
 const CAN_DELETE=['Admin'];
 const CAN_REQUEST=['Captain','Vice-Captain'];
 
-let allPlayers=[],allMatches=[],allGallery=[],allSponsors=[],allUsers=[];
+let allPlayers=[],allMatches=[],allGallery=[],allSponsors=[],allUsers=[],allDeals=[];
 let currentUser=null,currentRole=null;
 let galleryUploadFiles=[];
 let playerAvatarMode='upload',sponsorLogoMode='upload';
+let excelParsedRows=[];
 
 // ── MAP ──
 const mapPlayer=r=>({id:r.id,name:r.name,number:r.number,role:r.role,nat:r.nat,runs:r.runs,batAvg:r.bat_avg,sr:r.sr,hs:r.hs,fifties:r.fifties,hundreds:r.hundreds,wickets:r.wickets,hatTricks:r.hat_tricks,bowlAvg:r.bowl_avg,econ:r.econ,matches:r.matches,photo:r.photo});
 const mapMatch=r=>({id:r.id,opponent:r.opponent,date:r.date,venue:r.venue,result:r.result,ourScore:r.our_score,theirScore:r.their_score,season:r.season,tournament:r.tournament,players:r.players});
 const mapGallery=r=>({id:r.id,url:r.url,caption:r.caption,album:r.album,players:r.players});
 const mapSponsor=r=>({id:r.id,name:r.name,tier:r.tier,url:r.url,icon:r.icon,logo:r.logo});
+const mapDeal=r=>({id:r.id,sponsorId:r.sponsor_id,sponsorName:r.sponsors?.name||'',title:r.title,description:r.description,code:r.code,expiry:r.expiry});
 
 // ── UTILS ──
 function loading(on){document.getElementById('loadingBar').classList.toggle('show',on);}
@@ -656,20 +713,22 @@ async function logout(){
 async function loadAll(){
   loading(true);
   try{
-    const [p,m,g,s]=await Promise.all([
+    const [p,m,g,s,d]=await Promise.all([
       sb.from('players').select('*').order('id'),
       sb.from('matches').select('*').order('date',{ascending:false}),
       sb.from('gallery').select('*').order('id'),
       sb.from('sponsors').select('*').order('id'),
+      sb.from('deals').select('*,sponsors(name)').order('expiry',{ascending:true}),
     ]);
     allPlayers=(p.data||[]).map(mapPlayer);
     allMatches=(m.data||[]).map(mapMatch);
     allGallery=(g.data||[]).map(mapGallery);
     allSponsors=(s.data||[]).map(mapSponsor);
+    allDeals=(d.data||[]).map(mapDeal);
     if(currentRole==='Admin'){const {data:u}=await sb.from('club_users').select('*').order('created_at');allUsers=u||[];}
   }catch(e){toast('DB error: '+e.message,'error');}
   loading(false);
-  renderDashboard();renderPlayersTable();renderMatchesTable();renderGalleryGrid();renderSponsorsTable();
+  renderDashboard();renderPlayersTable();renderMatchesTable();renderGalleryGrid();renderSponsorsTable();renderDealsTable();
   if(currentRole==='Admin'){renderUsersTable();renderDeleteRequests();}
   applyRoleUI();
 }
@@ -679,6 +738,7 @@ function applyRoleUI(){
   const canEdit=CAN_EDIT.includes(currentRole);
   ['playerFormWrap','matchFormWrap','galleryFormWrap'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display=canEdit?'block':'none';});
   const sf=document.getElementById('sponsorFormWrap');if(sf)sf.style.display=isAdmin?'block':'none';
+  const df=document.getElementById('dealsFormWrap');if(df)df.style.display=isAdmin?'block':'none';
   const dr=document.getElementById('deleteRequestsSection');
   if(dr)dr.style.display=(isAdmin||CAN_REQUEST.includes(currentRole))?'block':'none';
 }
@@ -1215,6 +1275,168 @@ async function checkSession(){
   if(session?.user)await enterDashboard(session.user);
 }
 
+// ── DEALS ──
+function renderDealsTable(){
+  document.getElementById('dealCount').textContent=allDeals.length;
+  const today=new Date().toISOString().slice(0,10);
+  const isAdmin=currentRole==='Admin';
+  // Populate sponsor dropdown
+  const sel=document.getElementById('dSponsor');
+  const cur=sel.value;
+  sel.innerHTML='<option value="">— Select sponsor —</option>'+allSponsors.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
+  if(cur)sel.value=cur;
+
+  document.getElementById('dealsBody').innerHTML=allDeals.length?allDeals.map(d=>{
+    const expired=d.expiry&&d.expiry<today;
+    const statusBadge=expired?'<span class="badge badge-rejected">Expired</span>':'<span class="badge badge-approved">Active</span>';
+    const expiryStr=d.expiry?new Date(d.expiry+'T12:00:00').toLocaleDateString('en-CA',{day:'numeric',month:'short',year:'numeric'}):'No expiry';
+    return`<tr>
+      <td><strong>${d.sponsorName}</strong></td>
+      <td>${d.title}</td>
+      <td>${d.code?`<span class="badge badge-gold" style="font-size:0.78rem;letter-spacing:2px;">${d.code}</span>`:'—'}</td>
+      <td style="font-size:0.82rem;color:${expired?'var(--red)':'var(--text-mid)'};">${expiryStr}</td>
+      <td>${statusBadge}</td>
+      <td style="white-space:nowrap;">
+        ${isAdmin?`<button class="btn-sm btn-sm-edit" onclick="editDeal(${d.id})" style="margin-right:4px;">Edit</button>
+        <button class="btn-sm btn-sm-del" onclick="deleteDeal(${d.id})">Delete</button>`:''}
+      </td>
+    </tr>`;
+  }).join(''):'<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:1.5rem;">No deals yet. Add one above.</td></tr>';
+}
+
+async function saveDeal(){
+  if(currentRole!=='Admin')return toast('Admin only','error');
+  const editId=parseInt(document.getElementById('editDealId').value)||0;
+  const sponsorId=parseInt(document.getElementById('dSponsor').value)||null;
+  const title=document.getElementById('dTitle').value.trim();
+  if(!sponsorId)return toast('Select a sponsor','error');
+  if(!title)return toast('Enter a deal title','error');
+  const row={sponsor_id:sponsorId,title,description:document.getElementById('dDesc').value.trim()||null,code:document.getElementById('dCode').value.trim()||null,expiry:document.getElementById('dExpiry').value||null};
+  loading(true);
+  const res=editId?await sb.from('deals').update(row).eq('id',editId).select():await sb.from('deals').insert(row).select();
+  loading(false);
+  if(res.error)return toast('Error: '+res.error.message,'error');
+  const {data}=await sb.from('deals').select('*,sponsors(name)').order('expiry',{ascending:true});
+  allDeals=(data||[]).map(mapDeal);
+  clearDealForm();renderDealsTable();
+  toast(editId?'Deal updated ✓':'Deal added ✓');
+}
+
+function editDeal(id){
+  const d=allDeals.find(d=>d.id===id);if(!d)return;
+  document.getElementById('editDealId').value=d.id;
+  document.getElementById('dSponsor').value=d.sponsorId;
+  document.getElementById('dTitle').value=d.title;
+  document.getElementById('dDesc').value=d.description||'';
+  document.getElementById('dCode').value=d.code||'';
+  document.getElementById('dExpiry').value=d.expiry||'';
+  document.getElementById('dealFormTitle').textContent='Edit Deal: '+d.title;
+  window.scrollTo({top:document.getElementById('dealFormTitle').getBoundingClientRect().top+window.scrollY-80,behavior:'smooth'});
+}
+
+async function deleteDeal(id){
+  if(currentRole!=='Admin')return toast('Admin only','error');
+  const d=allDeals.find(d=>d.id===id);if(!d)return;
+  const ok=await confirmDialog(`Delete deal "${d.title}"?`,'Delete Deal','🗑️','Delete');
+  if(!ok)return;
+  loading(true);await sb.from('deals').delete().eq('id',id);loading(false);
+  const {data}=await sb.from('deals').select('*,sponsors(name)').order('expiry',{ascending:true});
+  allDeals=(data||[]).map(mapDeal);renderDealsTable();toast('Deal deleted');
+}
+
+function clearDealForm(){
+  document.getElementById('editDealId').value='';
+  document.getElementById('dealFormTitle').textContent='➕ Add Sponsor Deal';
+  ['dSponsor','dTitle','dDesc','dCode','dExpiry'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+}
+
+// ── EXCEL IMPORT ──
+function previewExcel(input){
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const data=new Uint8Array(e.target.result);
+      const wb=XLSX.read(data,{type:'uint8',cellDates:true});
+      const ws=wb.Sheets[wb.SheetNames[0]];
+      const rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});
+      if(rows.length<2){toast('File appears empty or has no data rows','error');return;}
+      // Skip header row (index 0)
+      excelParsedRows=rows.slice(1).filter(r=>r.some(c=>String(c).trim()!=='')).map(r=>{
+        // Columns: Date(0), Opponent(1), Venue(2), Time(3), Tournament(4), Season(5)
+        let dateVal=r[0];
+        let dateStr='';
+        if(dateVal instanceof Date){
+          dateStr=dateVal.toISOString().slice(0,10);
+        } else if(typeof dateVal==='number'){
+          // Excel serial date
+          const d=XLSX.SSF.parse_date_code(dateVal);
+          dateStr=`${d.y}-${String(d.m).padStart(2,'0')}-${String(d.d).padStart(2,'0')}`;
+        } else {
+          dateStr=String(dateVal).trim();
+          // Try to normalise common formats DD/MM/YYYY or MM/DD/YYYY
+          const parts=dateStr.split(/[\/\-\.]/);
+          if(parts.length===3){
+            // Assume DD/MM/YYYY if first part <= 31 and > 12
+            if(parseInt(parts[0])>12) dateStr=`${parts[2]}-${parts[1].padStart(2,'0')}-${parts[0].padStart(2,'0')}`;
+            else if(parts[2].length===4) dateStr=`${parts[2]}-${parts[0].padStart(2,'0')}-${parts[1].padStart(2,'0')}`;
+          }
+        }
+        return{
+          date:dateStr||null,
+          opponent:String(r[1]||'').trim(),
+          venue:String(r[2]||'').trim()||null,
+          time:String(r[3]||'').trim()||null,
+          tournament:String(r[4]||'').trim()||null,
+          season:String(r[5]||'').trim()||null,
+        };
+      }).filter(r=>r.opponent);
+
+      document.getElementById('excelRowCount').textContent=excelParsedRows.length;
+      document.getElementById('excelPreviewBody').innerHTML=excelParsedRows.map(r=>`
+        <tr>
+          <td>${r.date||'—'}</td><td>${r.opponent}</td><td>${r.venue||'—'}</td>
+          <td>${r.time||'—'}</td><td>${r.tournament||'—'}</td><td>${r.season||'—'}</td>
+        </tr>`).join('');
+      document.getElementById('excelPreviewWrap').style.display='block';
+      toast(`${excelParsedRows.length} matches ready to import`,'info');
+    }catch(err){
+      toast('Could not parse file: '+err.message,'error');
+      console.error(err);
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+async function importExcelMatches(){
+  if(!excelParsedRows.length)return toast('No rows to import','error');
+  loading(true);
+  const rows=excelParsedRows.map(r=>({
+    opponent:r.opponent,
+    date:r.date||null,
+    venue:r.venue||null,
+    result:'Upcoming',
+    our_score:null,their_score:null,
+    season:r.season||null,
+    tournament:r.tournament||null,
+    players:null,
+  }));
+  const {error}=await sb.from('matches').insert(rows);
+  loading(false);
+  if(error)return toast('Import error: '+error.message,'error');
+  const {data}=await sb.from('matches').select('*').order('date',{ascending:false});
+  allMatches=(data||[]).map(mapMatch);
+  clearExcelImport();renderMatchesTable();renderDashboard();
+  toast(`${rows.length} match${rows.length!==1?'es':''} imported ✓`);
+}
+
+function clearExcelImport(){
+  excelParsedRows=[];
+  document.getElementById('excelFile').value='';
+  document.getElementById('excelPreviewBody').innerHTML='';
+  document.getElementById('excelPreviewWrap').style.display='none';
+}
+
 // ── REMOVE PHOTOS ──
 function removePlayerPhoto(){
   document.getElementById('playerPhotoRemoved').value='true';
@@ -1249,6 +1471,8 @@ window.saveGalleryUrl=saveGalleryUrl;window.deleteGalleryItem=deleteGalleryItem;
 window.showAlbumSuggestions=showAlbumSuggestions;window.showPlayerSuggestions=showPlayerSuggestions;window.showGalleryPlayerSuggestions=showGalleryPlayerSuggestions;
 window.handleTagKey=handleTagKey;window.removeTag=removeTag;window.addTag=addTag;
 window.saveSponsor=saveSponsor;window.editSponsor=editSponsor;window.deleteSponsor=deleteSponsor;window.clearSponsorForm=clearSponsorForm;
+window.saveDeal=saveDeal;window.editDeal=editDeal;window.deleteDeal=deleteDeal;window.clearDealForm=clearDealForm;
+window.previewExcel=previewExcel;window.importExcelMatches=importExcelMatches;window.clearExcelImport=clearExcelImport;
 window.removePlayerPhoto=removePlayerPhoto;window.removeSponsorLogo=removeSponsorLogo;
 window.createUser=createUser;window.deleteUser=deleteUser;
 window.approveDeleteRequest=approveDeleteRequest;window.rejectDeleteRequest=rejectDeleteRequest;window.sendDeleteRequest=sendDeleteRequest;
