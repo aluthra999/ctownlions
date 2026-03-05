@@ -194,6 +194,12 @@ body{font-family:'Barlow',sans-serif;background:var(--cream);color:var(--text-da
 .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:199;}
 .sidebar-overlay.show{display:block;}
 
+/* DRAG REORDER */
+.drag-handle{cursor:grab;color:var(--text-muted);font-size:1rem;padding:0 0.4rem;user-select:none;}
+.drag-handle:active{cursor:grabbing;}
+tr.dragging{opacity:0.4;background:var(--cream-mid);}
+tr.drag-over{border-top:2px solid var(--gold);}
+
 @media(max-width:960px){
   :root{--sidebar:0px;}
   .sidebar{transform:translateX(-240px);width:240px;}
@@ -360,14 +366,40 @@ body{font-family:'Barlow',sans-serif;background:var(--cream);color:var(--text-da
             <h3 id="matchFormTitle">Add New Match</h3>
             <input type="hidden" id="editMatchId">
             <div class="form-grid">
+              <div class="form-group"><label>Our Team Name</label><input type="text" id="mOurTeam" placeholder="C-Town Lions" value="C-Town Lions"></div>
               <div class="form-group"><label>Opponent *</label><input type="text" id="mOpponent" placeholder="Team name"></div>
               <div class="form-group"><label>Date</label><input type="date" id="mDate"></div>
+              <div class="form-group"><label>Time</label><input type="time" id="mTime"></div>
               <div class="form-group"><label>Venue</label><input type="text" id="mVenue" placeholder="Ground name"></div>
-              <div class="form-group"><label>Result</label><select id="mResult"><option>Win</option><option>Loss</option><option>Draw</option><option>Upcoming</option></select></div>
+              <div class="form-group"><label>Result</label>
+                <select id="mResult" onchange="toggleNoResultReason()">
+                  <option value="Win">Win</option>
+                  <option value="Loss">Loss</option>
+                  <option value="Draw">Draw</option>
+                  <option value="Upcoming">Upcoming</option>
+                  <option value="No Result">No Result</option>
+                </select>
+              </div>
               <div class="form-group"><label>Our Score</label><input type="text" id="mOurScore" placeholder="187/6"></div>
               <div class="form-group"><label>Their Score</label><input type="text" id="mTheirScore" placeholder="174/8"></div>
-              <div class="form-group"><label>Season</label><input type="text" id="mSeason" placeholder="2025"></div>
+              <div class="form-group"><label>Season</label><input type="text" id="mSeason" placeholder="2026"></div>
               <div class="form-group"><label>Tournament</label><input type="text" id="mTournament" placeholder="PEI Summer League"></div>
+              <div class="form-group full" id="noResultWrap" style="display:none;">
+                <label>No Result Reason</label>
+                <select id="mNoResultPreset" onchange="handleNoResultPreset(this.value)" style="width:100%;background:var(--cream);border:1.5px solid var(--cream-dark);padding:0.55rem 0.85rem;font-family:'Barlow',sans-serif;font-size:0.88rem;outline:none;margin-bottom:0.5rem;">
+                  <option value="Match cancelled due to rain">Match cancelled due to rain</option>
+                  <option value="Match cancelled due to bad weather">Match cancelled due to bad weather</option>
+                  <option value="other">Other (type below)</option>
+                </select>
+                <input type="text" id="mNoResultReason" placeholder="Custom reason…" style="width:100%;background:var(--cream);border:1.5px solid var(--cream-dark);padding:0.55rem 0.85rem;font-family:'Barlow',sans-serif;font-size:0.88rem;outline:none;" value="Match cancelled due to rain">
+              </div>
+              <div class="form-group full"><label>Man of the Match</label>
+                <div class="tag-input-wrap" id="motmTagWrap" onclick="document.getElementById('motmTagInput').focus()">
+                  <input type="text" class="tag-inline-input" id="motmTagInput" placeholder="Type player name…" autocomplete="off" oninput="showMotmSuggestions(this.value)" onkeydown="handleTagKey(event,'matchMotm','motmTagWrap','motmTagInput')">
+                </div>
+                <div class="autocomplete-wrap"><div class="autocomplete-dropdown" id="motmDropdown"></div></div>
+                <input type="hidden" id="matchMotm" value="">
+              </div>
               <div class="form-group full"><label>Players in This Match</label>
                 <div class="tag-input-wrap" id="matchPlayerTagWrap" onclick="document.getElementById('matchPlayerTagInput').focus()">
                   <input type="text" class="tag-inline-input" id="matchPlayerTagInput" placeholder="Type player name…" autocomplete="off" oninput="showPlayerSuggestions(this.value)" onkeydown="handleTagKey(event,'matchPlayerTags','matchPlayerTagWrap','matchPlayerTagInput')">
@@ -382,18 +414,19 @@ body{font-family:'Barlow',sans-serif;background:var(--cream);color:var(--text-da
           <!-- EXCEL IMPORT -->
           <div class="form-card" style="border-top:3px solid var(--gold);">
             <h3>📥 Import Schedule from Excel</h3>
-            <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:1rem;line-height:1.6;">Upload an <strong>.xlsx</strong> or <strong>.csv</strong> file with columns in this order: <strong>Date · Opponent · Venue · Time · Tournament · Season</strong>. First row is treated as a header and skipped. All imported matches are set to <em>Upcoming</em> — update results manually afterward.</p>
-            <div class="photo-upload-area" id="excelUploadArea" style="padding:1.5rem;">
-              <input type="file" id="excelFile" accept=".xlsx,.xls,.csv" onchange="previewExcel(this)">
-              <div class="upload-icon">📊</div>
-              <div class="upload-text">Click or drag Excel / CSV file</div>
-              <div class="upload-sub">.xlsx · .xls · .csv supported</div>
+            <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:1rem;line-height:1.6;">Upload an <strong>.xlsx</strong> or <strong>.csv</strong> file. Columns must be in this exact order: <strong>Date · Opponent · Venue · Time · Tournament · Season · Players</strong> (Players = comma-separated names, optional). First row is the header — it is skipped. Matches import as <em>Upcoming</em>.</p>
+            <div style="margin-bottom:1rem;">
+              <label style="display:inline-block;background:var(--green);color:var(--white);font-family:'Barlow Condensed',sans-serif;font-size:0.82rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:0.6rem 1.25rem;cursor:pointer;transition:background 0.2s;" onmouseover="this.style.background='var(--green-mid)'" onmouseout="this.style.background='var(--green)'">
+                📊 Choose File
+                <input type="file" id="excelFile" accept=".xlsx,.xls,.csv" style="display:none;" onchange="previewExcel(this)">
+              </label>
+              <span id="excelFileName" style="font-size:0.82rem;color:var(--text-muted);margin-left:0.75rem;">No file chosen</span>
             </div>
             <div id="excelPreviewWrap" style="display:none;margin-top:1rem;">
               <div style="font-family:'Barlow Condensed',sans-serif;font-size:0.7rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.5rem;">Preview (<span id="excelRowCount">0</span> matches)</div>
               <div style="overflow-x:auto;max-height:280px;overflow-y:auto;">
                 <table class="data-table" id="excelPreviewTable">
-                  <thead><tr><th>Date</th><th>Opponent</th><th>Venue</th><th>Time</th><th>Tournament</th><th>Season</th></tr></thead>
+                  <thead><tr><th>Date</th><th>Opponent</th><th>Venue</th><th>Time</th><th>Tournament</th><th>Season</th><th>Players</th></tr></thead>
                   <tbody id="excelPreviewBody"></tbody>
                 </table>
               </div>
@@ -406,7 +439,7 @@ body{font-family:'Barlow',sans-serif;background:var(--cream);color:var(--text-da
         </div>
         <div class="table-card">
           <div class="table-header"><h3>All Matches (<span id="matchCount">0</span>)</h3><input type="text" class="table-search" placeholder="Search…" oninput="searchTable('matchesBody',this.value,1)"></div>
-          <div style="overflow-x:auto;"><table class="data-table"><thead><tr><th>Date</th><th>Opponent</th><th>Result</th><th>Score</th><th>Season</th><th>Tournament</th><th>Actions</th></tr></thead><tbody id="matchesBody"></tbody></table></div>
+          <div style="overflow-x:auto;"><table class="data-table"><thead><tr><th>Date</th><th>Time</th><th>Our Team</th><th>Opponent</th><th>Result</th><th>Score</th><th>MOTM</th><th>Season</th><th>Tournament</th><th>Actions</th></tr></thead><tbody id="matchesBody"></tbody></table></div>
         </div>
       </div>
 
@@ -489,7 +522,7 @@ body{font-family:'Barlow',sans-serif;background:var(--cream);color:var(--text-da
         </div>
         <div class="table-card">
           <div class="table-header"><h3>All Sponsors (<span id="sponsorCount">0</span>)</h3></div>
-          <div style="overflow-x:auto;"><table class="data-table"><thead><tr><th>Logo</th><th>Name</th><th>Tier</th><th>Website</th><th>Actions</th></tr></thead><tbody id="sponsorsBody"></tbody></table></div>
+          <div style="overflow-x:auto;"><table class="data-table"><thead><tr><th style="width:30px;"></th><th>Logo</th><th>Name</th><th>Tier</th><th>Website</th><th>Actions</th></tr></thead><tbody id="sponsorsBody"></tbody></table></div>
         </div>
 
         <!-- DEALS -->
@@ -549,6 +582,30 @@ body{font-family:'Barlow',sans-serif;background:var(--cream);color:var(--text-da
         </div>
       </div>
 
+      <!-- PAST SQUADS (Admin only) -->
+      <div class="section-panel" id="section-squads">
+        <div id="squadFormWrap">
+          <div class="form-card">
+            <h3>📋 Save Current Squad as Past Squad</h3>
+            <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:1rem;line-height:1.6;">At the end of each season, snapshot the current roster into a historical record. This lets visitors browse past squads from the homepage.</p>
+            <div class="form-grid">
+              <div class="form-group"><label>Season Year *</label><input type="number" id="sqYear" placeholder="e.g. 2025" min="2000" max="2099"></div>
+              <div class="form-group full"><label>Squad Name (optional)</label><input type="text" id="sqLabel" placeholder="e.g. 2025 PEI League Squad"></div>
+            </div>
+            <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:1rem;">The following players will be saved. Deselect any you want to exclude:</p>
+            <div id="squadPlayerChecklist" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:0.4rem;margin-bottom:1rem;"></div>
+            <div class="btn-row"><button class="btn btn-save" onclick="saveSquadSnapshot()">📸 Save Squad Snapshot</button></div>
+          </div>
+        </div>
+        <div class="table-card">
+          <div class="table-header"><h3>Past Squad Snapshots (<span id="squadCount">0</span>)</h3></div>
+          <div style="overflow-x:auto;"><table class="data-table">
+            <thead><tr><th>Year</th><th>Label</th><th>Players</th><th>Saved</th><th>Actions</th></tr></thead>
+            <tbody id="squadsBody"></tbody>
+          </table></div>
+        </div>
+      </div>
+
       <!-- SETTINGS -->
       <div class="section-panel" id="section-settings">
         <div class="settings-grid">
@@ -582,7 +639,7 @@ const CAN_EDIT=['Admin','Captain','Vice-Captain'];
 const CAN_DELETE=['Admin'];
 const CAN_REQUEST=['Captain','Vice-Captain'];
 
-let allPlayers=[],allMatches=[],allGallery=[],allSponsors=[],allUsers=[],allDeals=[];
+let allPlayers=[],allMatches=[],allGallery=[],allSponsors=[],allUsers=[],allDeals=[],allSquads=[];
 let currentUser=null,currentRole=null;
 let galleryUploadFiles=[];
 let playerAvatarMode='upload',sponsorLogoMode='upload';
@@ -590,9 +647,9 @@ let excelParsedRows=[];
 
 // ── MAP ──
 const mapPlayer=r=>({id:r.id,name:r.name,number:r.number,role:r.role,nat:r.nat,runs:r.runs,batAvg:r.bat_avg,sr:r.sr,hs:r.hs,fifties:r.fifties,hundreds:r.hundreds,wickets:r.wickets,hatTricks:r.hat_tricks,bowlAvg:r.bowl_avg,econ:r.econ,matches:r.matches,photo:r.photo});
-const mapMatch=r=>({id:r.id,opponent:r.opponent,date:r.date,venue:r.venue,result:r.result,ourScore:r.our_score,theirScore:r.their_score,season:r.season,tournament:r.tournament,players:r.players});
+const mapMatch=r=>({id:r.id,opponent:r.opponent,date:r.date,venue:r.venue,result:r.result,ourTeam:r.our_team,ourScore:r.our_score,theirScore:r.their_score,season:r.season,tournament:r.tournament,players:r.players,noResultReason:r.no_result_reason,motm:r.motm});
 const mapGallery=r=>({id:r.id,url:r.url,caption:r.caption,album:r.album,players:r.players});
-const mapSponsor=r=>({id:r.id,name:r.name,tier:r.tier,url:r.url,icon:r.icon,logo:r.logo});
+const mapSponsor=r=>({id:r.id,name:r.name,tier:r.tier,url:r.url,icon:r.icon,logo:r.logo,sortOrder:r.sort_order||0});
 const mapDeal=r=>({id:r.id,sponsorId:r.sponsor_id,sponsorName:r.sponsors?.name||'',title:r.title,description:r.description,code:r.code,expiry:r.expiry});
 
 // ── UTILS ──
@@ -679,6 +736,7 @@ function buildSidebarNav(){
     ${lk('sponsors','🤝','Sponsors',isAdmin)}
     <div class="sidebar-section-label">Admin</div>
     ${lk('users','👥','Users',isAdmin)}
+    ${lk('squads','📋','Past Squads',isAdmin)}
     <button class="sidebar-link" onclick="showSection('settings',this)"><span class="li">⚙️</span> Settings</button>
   `;
 }
@@ -713,23 +771,25 @@ async function logout(){
 async function loadAll(){
   loading(true);
   try{
-    const [p,m,g,s,d]=await Promise.all([
+    const [p,m,g,s,d,sq]=await Promise.all([
       sb.from('players').select('*').order('id'),
       sb.from('matches').select('*').order('date',{ascending:false}),
       sb.from('gallery').select('*').order('id'),
-      sb.from('sponsors').select('*').order('id'),
+      sb.from('sponsors').select('*').order('sort_order',{ascending:true}),
       sb.from('deals').select('*,sponsors(name)').order('expiry',{ascending:true}),
+      sb.from('past_squads').select('*').order('year',{ascending:false}),
     ]);
     allPlayers=(p.data||[]).map(mapPlayer);
     allMatches=(m.data||[]).map(mapMatch);
     allGallery=(g.data||[]).map(mapGallery);
     allSponsors=(s.data||[]).map(mapSponsor);
     allDeals=(d.data||[]).map(mapDeal);
+    allSquads=(sq.data||[]);
     if(currentRole==='Admin'){const {data:u}=await sb.from('club_users').select('*').order('created_at');allUsers=u||[];}
   }catch(e){toast('DB error: '+e.message,'error');}
   loading(false);
   renderDashboard();renderPlayersTable();renderMatchesTable();renderGalleryGrid();renderSponsorsTable();renderDealsTable();
-  if(currentRole==='Admin'){renderUsersTable();renderDeleteRequests();}
+  if(currentRole==='Admin'){renderUsersTable();renderDeleteRequests();renderSquadsTable();}
   applyRoleUI();
 }
 
@@ -924,12 +984,20 @@ function renderMatchesTable(){
   document.getElementById('matchCount').textContent=allMatches.length;
   const isAdmin=currentRole==='Admin';const canEdit=CAN_EDIT.includes(currentRole);
   document.getElementById('matchesBody').innerHTML=allMatches.map(m=>{
-    const bc={Win:'win',Loss:'loss',Draw:'draw',Upcoming:'upcoming'}[m.result]||'draw';
+    const bc={Win:'win',Loss:'loss',Draw:'draw',Upcoming:'upcoming','No Result':'draw'}[m.result]||'draw';
     const d=m.date?new Date(m.date+'T12:00:00').toLocaleDateString('en-CA',{day:'numeric',month:'short',year:'numeric'}):'—';
+    const resultLabel=m.result==='No Result'&&m.noResultReason?`<span class="badge badge-draw" title="${m.noResultReason}">No Result</span>`:
+      `<span class="badge badge-${bc}">${m.result}</span>`;
+    const ourLabel=m.ourTeam||'C-Town Lions';
     return`<tr>
-      <td>${d}</td><td><strong>${m.opponent}</strong></td>
-      <td><span class="badge badge-${bc}">${m.result}</span></td>
-      <td>${m.ourScore||'—'} / ${m.theirScore||'—'}</td><td>${m.season||'—'}</td><td>${m.tournament||'—'}</td>
+      <td>${d}</td>
+      <td style="font-size:0.8rem;color:var(--text-muted);">${m.time||'—'}</td>
+      <td style="font-size:0.82rem;">${ourLabel}</td>
+      <td><strong>${m.opponent}</strong></td>
+      <td>${resultLabel}</td>
+      <td style="font-size:0.8rem;white-space:nowrap;">${ourLabel}: ${m.ourScore||'—'}<br>${m.opponent}: ${m.theirScore||'—'}</td>
+      <td style="font-size:0.8rem;">⭐ ${m.motm||'—'}</td>
+      <td>${m.season||'—'}</td><td>${m.tournament||'—'}</td>
       <td style="white-space:nowrap;">
         ${canEdit?`<button class="btn-sm btn-sm-edit" onclick="editMatch(${m.id})" style="margin-right:4px;">Edit</button>`:''}
         ${isAdmin?`<button class="btn-sm btn-sm-del" onclick="deleteMatch(${m.id})" style="margin-right:4px;">Delete</button>`:''}
@@ -942,7 +1010,26 @@ function renderMatchesTable(){
 async function saveMatch(){
   if(!CAN_EDIT.includes(currentRole))return toast('No permission','error');
   const editId=parseInt(document.getElementById('editMatchId').value)||0;
-  const row={opponent:document.getElementById('mOpponent').value.trim(),date:document.getElementById('mDate').value||null,venue:document.getElementById('mVenue').value||null,result:document.getElementById('mResult').value,our_score:document.getElementById('mOurScore').value||null,their_score:document.getElementById('mTheirScore').value||null,season:document.getElementById('mSeason').value||null,tournament:document.getElementById('mTournament').value||null,players:document.getElementById('matchPlayerTags').value||null};
+  const result=document.getElementById('mResult').value;
+  let noResultReason=null;
+  if(result==='No Result'){
+    noResultReason=document.getElementById('mNoResultReason').value.trim()||'Match cancelled';
+  }
+  const row={
+    our_team:document.getElementById('mOurTeam').value.trim()||'C-Town Lions',
+    opponent:document.getElementById('mOpponent').value.trim(),
+    date:document.getElementById('mDate').value||null,
+    time:document.getElementById('mTime').value||null,
+    venue:document.getElementById('mVenue').value||null,
+    result,
+    no_result_reason:noResultReason,
+    our_score:document.getElementById('mOurScore').value||null,
+    their_score:document.getElementById('mTheirScore').value||null,
+    season:document.getElementById('mSeason').value||null,
+    tournament:document.getElementById('mTournament').value||null,
+    motm:document.getElementById('matchMotm').value||null,
+    players:document.getElementById('matchPlayerTags').value||null
+  };
   if(!row.opponent)return toast('Enter opponent name','error');
   loading(true);
   const res=editId?await sb.from('matches').update(row).eq('id',editId).select():await sb.from('matches').insert(row).select();
@@ -956,11 +1043,30 @@ async function saveMatch(){
 function editMatch(id){
   const m=allMatches.find(m=>m.id===id);if(!m)return;
   document.getElementById('editMatchId').value=m.id;
-  document.getElementById('mOpponent').value=m.opponent;document.getElementById('mDate').value=m.date||'';
-  document.getElementById('mVenue').value=m.venue||'';document.getElementById('mResult').value=m.result;
-  document.getElementById('mOurScore').value=m.ourScore||'';document.getElementById('mTheirScore').value=m.theirScore||'';
-  document.getElementById('mSeason').value=m.season||'';document.getElementById('mTournament').value=m.tournament||'';
+  document.getElementById('mOurTeam').value=m.ourTeam||'C-Town Lions';
+  document.getElementById('mOpponent').value=m.opponent;
+  document.getElementById('mDate').value=m.date||'';
+  document.getElementById('mTime').value=m.time||'';
+  document.getElementById('mVenue').value=m.venue||'';
+  document.getElementById('mResult').value=m.result;
+  document.getElementById('mOurScore').value=m.ourScore||'';
+  document.getElementById('mTheirScore').value=m.theirScore||'';
+  document.getElementById('mSeason').value=m.season||'';
+  document.getElementById('mTournament').value=m.tournament||'';
+  setTagsFromString('matchMotm','motmTagWrap','motmTagInput',m.motm||'');
   setTagsFromString('matchPlayerTags','matchPlayerTagWrap','matchPlayerTagInput',m.players||'');
+  // No result reason
+  toggleNoResultReason();
+  if(m.result==='No Result'&&m.noResultReason){
+    const presets=['Match cancelled due to rain','Match cancelled due to bad weather'];
+    if(presets.includes(m.noResultReason)){
+      document.getElementById('mNoResultPreset').value=m.noResultReason;
+      document.getElementById('mNoResultReason').value=m.noResultReason;
+    }else{
+      document.getElementById('mNoResultPreset').value='other';
+      document.getElementById('mNoResultReason').value=m.noResultReason;
+    }
+  }
   document.getElementById('matchFormTitle').textContent='Edit Match: vs '+m.opponent;
   showSection('matches',document.querySelector('.sidebar-link[onclick*="matches"]'));
   window.scrollTo({top:0,behavior:'smooth'});
@@ -977,9 +1083,27 @@ async function deleteMatch(id){
 }
 
 function clearMatchForm(){
-  document.getElementById('editMatchId').value='';document.getElementById('matchFormTitle').textContent='Add New Match';
-  ['mOpponent','mDate','mVenue','mOurScore','mTheirScore','mSeason','mTournament'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('mResult').value='Win';clearTags('matchPlayerTags','matchPlayerTagWrap','matchPlayerTagInput');
+  document.getElementById('editMatchId').value='';
+  document.getElementById('matchFormTitle').textContent='Add New Match';
+  document.getElementById('mOurTeam').value='C-Town Lions';
+  ['mOpponent','mDate','mTime','mVenue','mOurScore','mTheirScore','mSeason','mTournament'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('mResult').value='Win';
+  document.getElementById('noResultWrap').style.display='none';
+  document.getElementById('mNoResultPreset').value='Match cancelled due to rain';
+  document.getElementById('mNoResultReason').value='Match cancelled due to rain';
+  clearTags('matchMotm','motmTagWrap','motmTagInput');
+  clearTags('matchPlayerTags','matchPlayerTagWrap','matchPlayerTagInput');
+}
+
+function toggleNoResultReason(){
+  const res=document.getElementById('mResult').value;
+  document.getElementById('noResultWrap').style.display=res==='No Result'?'block':'none';
+}
+
+function handleNoResultPreset(val){
+  const inp=document.getElementById('mNoResultReason');
+  if(val==='other'){inp.value='';inp.focus();}
+  else inp.value=val;
 }
 
 // ── GALLERY ──
@@ -1059,8 +1183,11 @@ async function deleteGalleryItem(id){
 function renderSponsorsTable(){
   document.getElementById('sponsorCount').textContent=allSponsors.length;
   const isAdmin=currentRole==='Admin';
-  document.getElementById('sponsorsBody').innerHTML=allSponsors.map(s=>`
-    <tr>
+  document.getElementById('sponsorsBody').innerHTML=allSponsors.map((s,i)=>`
+    <tr draggable="${isAdmin}" data-id="${s.id}" data-idx="${i}"
+        ondragstart="sponsorDragStart(event)" ondragover="sponsorDragOver(event)"
+        ondrop="sponsorDrop(event)" ondragleave="sponsorDragLeave(event)">
+      <td>${isAdmin?`<span class="drag-handle" title="Drag to reorder">⠿</span>`:''}</td>
       <td>${s.logo?`<img src="${s.logo}" class="thumb" style="object-fit:contain;background:white;" onerror="this.style.display='none'">`:`<div class="thumb-placeholder">${s.icon||'🏢'}</div>`}</td>
       <td><strong>${s.name}</strong></td>
       <td><span class="badge badge-${(s.tier||'').toLowerCase()}">${s.tier}</span></td>
@@ -1069,6 +1196,32 @@ function renderSponsorsTable(){
         ${isAdmin?`<button class="btn-sm btn-sm-edit" onclick="editSponsor(${s.id})" style="margin-right:4px;">Edit</button><button class="btn-sm btn-sm-del" onclick="deleteSponsor(${s.id})">Delete</button>`:''}
       </td>
     </tr>`).join('');
+}
+
+let _dragSrcIdx=null;
+function sponsorDragStart(e){
+  _dragSrcIdx=parseInt(e.currentTarget.dataset.idx);
+  e.currentTarget.classList.add('dragging');
+  e.dataTransfer.effectAllowed='move';
+}
+function sponsorDragOver(e){e.preventDefault();e.currentTarget.classList.add('drag-over');}
+function sponsorDragLeave(e){e.currentTarget.classList.remove('drag-over');}
+async function sponsorDrop(e){
+  e.preventDefault();
+  const targetIdx=parseInt(e.currentTarget.dataset.idx);
+  e.currentTarget.classList.remove('drag-over');
+  if(_dragSrcIdx===null||_dragSrcIdx===targetIdx)return;
+  // Reorder array
+  const moved=allSponsors.splice(_dragSrcIdx,1)[0];
+  allSponsors.splice(targetIdx,0,moved);
+  _dragSrcIdx=null;
+  // Persist new sort order for entire list
+  loading(true);
+  await Promise.all(allSponsors.map((s,i)=>sb.from('sponsors').update({sort_order:i}).eq('id',s.id)));
+  loading(false);
+  allSponsors.forEach((s,i)=>s.sortOrder=i);
+  renderSponsorsTable();
+  toast('Sponsor order saved ✓');
 }
 
 async function saveSponsor(){
@@ -1183,7 +1336,55 @@ async function deleteUser(userId,name){
   allUsers=u||[];renderUsersTable();toast('User deleted');
 }
 
-// ── SETTINGS ──
+// ── PAST SQUADS ──
+function renderSquadsTable(){
+  document.getElementById('squadCount').textContent=allSquads.length;
+  // Populate player checklist
+  const checklist=document.getElementById('squadPlayerChecklist');
+  if(checklist) checklist.innerHTML=allPlayers.map(p=>`
+    <label style="display:flex;align-items:center;gap:0.4rem;font-size:0.83rem;cursor:pointer;">
+      <input type="checkbox" checked value="${p.id}" style="accent-color:var(--green);">
+      ${ROLE_ICONS[p.role]||'🏏'} ${p.name}
+    </label>`).join('');
+  document.getElementById('squadsBody').innerHTML=allSquads.length?allSquads.map(sq=>{
+    const players=sq.players_json||[];
+    return`<tr>
+      <td><strong>${sq.year}</strong></td>
+      <td>${sq.label||'—'}</td>
+      <td style="font-size:0.8rem;color:var(--text-muted);">${players.length} players</td>
+      <td style="font-size:0.78rem;color:var(--text-muted);">${new Date(sq.created_at).toLocaleDateString('en-CA',{day:'numeric',month:'short',year:'numeric'})}</td>
+      <td><button class="btn-sm btn-sm-del" onclick="deleteSquad(${sq.id})">Delete</button></td>
+    </tr>`;
+  }).join(''):'<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:1.5rem;">No past squads saved yet.</td></tr>';
+}
+
+async function saveSquadSnapshot(){
+  if(currentRole!=='Admin')return toast('Admin only','error');
+  const year=parseInt(document.getElementById('sqYear').value);
+  if(!year)return toast('Enter a season year','error');
+  const label=document.getElementById('sqLabel').value.trim()||null;
+  const checked=Array.from(document.querySelectorAll('#squadPlayerChecklist input:checked')).map(cb=>parseInt(cb.value));
+  if(!checked.length)return toast('Select at least one player','error');
+  const players_json=allPlayers.filter(p=>checked.includes(p.id)).map(p=>({id:p.id,name:p.name,role:p.role,nat:p.nat,number:p.number,photo:p.photo,runs:p.runs,batAvg:p.batAvg,sr:p.sr,hs:p.hs,fifties:p.fifties,hundreds:p.hundreds,wickets:p.wickets,bowlAvg:p.bowlAvg,econ:p.econ,matches:p.matches}));
+  const ok=await confirmDialog(`Save ${players_json.length} players as the ${year} squad?`,'Save Squad Snapshot','📋','Save');
+  if(!ok)return;
+  loading(true);
+  const {error}=await sb.from('past_squads').insert({year,label,players_json});
+  loading(false);
+  if(error)return toast('Error: '+error.message,'error');
+  const {data}=await sb.from('past_squads').select('*').order('year',{ascending:false});
+  allSquads=data||[];
+  document.getElementById('sqYear').value='';document.getElementById('sqLabel').value='';
+  renderSquadsTable();toast(`${year} squad saved ✓`);
+}
+
+async function deleteSquad(id){
+  const ok=await confirmDialog('Delete this squad snapshot? This cannot be undone.','Delete Squad','🗑️','Delete');
+  if(!ok)return;
+  loading(true);await sb.from('past_squads').delete().eq('id',id);loading(false);
+  const {data}=await sb.from('past_squads').select('*').order('year',{ascending:false});
+  allSquads=data||[];renderSquadsTable();toast('Squad deleted');
+}
 async function changePassword(){
   const np=document.getElementById('newPass').value;
   const cp=document.getElementById('confirmPass').value;
@@ -1231,6 +1432,15 @@ function showPlayerSuggestions(val){
   const filtered=allPlayers.filter(p=>p.name.toLowerCase().includes(val.toLowerCase())&&!existing.includes(p.name));
   if(!val||!filtered.length){dd.style.display='none';return;}
   dd.innerHTML=filtered.map(p=>`<div class="autocomplete-item" onclick="addTag('matchPlayerTags','matchPlayerTagWrap','${p.name.replace(/'/g,"\\'")}');document.getElementById('matchPlayerTagInput').value='';document.getElementById('playerSuggestionsDropdown').style.display='none';">${p.name}</div>`).join('');
+  dd.style.display='block';
+}
+
+function showMotmSuggestions(val){
+  const dd=document.getElementById('motmDropdown');
+  const existing=getTagsArr('matchMotm');
+  const filtered=allPlayers.filter(p=>p.name.toLowerCase().includes(val.toLowerCase())&&!existing.includes(p.name));
+  if(!val||!filtered.length){dd.style.display='none';return;}
+  dd.innerHTML=filtered.map(p=>`<div class="autocomplete-item" onclick="addTag('matchMotm','motmTagWrap','${p.name.replace(/'/g,"\\'")}');document.getElementById('motmTagInput').value='';document.getElementById('motmDropdown').style.display='none';">${p.name}</div>`).join('');
   dd.style.display='block';
 }
 
@@ -1353,33 +1563,27 @@ function clearDealForm(){
 // ── EXCEL IMPORT ──
 function previewExcel(input){
   const file=input.files[0];if(!file)return;
+  document.getElementById('excelFileName').textContent=file.name;
   const reader=new FileReader();
   reader.onload=e=>{
     try{
       const data=new Uint8Array(e.target.result);
-      const wb=XLSX.read(data,{type:'uint8',cellDates:true});
+      const wb=XLSX.read(data,{type:'array',cellDates:true});
       const ws=wb.Sheets[wb.SheetNames[0]];
-      const rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});
+      const rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:'',raw:false});
       if(rows.length<2){toast('File appears empty or has no data rows','error');return;}
-      // Skip header row (index 0)
       excelParsedRows=rows.slice(1).filter(r=>r.some(c=>String(c).trim()!=='')).map(r=>{
-        // Columns: Date(0), Opponent(1), Venue(2), Time(3), Tournament(4), Season(5)
-        let dateVal=r[0];
-        let dateStr='';
-        if(dateVal instanceof Date){
-          dateStr=dateVal.toISOString().slice(0,10);
-        } else if(typeof dateVal==='number'){
-          // Excel serial date
-          const d=XLSX.SSF.parse_date_code(dateVal);
-          dateStr=`${d.y}-${String(d.m).padStart(2,'0')}-${String(d.d).padStart(2,'0')}`;
-        } else {
-          dateStr=String(dateVal).trim();
-          // Try to normalise common formats DD/MM/YYYY or MM/DD/YYYY
-          const parts=dateStr.split(/[\/\-\.]/);
-          if(parts.length===3){
-            // Assume DD/MM/YYYY if first part <= 31 and > 12
+        // Columns: Date(0), Opponent(1), Venue(2), Time(3), Tournament(4), Season(5), Players(6)
+        let dateStr=String(r[0]||'').trim();
+        // Normalise date formats
+        const parts=dateStr.split(/[\/\-\.]/);
+        if(parts.length===3){
+          if(parts[2].length===4){
+            // DD/MM/YYYY or MM/DD/YYYY — if day > 12, must be DD first
             if(parseInt(parts[0])>12) dateStr=`${parts[2]}-${parts[1].padStart(2,'0')}-${parts[0].padStart(2,'0')}`;
-            else if(parts[2].length===4) dateStr=`${parts[2]}-${parts[0].padStart(2,'0')}-${parts[1].padStart(2,'0')}`;
+            else dateStr=`${parts[2]}-${parts[0].padStart(2,'0')}-${parts[1].padStart(2,'0')}`;
+          } else if(parts[0].length===4){
+            dateStr=`${parts[0]}-${parts[1].padStart(2,'0')}-${parts[2].padStart(2,'0')}`;
           }
         }
         return{
@@ -1389,6 +1593,7 @@ function previewExcel(input){
           time:String(r[3]||'').trim()||null,
           tournament:String(r[4]||'').trim()||null,
           season:String(r[5]||'').trim()||null,
+          players:String(r[6]||'').trim()||null,
         };
       }).filter(r=>r.opponent);
 
@@ -1397,6 +1602,7 @@ function previewExcel(input){
         <tr>
           <td>${r.date||'—'}</td><td>${r.opponent}</td><td>${r.venue||'—'}</td>
           <td>${r.time||'—'}</td><td>${r.tournament||'—'}</td><td>${r.season||'—'}</td>
+          <td style="font-size:0.75rem;color:var(--text-muted);">${r.players||'—'}</td>
         </tr>`).join('');
       document.getElementById('excelPreviewWrap').style.display='block';
       toast(`${excelParsedRows.length} matches ready to import`,'info');
@@ -1412,14 +1618,18 @@ async function importExcelMatches(){
   if(!excelParsedRows.length)return toast('No rows to import','error');
   loading(true);
   const rows=excelParsedRows.map(r=>({
+    our_team:'C-Town Lions',
     opponent:r.opponent,
     date:r.date||null,
+    time:r.time||null,
     venue:r.venue||null,
     result:'Upcoming',
     our_score:null,their_score:null,
     season:r.season||null,
     tournament:r.tournament||null,
-    players:null,
+    players:r.players||null,
+    motm:null,
+    no_result_reason:null,
   }));
   const {error}=await sb.from('matches').insert(rows);
   loading(false);
@@ -1433,6 +1643,7 @@ async function importExcelMatches(){
 function clearExcelImport(){
   excelParsedRows=[];
   document.getElementById('excelFile').value='';
+  document.getElementById('excelFileName').textContent='No file chosen';
   document.getElementById('excelPreviewBody').innerHTML='';
   document.getElementById('excelPreviewWrap').style.display='none';
 }
@@ -1471,6 +1682,10 @@ window.saveGalleryUrl=saveGalleryUrl;window.deleteGalleryItem=deleteGalleryItem;
 window.showAlbumSuggestions=showAlbumSuggestions;window.showPlayerSuggestions=showPlayerSuggestions;window.showGalleryPlayerSuggestions=showGalleryPlayerSuggestions;
 window.handleTagKey=handleTagKey;window.removeTag=removeTag;window.addTag=addTag;
 window.saveSponsor=saveSponsor;window.editSponsor=editSponsor;window.deleteSponsor=deleteSponsor;window.clearSponsorForm=clearSponsorForm;
+window.toggleNoResultReason=toggleNoResultReason;window.handleNoResultPreset=handleNoResultPreset;
+window.showMotmSuggestions=showMotmSuggestions;
+window.saveSquadSnapshot=saveSquadSnapshot;window.deleteSquad=deleteSquad;
+window.sponsorDragStart=sponsorDragStart;window.sponsorDragOver=sponsorDragOver;window.sponsorDrop=sponsorDrop;window.sponsorDragLeave=sponsorDragLeave;
 window.saveDeal=saveDeal;window.editDeal=editDeal;window.deleteDeal=deleteDeal;window.clearDealForm=clearDealForm;
 window.previewExcel=previewExcel;window.importExcelMatches=importExcelMatches;window.clearExcelImport=clearExcelImport;
 window.removePlayerPhoto=removePlayerPhoto;window.removeSponsorLogo=removeSponsorLogo;
