@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Matches — Charlottetown Lions CC</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;600;700&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--green:#1a3d2b;--green-mid:#234d37;--gold:#b8932a;--gold-light:#d4aa40;--cream:#f8f4ed;--cream-dark:#ede8df;--cream-mid:#f2ede4;--off-white:#fdfbf7;--dark:#0d1f16;--text-dark:#1a2a1f;--text-mid:#3d5244;--text-muted:#7a9282;--white:#ffffff;--red:#c0392b;--shadow:0 4px 24px rgba(26,61,43,0.10);--shadow-lg:0 8px 40px rgba(26,61,43,0.15);}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Barlow',sans-serif;background:var(--cream);color:var(--text-dark);min-height:100vh;}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:500;background:var(--white);border-bottom:1px solid var(--cream-dark);padding:0 2rem;height:60px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow);}
+.nav-logo{display:flex;align-items:center;gap:0.6rem;text-decoration:none;}
+.nav-logo-icon{width:32px;height:32px;background:var(--green);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;}
+.nav-logo-text{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:2px;color:var(--green);}
+.nav-back{font-family:'Barlow Condensed',sans-serif;font-size:0.8rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);text-decoration:none;border:1px solid var(--cream-dark);padding:0.35rem 0.9rem;transition:all 0.2s;}
+.nav-back:hover{color:var(--green);border-color:var(--green);}
+
+/* HERO BANNER */
+.matches-hero{background:linear-gradient(135deg,var(--dark) 0%,var(--green) 100%);padding:3rem 2rem 2rem;text-align:center;}
+.matches-hero-label{font-family:'Barlow Condensed',sans-serif;font-size:0.72rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.45);margin-bottom:0.5rem;}
+.matches-hero-title{font-family:'Bebas Neue',sans-serif;font-size:3rem;letter-spacing:4px;color:var(--gold-light);line-height:1;}
+.matches-hero-sub{font-size:0.85rem;color:rgba(255,255,255,0.5);margin-top:0.5rem;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;}
+
+/* FILTERS */
+.filters-bar{background:var(--white);border-bottom:1px solid var(--cream-dark);padding:1rem 2rem;display:flex;gap:0.75rem;flex-wrap:wrap;align-items:center;justify-content:center;position:sticky;top:60px;z-index:100;}
+.select-styled{font-family:'Barlow Condensed',sans-serif;font-size:0.82rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;background:var(--cream);color:var(--text-dark);border:1.5px solid var(--cream-dark);padding:0.45rem 0.85rem;cursor:pointer;outline:none;transition:border-color 0.2s;}
+.select-styled:focus{border-color:var(--green);}
+.filter-label{font-family:'Barlow Condensed',sans-serif;font-size:0.7rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);}
+#matchCount{font-family:'Barlow Condensed',sans-serif;font-size:0.78rem;color:var(--text-muted);letter-spacing:1px;margin-left:auto;}
+
+/* MAIN */
+.matches-main{max-width:1100px;margin:0 auto;padding:2rem;}
+
+/* SECTION DIVIDERS */
+.matches-section-title{font-family:'Barlow Condensed',sans-serif;font-size:0.7rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);padding:0.5rem 0 0.75rem;border-bottom:2px solid var(--cream-dark);margin-bottom:1rem;margin-top:2rem;}
+.matches-section-title:first-child{margin-top:0;}
+
+/* MATCH CARDS GRID */
+.matches-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem;margin-bottom:1rem;}
+
+/* MATCH CARD */
+.match-card{background:var(--white);border:1px solid var(--cream-dark);box-shadow:var(--shadow);transition:all 0.2s;display:flex;flex-direction:column;}
+.match-card.upcoming{border-top:3px solid var(--gold);}
+.match-card.win{border-top:3px solid #2a8a3e;}
+.match-card.loss{border-top:3px solid var(--red);}
+.match-card.draw{border-top:3px solid var(--text-muted);}
+.match-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-2px);}
+
+.mc-tournament{padding:0.5rem 0.85rem;font-family:'Barlow Condensed',sans-serif;font-size:0.62rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);border-bottom:1px solid var(--cream-dark);display:flex;justify-content:space-between;align-items:center;}
+.mc-teams{padding:1rem 0.85rem 0.75rem;display:flex;align-items:center;gap:0.75rem;}
+.mc-team-block{flex:1;min-width:0;}
+.mc-team-logo{width:40px;height:40px;object-fit:contain;background:var(--cream);border:1px solid var(--cream-dark);flex-shrink:0;}
+.mc-team-initials{width:40px;height:40px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:0.75rem;letter-spacing:1px;color:var(--white);}
+.mc-vs{font-family:'Bebas Neue',sans-serif;font-size:0.9rem;color:var(--text-muted);letter-spacing:2px;flex-shrink:0;}
+.mc-team-name{font-family:'Barlow Condensed',sans-serif;font-size:0.85rem;font-weight:700;letter-spacing:0.5px;color:var(--text-dark);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:0.35rem;}
+.mc-score{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:1px;color:var(--green);line-height:1;}
+.mc-score.opp{color:var(--text-mid);}
+.mc-footer{padding:0.6rem 0.85rem;margin-top:auto;border-top:1px solid var(--cream-dark);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.35rem;}
+.mc-date{font-size:0.72rem;color:var(--text-muted);font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;}
+.mc-venue{font-size:0.7rem;color:var(--text-muted);text-align:right;font-family:'Barlow Condensed',sans-serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:160px;}
+.mc-motm{font-size:0.68rem;color:var(--gold);font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;width:100%;}
+
+.match-result-badge{display:inline-block;font-family:'Barlow Condensed',sans-serif;font-size:0.65rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:0.15rem 0.5rem;}
+.badge-win{background:rgba(46,163,71,0.12);color:#2a8a3e;border:1px solid rgba(46,163,71,0.3);}
+.badge-loss{background:rgba(192,57,43,0.1);color:#c0392b;border:1px solid rgba(192,57,43,0.3);}
+.badge-upcoming{background:rgba(184,147,42,0.1);color:var(--gold);border:1px solid rgba(184,147,42,0.3);}
+.badge-draw{background:rgba(0,0,0,0.06);color:var(--text-muted);border:1px solid rgba(0,0,0,0.1);}
+
+/* LOADING */
+.loading-state{text-align:center;padding:4rem 2rem;color:var(--text-muted);font-family:'Barlow Condensed',sans-serif;font-size:0.9rem;letter-spacing:2px;text-transform:uppercase;}
+
+/* EMPTY STATE */
+.empty-state{text-align:center;padding:3rem;color:var(--text-muted);font-family:'Barlow Condensed',sans-serif;font-size:0.85rem;letter-spacing:1.5px;text-transform:uppercase;grid-column:1/-1;}
+
+/* FOOTER */
+footer{background:var(--dark);color:rgba(255,255,255,0.5);text-align:center;padding:2rem;font-size:0.82rem;line-height:2;}
+footer a{color:rgba(255,255,255,0.4);text-decoration:none;}
+
+@media(max-width:600px){
+  .matches-hero-title{font-size:2.2rem;}
+  .matches-main{padding:1.25rem;}
+  .filters-bar{padding:0.75rem 1rem;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">
+    <div class="nav-logo-icon">🦁</div>
+    <span class="nav-logo-text">C-Town Lions</span>
+  </a>
+  <a href="index.html" class="nav-back">← Back to Home</a>
+</nav>
+
+<div class="matches-hero">
+  <div class="matches-hero-label">Charlottetown Lions CC</div>
+  <div class="matches-hero-title">All Matches</div>
+  <div class="matches-hero-sub" id="heroSub">Loading…</div>
+</div>
+
+<div class="filters-bar">
+  <span class="filter-label">Filter:</span>
+  <select class="select-styled" id="seasonFilter" onchange="applyFilters()">
+    <option value="all">All Seasons</option>
+  </select>
+  <select class="select-styled" id="tournamentFilter" onchange="applyFilters()">
+    <option value="all">All Tournaments</option>
+  </select>
+  <select class="select-styled" id="resultFilter" onchange="applyFilters()">
+    <option value="all">All Results</option>
+    <option value="Upcoming">Upcoming</option>
+    <option value="Win">Wins</option>
+    <option value="Loss">Losses</option>
+    <option value="Draw">Draws</option>
+    <option value="No Result">No Result</option>
+  </select>
+  <span id="matchCount"></span>
+</div>
+
+<div class="matches-main" id="matchesMain">
+  <div class="loading-state">Loading matches…</div>
+</div>
+
+<footer>
+  <p>© <span id="year"></span> Charlottetown Lions Cricket Club · Prince Edward Island, Canada 🍁</p>
+  <p><a href="index.html">← Back to home</a> · <a href="admin.html">Admin</a></p>
+</footer>
+
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+const SUPABASE_URL = 'https://mtgknrfmtvhkqqdtbxcf.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im10Z2tucmZtdHZoa3FxZHRieGNmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE3MjY3MzMsImV4cCI6MjA4NzMwMjczM30.y04TSrIICBqRwX7AcOILUbIOOhKZlRzVgvdB4Po6tpc';
+const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let allMatches = [], allTeamLogos = [];
+
+document.getElementById('year').textContent = new Date().getFullYear();
+
+function mapMatch(r){
+  return {id:r.id,opponent:r.opponent,date:r.date,time:r.time,venue:r.venue,result:r.result,
+    ourTeam:r.our_team,ourScore:r.our_score,theirScore:r.their_score,season:r.season,
+    tournament:r.tournament,players:r.players,motm:r.motm};
+}
+
+function getTeamLogo(name){
+  if(!name)return null;
+  const tl=allTeamLogos.find(t=>t.team_name.toLowerCase()===name.toLowerCase());
+  return tl?tl.logo_url:null;
+}
+
+function teamBadge(name,size=40){
+  const logo=getTeamLogo(name);
+  const initials=(name||'?').split(/\s+/).map(w=>w[0]).join('').slice(0,3).toUpperCase();
+  const colors=['#1a3d2b','#234d37','#2a5c45','#1d4731','#3a6b50'];
+  const bg=colors[(name||'').length%colors.length];
+  if(logo) return `<img src="${logo}" class="mc-team-logo" style="width:${size}px;height:${size}px;" alt="${name}" onerror="this.outerHTML='<div class=\\'mc-team-initials\\' style=\\'width:${size}px;height:${size}px;background:${bg};font-size:${Math.max(size*0.28,8)}px;\\'>${initials}</div>'">`;
+  return `<div class="mc-team-initials" style="width:${size}px;height:${size}px;background:${bg};font-size:${Math.max(size*0.28,8)}px;">${initials}</div>`;
+}
+
+function buildCard(m){
+  const resultClass={Win:'win',Loss:'loss',Draw:'draw',Upcoming:'upcoming','No Result':'draw'}[m.result]||'upcoming';
+  const bc={Win:'badge-win',Loss:'badge-loss',Draw:'badge-draw',Upcoming:'badge-upcoming','No Result':'badge-draw'}[m.result]||'badge-upcoming';
+  const ourTeam=m.ourTeam||'C-Town Lions';
+  const d=m.date?new Date(m.date+'T12:00:00').toLocaleDateString('en-CA',{weekday:'short',day:'numeric',month:'short',year:'numeric'}):'—';
+  const timeStr=m.time?` · ${m.time}`:'';
+  return `<div class="match-card ${resultClass}">
+    <div class="mc-tournament">
+      <span>${m.tournament||'Friendly'}</span>
+      <span class="match-result-badge ${bc}">${m.result}</span>
+    </div>
+    <div class="mc-teams">
+      <div class="mc-team-block" style="text-align:right;">
+        ${teamBadge(ourTeam)}
+        <div class="mc-team-name">${ourTeam}</div>
+        ${m.result!=='Upcoming'?`<div class="mc-score">${m.ourScore||'—'}</div>`:''}
+      </div>
+      <div class="mc-vs">VS</div>
+      <div class="mc-team-block">
+        ${teamBadge(m.opponent)}
+        <div class="mc-team-name">${m.opponent}</div>
+        ${m.result!=='Upcoming'?`<div class="mc-score opp">${m.theirScore||'—'}</div>`:''}
+      </div>
+    </div>
+    <div class="mc-footer">
+      <span class="mc-date">${d}${timeStr}</span>
+      <span class="mc-venue">${m.venue||''}</span>
+      ${m.motm?`<span class="mc-motm">⭐ MOTM: ${m.motm}</span>`:''}
+    </div>
+  </div>`;
+}
+
+function applyFilters(){
+  const season=document.getElementById('seasonFilter').value;
+  const tournament=document.getElementById('tournamentFilter').value;
+  const result=document.getElementById('resultFilter').value;
+
+  const filtered=allMatches.filter(m=>
+    (season==='all'||m.season===season)&&
+    (tournament==='all'||m.tournament===tournament)&&
+    (result==='all'||m.result===result)
+  );
+
+  document.getElementById('matchCount').textContent=`${filtered.length} match${filtered.length!==1?'es':''}`;
+
+  const upcoming=filtered.filter(m=>m.result==='Upcoming').sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+  const past=filtered.filter(m=>m.result!=='Upcoming').sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+
+  const main=document.getElementById('matchesMain');
+  if(!filtered.length){main.innerHTML='<div class="empty-state">No matches found</div>';return;}
+
+  let html='';
+  if(upcoming.length){
+    html+=`<div class="matches-section-title">Upcoming (${upcoming.length})</div>`;
+    html+=`<div class="matches-grid">${upcoming.map(buildCard).join('')}</div>`;
+  }
+  if(past.length){
+    html+=`<div class="matches-section-title">Results (${past.length})</div>`;
+    html+=`<div class="matches-grid">${past.map(buildCard).join('')}</div>`;
+  }
+  main.innerHTML=html;
+}
+
+function populateFilters(){
+  const seasons=[...new Set(allMatches.map(m=>m.season).filter(Boolean))].sort().reverse();
+  const tournaments=[...new Set(allMatches.map(m=>m.tournament).filter(Boolean))].sort();
+  const ss=document.getElementById('seasonFilter'),ts=document.getElementById('tournamentFilter');
+  ss.innerHTML='<option value="all">All Seasons</option>'+seasons.map(s=>`<option value="${s}">${s}</option>`).join('');
+  ts.innerHTML='<option value="all">All Tournaments</option>'+tournaments.map(t=>`<option value="${t}">${t}</option>`).join('');
+}
+
+async function load(){
+  const [m,tl]=await Promise.all([
+    sb.from('matches').select('*').order('date',{ascending:false}),
+    sb.from('team_logos').select('*'),
+  ]);
+  allMatches=(m.data||[]).map(mapMatch);
+  allTeamLogos=tl.data||[];
+
+  const total=allMatches.length;
+  const wins=allMatches.filter(m=>m.result==='Win').length;
+  const upcoming=allMatches.filter(m=>m.result==='Upcoming').length;
+  document.getElementById('heroSub').textContent=`${total} matches · ${wins} wins · ${upcoming} upcoming`;
+
+  populateFilters();
+  applyFilters();
+}
+
+window.applyFilters=applyFilters;
+load();
+</script>
+</body>
+</html>
