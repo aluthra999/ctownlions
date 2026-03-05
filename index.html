@@ -320,51 +320,108 @@
     text-transform: uppercase; color: var(--green); text-align: center;
   }
 
-  /* ─── MATCHES ─── */
+  /* ─── MATCHES CAROUSEL ─── */
   #matches { background: var(--cream-mid); }
 
-  .matches-filters {
-    display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;
-    margin-bottom: 2.5rem;
+  .matches-carousel-wrap {
+    position: relative; max-width: 1200px; margin: 0 auto;
+    padding: 0 3.5rem 2.5rem;
   }
-
-  .select-styled {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 0.85rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
-    background: var(--white); color: var(--text-dark);
-    border: 1.5px solid rgba(26,61,43,0.2);
-    padding: 0.5rem 1rem; cursor: pointer; outline: none;
+  .matches-carousel {
+    display: flex; gap: 1rem; overflow: hidden;
+    scroll-behavior: smooth;
   }
-  .select-styled:focus { border-color: var(--green); }
-
-  .matches-list { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 1rem; }
-
-  .match-card {
+  .match-card-new {
+    flex: 0 0 calc(33.333% - 0.67rem);
     background: var(--white); border: 1px solid var(--cream-dark);
-    padding: 1.25rem 1.5rem;
-    display: grid; grid-template-columns: 1fr auto 1fr;
-    align-items: center; gap: 1rem;
-    box-shadow: var(--shadow); transition: box-shadow 0.2s;
+    box-shadow: var(--shadow); transition: all 0.25s;
+    display: flex; flex-direction: column; min-width: 0;
   }
-  .match-card:hover { box-shadow: var(--shadow-lg); }
+  .match-card-new.upcoming { border-top: 3px solid var(--gold); }
+  .match-card-new.win { border-top: 3px solid #2a8a3e; }
+  .match-card-new.loss { border-top: 3px solid var(--red); }
+  .match-card-new.draw { border-top: 3px solid var(--text-muted); }
+  .match-card-new:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
 
-  .match-team { font-family: 'Barlow Condensed', sans-serif; font-size: 1.05rem; font-weight: 700; letter-spacing: 1px; }
-  .match-team.home { text-align: right; }
-  .match-team.away { text-align: left; }
+  .mc-tournament {
+    padding: 0.5rem 0.85rem;
+    font-family: 'Barlow Condensed', sans-serif; font-size: 0.62rem;
+    font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--text-muted); border-bottom: 1px solid var(--cream-dark);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .mc-teams {
+    padding: 1rem 0.85rem 0.75rem;
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .mc-team-block { flex: 1; min-width: 0; }
+  .mc-team-logo {
+    width: 36px; height: 36px; object-fit: contain; flex-shrink: 0;
+    background: var(--cream); border: 1px solid var(--cream-dark);
+  }
+  .mc-team-initials {
+    width: 36px; height: 36px; flex-shrink: 0;
+    background: var(--green); display: flex; align-items: center; justify-content: center;
+    font-family: 'Bebas Neue', sans-serif; font-size: 0.7rem; letter-spacing: 1px;
+    color: var(--white); border: 1px solid var(--cream-dark);
+  }
+  .mc-vs {
+    font-family: 'Bebas Neue', sans-serif; font-size: 0.9rem; color: var(--text-muted);
+    letter-spacing: 2px; flex-shrink: 0;
+  }
+  .mc-team-name {
+    font-family: 'Barlow Condensed', sans-serif; font-size: 0.82rem;
+    font-weight: 700; letter-spacing: 0.5px; color: var(--text-dark);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .mc-score {
+    font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem;
+    letter-spacing: 1px; color: var(--green); line-height: 1;
+  }
+  .mc-score.opp { color: var(--text-mid); }
+  .mc-footer {
+    padding: 0.6rem 0.85rem; margin-top: auto;
+    border-top: 1px solid var(--cream-dark);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .mc-date { font-size: 0.72rem; color: var(--text-muted); font-family: 'Barlow Condensed', sans-serif; letter-spacing: 1px; }
+  .mc-venue { font-size: 0.7rem; color: var(--text-muted); text-align: right; font-family: 'Barlow Condensed', sans-serif; overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:120px; }
 
-  .match-score-box { text-align: center; min-width: 140px; }
-  .match-score { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; letter-spacing: 2px; color: var(--gold); }
-  .match-meta { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+  .carousel-btn {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    background: var(--green); color: var(--white); border: none;
+    width: 36px; height: 36px; cursor: pointer; font-size: 1.1rem;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s; z-index: 10;
+  }
+  .carousel-btn:hover { background: var(--green-mid); }
+  .carousel-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  .carousel-btn.prev { left: 0; }
+  .carousel-btn.next { right: 0; }
+
+  .matches-view-all {
+    text-align: center; padding: 0 2rem 1rem;
+  }
+
+  .match-card-new.highlight { box-shadow: 0 0 0 2px var(--gold), var(--shadow); }
 
   .match-result-badge {
     display: inline-block; font-family: 'Barlow Condensed', sans-serif;
-    font-size: 0.7rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
-    padding: 0.2rem 0.6rem; margin-top: 0.25rem;
+    font-size: 0.65rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+    padding: 0.15rem 0.5rem;
   }
   .badge-win { background: rgba(46,163,71,0.12); color: #2a8a3e; border: 1px solid rgba(46,163,71,0.3); }
   .badge-loss { background: rgba(192,57,43,0.1); color: #c0392b; border: 1px solid rgba(192,57,43,0.3); }
   .badge-upcoming { background: rgba(184,147,42,0.1); color: var(--gold); border: 1px solid rgba(184,147,42,0.3); }
   .badge-draw { background: rgba(0,0,0,0.06); color: var(--text-muted); border: 1px solid rgba(0,0,0,0.1); }
+
+  @media(max-width:768px){
+    .match-card-new { flex: 0 0 calc(100% - 0.5rem); }
+    .matches-carousel-wrap { padding: 0 2.5rem 2rem; }
+  }
+  @media(min-width:769px) and (max-width:1024px){
+    .match-card-new { flex: 0 0 calc(50% - 0.5rem); }
+  }
 
   /* ─── GALLERY PREVIEW ─── */
   #gallery-preview { background: var(--off-white); }
@@ -442,7 +499,8 @@
     margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center;
     font-size: 1.8rem; border: 1px solid var(--cream-dark);
   }
-  .sponsor-name { font-family: 'Barlow Condensed', sans-serif; font-size: 1rem; font-weight: 700; letter-spacing: 1px; color: var(--text-dark); margin-bottom: 0.25rem; }
+  .sponsor-name { font-family: 'Barlow Condensed', sans-serif; font-size: 1rem; font-weight: 700; letter-spacing: 1px; color: var(--text-dark); margin-bottom: 0.2rem; }
+  .sponsor-address { font-size: 0.72rem; color: var(--text-muted); margin-bottom: 0.25rem; line-height: 1.4; }
   .sponsor-tier { font-size: 0.72rem; color: var(--gold); text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; }
 
   /* ─── PAST SQUAD MODAL ─── */
@@ -806,12 +864,12 @@
     <li><a href="#deals" id="dealsNavItem" style="display:none;">Deals</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
-  <!-- <div style="display:flex;align-items:center;gap:1rem;">
+  <div style="display:flex;align-items:center;gap:1rem;">
     <a href="admin.html" class="nav-admin-btn">⚙ Admin</a>
     <div class="hamburger" id="hamburger" onclick="toggleMenu()">
       <span></span><span></span><span></span>
     </div>
-  </div> -->
+  </div>
 </nav>
 
 <!-- HERO -->
@@ -858,22 +916,14 @@
     <h2 class="section-title">Matches & Results</h2>
     <div class="section-line"></div>
   </div>
-  <div class="matches-filters">
-    <select class="select-styled" id="seasonFilter" onchange="renderMatches()">
-      <option value="all">All Seasons</option>
-    </select>
-    <select class="select-styled" id="tournamentFilter" onchange="renderMatches()">
-      <option value="all">All Tournaments</option>
-    </select>
-    <select class="select-styled" id="resultFilter" onchange="renderMatches()">
-      <option value="all">All Results</option>
-      <option value="Win">Wins</option>
-      <option value="Loss">Losses</option>
-      <option value="Draw">Draws</option>
-      <option value="Upcoming">Upcoming</option>
-    </select>
+  <div class="matches-carousel-wrap">
+    <button class="carousel-btn prev" id="carouselPrev" onclick="carouselNav(-1)">‹</button>
+    <div class="matches-carousel" id="matchesCarousel"></div>
+    <button class="carousel-btn next" id="carouselNext" onclick="carouselNav(1)">›</button>
   </div>
-  <div class="matches-list" id="matchesList"></div>
+  <div class="matches-view-all">
+    <a href="matches.html" class="btn-primary" style="display:inline-block;">View All Matches →</a>
+  </div>
 </section>
 
 <!-- GALLERY PREVIEW -->
@@ -918,20 +968,20 @@
   </div>
   <div class="contact-wrapper">
     <div class="contact-info">
-      <!-- <div class="contact-item">
+      <div class="contact-item">
         <div class="contact-icon">📍</div>
         <h4>Location</h4>
-        <p>Prince Edward Island</p>
-      </div> -->
+        <p>Charlottetown<br>Prince Edward Island<br>Canada</p>
+      </div>
       <div class="contact-item">
         <div class="contact-icon">📧</div>
         <h4>Email</h4>
-        <p><a href="/">Email</a></p>
+        <p><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b9d0d7dfd6f9dacdd6ced7d5d0d6d7ca97dad8">[email&#160;protected]</a></p>
       </div>
       <div class="contact-item">
         <div class="contact-icon">📱</div>
         <h4>Follow Us</h4>
-        <p><a href="https://www.instagram.com/belfastdiscgolfpei/" class="btn-hero-secondary">Instagram</a></p>
+        <p>@ctownlions<br>Instagram · Facebook</p>
       </div>
     </div>
     <form class="contact-form" onsubmit="submitContact(event)">
@@ -1024,7 +1074,7 @@ const ROLE_ICONS = {
 };
 
 // ─── STATE ───────────────────────────────────────────────────────
-let allPlayers = [], allMatches = [], allGallery = [], allSponsors = [], allDeals = [], allSquads = [];
+let allPlayers = [], allMatches = [], allGallery = [], allSponsors = [], allDeals = [], allSquads = [], allTeamLogos = [];
 
 // ─── MAP DB ROW → APP OBJECT ─────────────────────────────────────
 function mapPlayer(r) {
@@ -1034,7 +1084,7 @@ function mapPlayer(r) {
     wickets:r.wickets, bowlAvg:r.bowl_avg, econ:r.econ, matches:r.matches, photo:r.photo };
 }
 function mapMatch(r) {
-  return { id:r.id, opponent:r.opponent, date:r.date, venue:r.venue, result:r.result,
+  return { id:r.id, opponent:r.opponent, date:r.date, time:r.time, venue:r.venue, result:r.result,
     ourTeam:r.our_team, ourScore:r.our_score, theirScore:r.their_score, season:r.season,
     tournament:r.tournament, players:r.players, motm:r.motm, noResultReason:r.no_result_reason };
 }
@@ -1042,20 +1092,21 @@ function mapGallery(r) {
   return { id:r.id, url:r.url, caption:r.caption, album:r.album, players:r.players };
 }
 function mapSponsor(r) {
-  return { id:r.id, name:r.name, tier:r.tier, url:r.url, icon:r.icon, logo:r.logo, sortOrder:r.sort_order||0 };
+  return { id:r.id, name:r.name, tier:r.tier, url:r.url, icon:r.icon, logo:r.logo, sortOrder:r.sort_order||0, address:r.address||null };
 }
 
 // ─── LOAD FROM SUPABASE ──────────────────────────────────────────
 async function loadData() {
   showLoading(true);
   try {
-    const [p, m, g, s, d, sq] = await Promise.all([
+    const [p, m, g, s, d, sq, tl] = await Promise.all([
       sb.from('players').select('*').order('id'),
       sb.from('matches').select('*').order('date', {ascending: false}),
       sb.from('gallery').select('*').order('id'),
       sb.from('sponsors').select('*').order('id'),
       sb.from('deals').select('*,sponsors(name,logo,icon,url)').order('expiry',{ascending:true}),
       sb.from('past_squads').select('*').order('year',{ascending:false}),
+      sb.from('team_logos').select('*'),
     ]);
     allPlayers  = (p.data || []).map(mapPlayer);
     allMatches  = (m.data || []).map(mapMatch);
@@ -1063,6 +1114,7 @@ async function loadData() {
     allSponsors = (s.data || []).map(mapSponsor);
     allDeals    = (d.data || []).map(r=>({id:r.id,sponsorId:r.sponsor_id,sponsorName:r.sponsors?.name||'',sponsorLogo:r.sponsors?.logo||null,sponsorIcon:r.sponsors?.icon||null,sponsorUrl:r.sponsors?.url||null,title:r.title,description:r.description,code:r.code,expiry:r.expiry}));
     allSquads   = (sq.data || []);
+    allTeamLogos = (tl.data || []);
   } catch(e) {
     showToast('⚠️ Could not connect to database');
     console.error(e);
@@ -1084,8 +1136,7 @@ function showLoading(on) {
 
 // ─── RENDER ALL ──────────────────────────────────────────────────
 function renderAll() {
-  renderRoster(); renderMatches(); renderGalleryPreview(); renderSponsors(); renderDeals(); populateMatchFilters();
-  // Show past squad link if any squads exist
+  renderRoster(); renderMatches(); renderGalleryPreview(); renderSponsors(); renderDeals();
   document.getElementById('pastSquadLinkWrap').style.display = allSquads.length ? 'block' : 'none';
 }
 
@@ -1213,48 +1264,99 @@ function openPlayerModal(id) {
 
 function closePlayerModal() { document.getElementById('playerModal').classList.remove('open'); }
 
-// ─── MATCHES ─────────────────────────────────────────────────────
-function populateMatchFilters() {
-  const seasons = [...new Set(allMatches.map(m=>m.season).filter(Boolean))].sort().reverse();
-  const tournaments = [...new Set(allMatches.map(m=>m.tournament).filter(Boolean))].sort();
-  const ss=document.getElementById('seasonFilter'), ts=document.getElementById('tournamentFilter');
-  const cv=ss.value, ct=ts.value;
-  ss.innerHTML='<option value="all">All Seasons</option>'+seasons.map(s=>`<option value="${s}"${s===cv?' selected':''}>${s}</option>`).join('');
-  ts.innerHTML='<option value="all">All Tournaments</option>'+tournaments.map(t=>`<option value="${t}"${t===ct?' selected':''}>${t}</option>`).join('');
+// ─── MATCHES CAROUSEL ────────────────────────────────────────────
+let carouselOffset = 0;
+
+function getTeamLogo(teamName) {
+  if(!teamName) return null;
+  const tl = allTeamLogos.find(t => t.team_name.toLowerCase() === teamName.toLowerCase());
+  return tl ? tl.logo_url : null;
+}
+
+function teamBadge(name, size=40) {
+  const logo = getTeamLogo(name);
+  if(logo) return `<img src="${logo}" class="mc-team-logo" style="width:${size}px;height:${size}px;" alt="${name}" onerror="this.outerHTML=teamInitials('${name.replace(/'/g,"\\'")}',${size})">`;
+  return teamInitialsHtml(name, size);
+}
+
+function teamInitialsHtml(name, size=40) {
+  const initials = (name||'?').split(/\s+/).map(w=>w[0]).join('').slice(0,3).toUpperCase();
+  const colors = ['#1a3d2b','#234d37','#2a5c45','#1d4731','#3a6b50'];
+  const bg = colors[(name||'').length % colors.length];
+  return `<div class="mc-team-initials" style="width:${size}px;height:${size}px;background:${bg};font-size:${Math.max(size*0.28,8)}px;">${initials}</div>`;
+}
+
+function buildMatchCard(m, highlight=false) {
+  const today = new Date().toISOString().slice(0,10);
+  const resultClass = {Win:'win',Loss:'loss',Draw:'draw',Upcoming:'upcoming','No Result':'draw'}[m.result]||'upcoming';
+  const bc = {Win:'badge-win',Loss:'badge-loss',Draw:'badge-draw',Upcoming:'badge-upcoming','No Result':'badge-draw'}[m.result]||'badge-upcoming';
+  const ourTeam = m.ourTeam || 'C-Town Lions';
+  const d = m.date ? new Date(m.date+'T12:00:00').toLocaleDateString('en-CA',{day:'numeric',month:'short'}) : '—';
+  const timeStr = m.time ? ` · ${m.time}` : '';
+
+  return `<div class="match-card-new ${resultClass}${highlight?' highlight':''}">
+    <div class="mc-tournament">
+      <span>${m.tournament||'Friendly'}</span>
+      <span class="match-result-badge ${bc}">${m.result}</span>
+    </div>
+    <div class="mc-teams">
+      <div class="mc-team-block" style="text-align:right;">
+        ${teamBadge(ourTeam)}
+        <div class="mc-team-name" style="margin-top:0.35rem;">${ourTeam}</div>
+        ${m.result!=='Upcoming'?`<div class="mc-score">${m.ourScore||'—'}</div>`:''}
+      </div>
+      <div class="mc-vs">VS</div>
+      <div class="mc-team-block">
+        ${teamBadge(m.opponent)}
+        <div class="mc-team-name" style="margin-top:0.35rem;">${m.opponent}</div>
+        ${m.result!=='Upcoming'?`<div class="mc-score opp">${m.theirScore||'—'}</div>`:''}
+      </div>
+    </div>
+    <div class="mc-footer">
+      <span class="mc-date">${d}${timeStr}</span>
+      <span class="mc-venue">${m.venue||''}</span>
+    </div>
+  </div>`;
 }
 
 function renderMatches() {
-  const season=document.getElementById('seasonFilter').value;
-  const tournament=document.getElementById('tournamentFilter').value;
-  const result=document.getElementById('resultFilter').value;
-  const filtered=allMatches.filter(m=>
-    (season==='all'||m.season===season)&&
-    (tournament==='all'||m.tournament===tournament)&&
-    (result==='all'||m.result===result)
-  );
+  const today = new Date().toISOString().slice(0,10);
+  // Sort: upcoming by date asc, then past by date desc
+  const upcoming = allMatches.filter(m=>m.result==='Upcoming'&&m.date).sort((a,b)=>a.date.localeCompare(b.date));
+  const past = allMatches.filter(m=>m.result!=='Upcoming'||!m.date).sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  // Show: last 3 past + next 6 upcoming (capped at 9 visible)
+  const display = [...past.slice(0,3).reverse(), ...upcoming.slice(0,6)];
 
-  const list = document.getElementById('matchesList');
-  list.innerHTML = filtered.length ? filtered.map(m => {
-    const bc = {Win:'badge-win',Loss:'badge-loss',Draw:'badge-draw',Upcoming:'badge-upcoming'}[m.result]||'';
-    const d = m.date ? new Date(m.date+'T12:00:00').toLocaleDateString('en-CA',{day:'numeric',month:'short',year:'numeric'}) : '';
-    return `<div class="match-card">
-      <div class="match-team home">
-        <div style="font-size:0.7rem;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;font-family:'Barlow Condensed',sans-serif;margin-bottom:2px;">C-Town Lions</div>
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:1px;color:var(--green);">${m.ourScore||'—'}</div>
-      </div>
-      <div class="match-score-box">
-        <div class="match-meta">${d}</div>
-        <div class="match-meta">${m.venue||''}</div>
-        <div><span class="match-result-badge ${bc}">${m.result}</span></div>
-        <div class="match-meta" style="margin-top:4px;">${m.tournament||''}</div>
-      </div>
-      <div class="match-team away">
-        <div style="font-size:0.7rem;color:var(--text-muted);letter-spacing:1.5px;text-transform:uppercase;font-family:'Barlow Condensed',sans-serif;margin-bottom:2px;">${m.opponent}</div>
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:1px;color:var(--text-mid);">${m.theirScore||'—'}</div>
-      </div>
-    </div>`;
-  }).join('') : '<p style="text-align:center;color:var(--text-muted);padding:3rem;">No matches found for these filters.</p>';
+  const carousel = document.getElementById('matchesCarousel');
+  if(!display.length){ carousel.innerHTML='<p style="padding:2rem;color:var(--text-muted);">No matches yet.</p>'; return; }
+
+  // Find the first upcoming match index to set initial offset
+  const firstUpcomingIdx = display.findIndex(m=>m.result==='Upcoming');
+  carousel.innerHTML = display.map((m,i) => buildMatchCard(m, m.result==='Upcoming'&&i===firstUpcomingIdx)).join('');
+
+  // Set carousel offset so next upcoming is visible
+  const visibleCount = window.innerWidth < 768 ? 1 : window.innerWidth < 1024 ? 2 : 3;
+  carouselOffset = Math.max(0, Math.min(firstUpcomingIdx, display.length - visibleCount));
+  updateCarousel(display.length);
 }
+
+function updateCarousel(total) {
+  const carousel = document.getElementById('matchesCarousel');
+  const visibleCount = window.innerWidth < 768 ? 1 : window.innerWidth < 1024 ? 2 : 3;
+  const cardW = carousel.firstElementChild ? carousel.firstElementChild.offsetWidth + 16 : 0;
+  carousel.scrollLeft = carouselOffset * cardW;
+  document.getElementById('carouselPrev').disabled = carouselOffset <= 0;
+  document.getElementById('carouselNext').disabled = carouselOffset >= total - visibleCount;
+}
+
+function carouselNav(dir) {
+  const total = document.getElementById('matchesCarousel').children.length;
+  const visibleCount = window.innerWidth < 768 ? 1 : window.innerWidth < 1024 ? 2 : 3;
+  carouselOffset = Math.max(0, Math.min(carouselOffset + dir, total - visibleCount));
+  updateCarousel(total);
+}
+
+function populateMatchFilters() {} // no filters on homepage
 
 function renderGalleryPreview() {
   const gallery = allGallery.slice(0,6);
@@ -1296,6 +1398,7 @@ function renderSponsors() {
         <a href="${s.url||'#'}" target="_blank" class="sponsor-card">
           <div class="sponsor-logo">${s.logo ? `<img src="${s.logo}" alt="${s.name}" style="max-width:64px;max-height:48px;object-fit:contain;" onerror="this.parentElement.textContent='${(s.icon||'🏢').replace(/'/g,"\\'")}'">`  : (s.icon||'🏢')}</div>
           <div class="sponsor-name">${s.name}</div>
+          ${s.address ? `<div class="sponsor-address">${s.address}</div>` : ''}
           <div class="sponsor-tier">${s.tier} Sponsor</div>
         </a>`).join('')}
       </div>`;
@@ -1424,6 +1527,7 @@ document.getElementById('year').textContent = new Date().getFullYear();
 
 window.openPlayerModal=openPlayerModal; window.closePlayerModal=closePlayerModal;
 window.renderMatches=renderMatches; window.submitContact=submitContact; window.toggleMenu=toggleMenu;
+window.carouselNav=carouselNav;
 window.openSquadModal=openSquadModal; window.closeSquadModal=closeSquadModal; window.navSquad=navSquad;
 
 // ─── INIT ────────────────────────────────────────────────────────
