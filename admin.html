@@ -1786,7 +1786,7 @@ async function importExcelMatches(){
     their_score:      r.oppScore || null,
     season:           r.season || new Date().getFullYear().toString(),
     tournament:       r.tournament || null,
-    motm:             r.motm || null,
+    // motm:             r.motm || null,
     players:          r.players || null,
   }));
   const {error} = await sb.from('matches').insert(rows);
