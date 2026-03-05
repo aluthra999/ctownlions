@@ -442,6 +442,8 @@
     margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center;
     font-size: 1.8rem; border: 1px solid var(--cream-dark);
   }
+  .sponsor-name { font-family: 'Barlow Condensed', sans-serif; font-size: 1rem; font-weight: 700; letter-spacing: 1px; color: var(--text-dark); margin-bottom: 0.25rem; }
+  .sponsor-tier { font-size: 0.72rem; color: var(--gold); text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; }
 
   /* ─── PAST SQUAD MODAL ─── */
   .squad-modal-overlay {
@@ -554,32 +556,6 @@
     font-family: 'Barlow Condensed', sans-serif; letter-spacing: 1px;
   }
   .deal-expiry.soon { color: #f0a500; }
-
-  .sponsors-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
-    gap: 1.5rem; max-width: 1000px; margin: 0 auto;
-  }
-
-  .sponsor-card {
-    background: var(--white); border: 1px solid var(--cream-dark);
-    padding: 2rem 1.5rem; text-align: center;
-    transition: all 0.2s; box-shadow: var(--shadow); text-decoration: none;
-    display: block;
-  }
-  .sponsor-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: rgba(184,147,42,0.4); }
-
-  .sponsor-logo {
-    width: 72px; height: 72px;
-    background: var(--cream);
-    border-radius: 50%;
-    margin: 0 auto 1rem;
-    display: flex; align-items: center; justify-content: center; font-size: 1.8rem;
-    border: 1px solid var(--cream-dark);
-  }
-
-  .sponsor-name { font-family: 'Barlow Condensed', sans-serif; font-size: 1rem; font-weight: 700; letter-spacing: 1px; color: var(--text-dark); margin-bottom: 0.25rem; }
-  .sponsor-tier { font-size: 0.72rem; color: var(--gold); text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; }
 
   /* ─── CONTACT ─── */
   #contact { background: var(--off-white); }
@@ -1077,7 +1053,7 @@ async function loadData() {
       sb.from('players').select('*').order('id'),
       sb.from('matches').select('*').order('date', {ascending: false}),
       sb.from('gallery').select('*').order('id'),
-      sb.from('sponsors').select('*').order('sort_order', {ascending: true}),
+      sb.from('sponsors').select('*').order('id'),
       sb.from('deals').select('*,sponsors(name,logo,icon,url)').order('expiry',{ascending:true}),
       sb.from('past_squads').select('*').order('year',{ascending:false}),
     ]);
