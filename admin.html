@@ -1653,7 +1653,6 @@ function previewExcel(input){
         const oppScore   = get(7) || null;
         const season     = get(8) || currentYear;
         const tournament = get(9);
-        // const motmRaw    = get(10);
         const playersRaw = get(10);
 
         const errors = [];
@@ -1673,20 +1672,20 @@ function previewExcel(input){
         // Result — default Upcoming, validate if provided
         let result = 'Upcoming';
         let noResultReason = null;
-
+        
         if(resultRaw){
           const matched = VALID_RESULTS.find(v => v.toLowerCase() === resultRaw.toLowerCase());
-          if(matched){ 
-            result = matched; 
-          } else { 
-            errors.push(`Result "${resultRaw}" not valid — use: ${VALID_RESULTS.join(', ')}`); 
+          if(matched){
+            result = matched;
+          } else {
+            errors.push(`Result "${resultRaw}" not valid — use: ${VALID_RESULTS.join(', ')}`);
           }
         }
         
-        // Fix for No Result reason
+        // Only require reason when result is No Result
         if(result === 'No Result'){
           noResultReason = 'Match cancelled';
-        } else {
+        }else{
           noResultReason = null;
         }
 
