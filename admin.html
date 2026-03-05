@@ -1653,15 +1653,15 @@ function previewExcel(input){
         const oppScore   = get(7) || null;
         const season     = get(8) || currentYear;
         const tournament = get(9);
-        const motmRaw    = get(10);
-        const playersRaw = get(11);
+        // const motmRaw    = get(10);
+        const playersRaw = get(10);
 
         const errors = [];
 
         // Required field validation
         if(!opponent)   errors.push('Opponent missing');
         if(!dateRaw)    errors.push('Date missing');
-        if(!time)       errors.push('Time missing');
+        if(result !== 'Upcoming' && !time) errors.push('Time missing');
         if(!venue)      errors.push('Venue missing');
         if(!tournament) errors.push('Tournament missing');
         if(!playersRaw) errors.push('Players missing');
@@ -1673,10 +1673,21 @@ function previewExcel(input){
         // Result — default Upcoming, validate if provided
         let result = 'Upcoming';
         let noResultReason = null;
+
         if(resultRaw){
           const matched = VALID_RESULTS.find(v => v.toLowerCase() === resultRaw.toLowerCase());
-          if(matched){ result = matched; }
-          else { errors.push(`Result "${resultRaw}" not valid — use: ${VALID_RESULTS.join(', ')}`); }
+          if(matched){ 
+            result = matched; 
+          } else { 
+            errors.push(`Result "${resultRaw}" not valid — use: ${VALID_RESULTS.join(', ')}`); 
+          }
+        }
+        
+        // Fix for No Result reason
+        if(result === 'No Result'){
+          noResultReason = 'Match cancelled';
+        } else {
+          noResultReason = null;
         }
 
         // MOTM — only valid if match has a result AND player is in the players list
