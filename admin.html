@@ -413,8 +413,39 @@ tr.drag-over{border-top:2px solid var(--gold);}
 
           <!-- EXCEL IMPORT -->
           <div class="form-card" style="border-top:3px solid var(--gold);">
-            <h3>📥 Import Schedule from Excel</h3>
-            <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:1rem;line-height:1.6;">Upload an <strong>.xlsx</strong> or <strong>.csv</strong> file. Columns must be in this exact order: <strong>Date · Opponent · Venue · Time · Tournament · Season · Players</strong> (Players = comma-separated names, optional). First row is the header — it is skipped. Matches import as <em>Upcoming</em>.</p>
+            <h3>📥 Import Matches from Excel / CSV</h3>
+            <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:0.75rem;line-height:1.6;">
+              Columns must be in this exact order. <strong>* = required.</strong> First row is the header and is skipped.
+            </p>
+            <div style="overflow-x:auto;margin-bottom:1rem;">
+              <table style="font-size:0.75rem;border-collapse:collapse;white-space:nowrap;">
+                <thead><tr style="background:var(--green);color:var(--white);">
+                  <th style="padding:0.3rem 0.6rem;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;">Col</th>
+                  <th style="padding:0.3rem 0.6rem;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;">Header</th>
+                  <th style="padding:0.3rem 0.6rem;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;">Default if empty</th>
+                </tr></thead>
+                <tbody>
+                  ${[
+                    ['A','Our Team Name','C-Town Lions'],
+                    ['B','Opponent *','—'],
+                    ['C','Date *','—'],
+                    ['D','Time *','—'],
+                    ['E','Venue *','—'],
+                    ['F','Result','Upcoming'],
+                    ['G','Our Score','empty'],
+                    ['H','Opponent Score','empty'],
+                    ['I','Season','Current year'],
+                    ['J','Tournament *','—'],
+                    ['K','Man of the Match','empty (auto-validated against Players list)'],
+                    ['L','Players in This Match * (comma separated)','—'],
+                  ].map(([col,hdr,def],i)=>`<tr style="background:${i%2?'var(--cream)':'var(--off-white)'}">
+                    <td style="padding:0.3rem 0.6rem;font-family:'Barlow Condensed',sans-serif;font-weight:700;color:var(--gold);">${col}</td>
+                    <td style="padding:0.3rem 0.6rem;">${hdr}</td>
+                    <td style="padding:0.3rem 0.6rem;color:var(--text-muted);">${def}</td>
+                  </tr>`).join('')}
+                </tbody>
+              </table>
+            </div>
             <div style="margin-bottom:1rem;">
               <label style="display:inline-block;background:var(--green);color:var(--white);font-family:'Barlow Condensed',sans-serif;font-size:0.82rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:0.6rem 1.25rem;cursor:pointer;transition:background 0.2s;" onmouseover="this.style.background='var(--green-mid)'" onmouseout="this.style.background='var(--green)'">
                 📊 Choose File
@@ -423,15 +454,22 @@ tr.drag-over{border-top:2px solid var(--gold);}
               <span id="excelFileName" style="font-size:0.82rem;color:var(--text-muted);margin-left:0.75rem;">No file chosen</span>
             </div>
             <div id="excelPreviewWrap" style="display:none;margin-top:1rem;">
-              <div style="font-family:'Barlow Condensed',sans-serif;font-size:0.7rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.5rem;">Preview (<span id="excelRowCount">0</span> matches)</div>
-              <div style="overflow-x:auto;max-height:280px;overflow-y:auto;">
+              <div id="excelValidationErrors" style="display:none;background:rgba(192,57,43,0.07);border-left:3px solid var(--red);padding:0.75rem 1rem;margin-bottom:0.75rem;font-size:0.82rem;color:var(--red);line-height:1.7;"></div>
+              <div style="font-family:'Barlow Condensed',sans-serif;font-size:0.7rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.5rem;">
+                Preview — <span id="excelRowCount">0</span> valid · <span id="excelErrCount" style="color:var(--red);">0 errors</span>
+              </div>
+              <div style="overflow-x:auto;max-height:300px;overflow-y:auto;">
                 <table class="data-table" id="excelPreviewTable">
-                  <thead><tr><th>Date</th><th>Opponent</th><th>Venue</th><th>Time</th><th>Tournament</th><th>Season</th><th>Players</th></tr></thead>
+                  <thead><tr>
+                    <th>#</th><th>Our Team</th><th>Opponent</th><th>Date</th><th>Time</th>
+                    <th>Venue</th><th>Result</th><th>Our Score</th><th>Opp Score</th>
+                    <th>Season</th><th>Tournament</th><th>MOTM</th><th>Players</th><th>Status</th>
+                  </tr></thead>
                   <tbody id="excelPreviewBody"></tbody>
                 </table>
               </div>
               <div class="btn-row" style="margin-top:1rem;">
-                <button class="btn btn-save" onclick="importExcelMatches()">☁️ Import All</button>
+                <button class="btn btn-save" id="excelImportBtn" onclick="importExcelMatches()">☁️ Import Valid Rows</button>
                 <button class="btn btn-clear" onclick="clearExcelImport()">Clear</button>
               </div>
             </div>
@@ -1561,53 +1599,171 @@ function clearDealForm(){
 }
 
 // ── EXCEL IMPORT ──
+const VALID_RESULTS = ['Win','Loss','Draw','Upcoming','No Result'];
+
+function normaliseDate(raw){
+  let s = String(raw||'').trim();
+  if(!s) return null;
+  // Already YYYY-MM-DD
+  if(/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+  const parts = s.split(/[\/\-\.]/);
+  if(parts.length===3){
+    const [a,b,c] = parts;
+    if(a.length===4) return `${a}-${b.padStart(2,'0')}-${c.padStart(2,'0')}`; // YYYY/MM/DD
+    if(c.length===4){
+      // DD/MM/YYYY vs MM/DD/YYYY — if first part > 12 it must be day
+      if(parseInt(a)>12) return `${c}-${b.padStart(2,'0')}-${a.padStart(2,'0')}`;
+      return `${c}-${a.padStart(2,'0')}-${b.padStart(2,'0')}`;
+    }
+  }
+  // Try native parse as last resort
+  const d = new Date(s);
+  if(!isNaN(d)) return d.toISOString().slice(0,10);
+  return null;
+}
+
 function previewExcel(input){
-  const file=input.files[0];if(!file)return;
-  document.getElementById('excelFileName').textContent=file.name;
-  const reader=new FileReader();
-  reader.onload=e=>{
+  const file = input.files[0]; if(!file) return;
+  document.getElementById('excelFileName').textContent = file.name;
+  const reader = new FileReader();
+  reader.onload = e => {
     try{
-      const data=new Uint8Array(e.target.result);
-      const wb=XLSX.read(data,{type:'array',cellDates:true});
-      const ws=wb.Sheets[wb.SheetNames[0]];
-      const rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:'',raw:false});
-      if(rows.length<2){toast('File appears empty or has no data rows','error');return;}
-      excelParsedRows=rows.slice(1).filter(r=>r.some(c=>String(c).trim()!=='')).map(r=>{
-        // Columns: Date(0), Opponent(1), Venue(2), Time(3), Tournament(4), Season(5), Players(6)
-        let dateStr=String(r[0]||'').trim();
-        // Normalise date formats
-        const parts=dateStr.split(/[\/\-\.]/);
-        if(parts.length===3){
-          if(parts[2].length===4){
-            // DD/MM/YYYY or MM/DD/YYYY — if day > 12, must be DD first
-            if(parseInt(parts[0])>12) dateStr=`${parts[2]}-${parts[1].padStart(2,'0')}-${parts[0].padStart(2,'0')}`;
-            else dateStr=`${parts[2]}-${parts[0].padStart(2,'0')}-${parts[1].padStart(2,'0')}`;
-          } else if(parts[0].length===4){
-            dateStr=`${parts[0]}-${parts[1].padStart(2,'0')}-${parts[2].padStart(2,'0')}`;
+      const wb = XLSX.read(new Uint8Array(e.target.result), {type:'array', cellDates:true});
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(ws, {header:1, defval:'', raw:false});
+      if(rows.length < 2){ toast('File has no data rows','error'); return; }
+
+      const currentYear = new Date().getFullYear().toString();
+      const knownPlayerNames = allPlayers.map(p => p.name.toLowerCase());
+
+      // Col indices: A=0 OurTeam, B=1 Opponent, C=2 Date, D=3 Time, E=4 Venue,
+      //              F=5 Result, G=6 OurScore, H=7 OppScore, I=8 Season,
+      //              J=9 Tournament, K=10 MOTM, L=11 Players
+      const parsed = rows.slice(1).map((r, idx) => {
+        const rowNum = idx + 2; // human row number (1-indexed + header)
+        const get = col => String(r[col]||'').trim();
+
+        const ourTeam    = get(0) || 'C-Town Lions';
+        const opponent   = get(1);
+        const dateRaw    = get(2);
+        const time       = get(3) || null;
+        const venue      = get(4);
+        const resultRaw  = get(5);
+        const ourScore   = get(6) || null;
+        const oppScore   = get(7) || null;
+        const season     = get(8) || currentYear;
+        const tournament = get(9);
+        const motmRaw    = get(10);
+        const playersRaw = get(11);
+
+        const errors = [];
+
+        // Required field validation
+        if(!opponent)   errors.push('Opponent missing');
+        if(!dateRaw)    errors.push('Date missing');
+        if(!time)       errors.push('Time missing');
+        if(!venue)      errors.push('Venue missing');
+        if(!tournament) errors.push('Tournament missing');
+        if(!playersRaw) errors.push('Players missing');
+
+        // Date normalisation
+        const date = normaliseDate(dateRaw);
+        if(dateRaw && !date) errors.push(`Date "${dateRaw}" not recognised`);
+
+        // Result — default Upcoming, validate if provided
+        let result = 'Upcoming';
+        let noResultReason = null;
+        if(resultRaw){
+          const matched = VALID_RESULTS.find(v => v.toLowerCase() === resultRaw.toLowerCase());
+          if(matched){ result = matched; }
+          else { errors.push(`Result "${resultRaw}" not valid — use: ${VALID_RESULTS.join(', ')}`); }
+        }
+
+        // MOTM — only valid if match has a result AND player is in the players list
+        let motm = null;
+        if(motmRaw){
+          if(result === 'Upcoming'){
+            // silently skip MOTM for upcoming matches
+          } else {
+            // Check if MOTM is in the players list for this match
+            const matchPlayerNames = playersRaw
+              ? playersRaw.split(',').map(n=>n.trim().toLowerCase()).filter(Boolean)
+              : [];
+            const motmLower = motmRaw.toLowerCase();
+            // Only save if in the known club players list
+            if(knownPlayerNames.includes(motmLower)){
+              // Verify they're also in this match's player list (warn if not, still allow)
+              motm = allPlayers.find(p=>p.name.toLowerCase()===motmLower)?.name || null;
+              if(!matchPlayerNames.includes(motmLower)){
+                errors.push(`⚠ MOTM "${motmRaw}" is a club player but not listed in Players column`);
+              }
+            } else {
+              // Not a known club player — don't save
+              errors.push(`⚠ MOTM "${motmRaw}" not found in club roster — will be left empty`);
+            }
           }
         }
-        return{
-          date:dateStr||null,
-          opponent:String(r[1]||'').trim(),
-          venue:String(r[2]||'').trim()||null,
-          time:String(r[3]||'').trim()||null,
-          tournament:String(r[4]||'').trim()||null,
-          season:String(r[5]||'').trim()||null,
-          players:String(r[6]||'').trim()||null,
-        };
-      }).filter(r=>r.opponent);
 
-      document.getElementById('excelRowCount').textContent=excelParsedRows.length;
-      document.getElementById('excelPreviewBody').innerHTML=excelParsedRows.map(r=>`
-        <tr>
-          <td>${r.date||'—'}</td><td>${r.opponent}</td><td>${r.venue||'—'}</td>
-          <td>${r.time||'—'}</td><td>${r.tournament||'—'}</td><td>${r.season||'—'}</td>
-          <td style="font-size:0.75rem;color:var(--text-muted);">${r.players||'—'}</td>
-        </tr>`).join('');
-      document.getElementById('excelPreviewWrap').style.display='block';
-      toast(`${excelParsedRows.length} matches ready to import`,'info');
-    }catch(err){
-      toast('Could not parse file: '+err.message,'error');
+        return {
+          rowNum, ourTeam, opponent, date, time, venue, result, noResultReason,
+          ourScore, oppScore, season, tournament, motm, players: playersRaw||null,
+          errors, valid: errors.filter(e=>!e.startsWith('⚠')).length === 0
+        };
+      }).filter(r => r.opponent || r.errors.length); // include error rows so user sees them
+
+      excelParsedRows = parsed;
+
+      const validCount = parsed.filter(r=>r.valid).length;
+      const errCount   = parsed.filter(r=>!r.valid).length;
+      const warnOnly   = parsed.filter(r=>!r.valid && r.errors.every(e=>e.startsWith('⚠')));
+
+      document.getElementById('excelRowCount').textContent = validCount + warnOnly.length;
+      document.getElementById('excelErrCount').textContent = errCount - warnOnly.length + ' errors';
+
+      // Validation summary
+      const allErrors = parsed.flatMap(r => r.errors.filter(e=>!e.startsWith('⚠')).map(e=>`Row ${r.rowNum}: ${e}`));
+      const errBox = document.getElementById('excelValidationErrors');
+      if(allErrors.length){
+        errBox.innerHTML = '<strong>⚠ Errors found — these rows will be skipped:</strong><br>' + allErrors.join('<br>');
+        errBox.style.display = 'block';
+      } else {
+        errBox.style.display = 'none';
+      }
+
+      document.getElementById('excelPreviewBody').innerHTML = parsed.map(r => {
+        const rowStyle = r.valid ? '' : (r.errors.every(e=>e.startsWith('⚠')) ? 'background:#fffbe6;' : 'background:rgba(192,57,43,0.05);');
+        const statusHtml = r.valid
+          ? '<span style="color:#2a8a3e;font-size:0.75rem;font-weight:700;">✓ OK</span>'
+          : r.errors.every(e=>e.startsWith('⚠'))
+            ? `<span style="color:#f0a500;font-size:0.72rem;" title="${r.errors.join('\n')}">⚠ Warn</span>`
+            : `<span style="color:var(--red);font-size:0.72rem;" title="${r.errors.filter(e=>!e.startsWith('⚠')).join('\n')}">✗ ${r.errors.filter(e=>!e.startsWith('⚠')).length} err</span>`;
+        return `<tr style="${rowStyle}">
+          <td style="color:var(--text-muted);font-size:0.75rem;">${r.rowNum}</td>
+          <td>${r.ourTeam}</td>
+          <td><strong>${r.opponent||'—'}</strong></td>
+          <td>${r.date||r.errors.find(e=>e.includes('Date'))?`<span style="color:var(--red)">${r.date||'!'}</span>`:r.date||'—'}</td>
+          <td>${r.time||'—'}</td>
+          <td>${r.venue||'—'}</td>
+          <td>${r.result}</td>
+          <td style="font-size:0.78rem;">${r.ourScore||'—'}</td>
+          <td style="font-size:0.78rem;">${r.oppScore||'—'}</td>
+          <td>${r.season}</td>
+          <td style="font-size:0.78rem;">${r.tournament||'—'}</td>
+          <td style="font-size:0.75rem;color:${r.motm?'var(--text-dark)':'var(--text-muted)'};">${r.motm||'—'}</td>
+          <td style="font-size:0.72rem;color:var(--text-muted);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${r.players||''}">${r.players||'—'}</td>
+          <td>${statusHtml}</td>
+        </tr>`;
+      }).join('');
+
+      document.getElementById('excelPreviewWrap').style.display = 'block';
+      const importBtn = document.getElementById('excelImportBtn');
+      importBtn.textContent = `☁️ Import ${validCount + warnOnly.length} Matches`;
+      if(!validCount && !warnOnly.length){ importBtn.disabled=true; importBtn.style.opacity='0.5'; }
+      else { importBtn.disabled=false; importBtn.style.opacity='1'; }
+
+      toast(`${validCount} valid · ${errCount - warnOnly.length} skipped · ${warnOnly.length} warnings`, validCount ? 'info' : 'error');
+    } catch(err){
+      toast('Could not parse file: ' + err.message, 'error');
       console.error(err);
     }
   };
@@ -1615,37 +1771,45 @@ function previewExcel(input){
 }
 
 async function importExcelMatches(){
-  if(!excelParsedRows.length)return toast('No rows to import','error');
+  const toImport = excelParsedRows.filter(r => r.valid || r.errors.every(e=>e.startsWith('⚠')));
+  if(!toImport.length) return toast('No valid rows to import','error');
   loading(true);
-  const rows=excelParsedRows.map(r=>({
-    our_team:'C-Town Lions',
-    opponent:r.opponent,
-    date:r.date||null,
-    time:r.time||null,
-    venue:r.venue||null,
-    result:'Upcoming',
-    our_score:null,their_score:null,
-    season:r.season||null,
-    tournament:r.tournament||null,
-    players:r.players||null,
-    motm:null,
-    no_result_reason:null,
+  const rows = toImport.map(r => ({
+    our_team:         r.ourTeam || 'C-Town Lions',
+    opponent:         r.opponent,
+    date:             r.date || null,
+    time:             r.time || null,
+    venue:            r.venue || null,
+    result:           r.result || 'Upcoming',
+    no_result_reason: r.noResultReason || null,
+    our_score:        r.ourScore || null,
+    their_score:      r.oppScore || null,
+    season:           r.season || new Date().getFullYear().toString(),
+    tournament:       r.tournament || null,
+    motm:             r.motm || null,
+    players:          r.players || null,
   }));
-  const {error}=await sb.from('matches').insert(rows);
+  const {error} = await sb.from('matches').insert(rows);
   loading(false);
-  if(error)return toast('Import error: '+error.message,'error');
-  const {data}=await sb.from('matches').select('*').order('date',{ascending:false});
-  allMatches=(data||[]).map(mapMatch);
-  clearExcelImport();renderMatchesTable();renderDashboard();
+  if(error) return toast('Import error: ' + error.message, 'error');
+  const {data} = await sb.from('matches').select('*').order('date', {ascending:false});
+  allMatches = (data||[]).map(mapMatch);
+  clearExcelImport();
+  renderMatchesTable();
+  renderDashboard();
   toast(`${rows.length} match${rows.length!==1?'es':''} imported ✓`);
 }
 
 function clearExcelImport(){
-  excelParsedRows=[];
-  document.getElementById('excelFile').value='';
-  document.getElementById('excelFileName').textContent='No file chosen';
-  document.getElementById('excelPreviewBody').innerHTML='';
-  document.getElementById('excelPreviewWrap').style.display='none';
+  excelParsedRows = [];
+  document.getElementById('excelFile').value = '';
+  document.getElementById('excelFileName').textContent = 'No file chosen';
+  document.getElementById('excelPreviewBody').innerHTML = '';
+  document.getElementById('excelValidationErrors').style.display = 'none';
+  document.getElementById('excelPreviewWrap').style.display = 'none';
+  const btn = document.getElementById('excelImportBtn');
+  btn.disabled = false; btn.style.opacity = '1';
+  btn.textContent = '☁️ Import Valid Rows';
 }
 
 // ── REMOVE PHOTOS ──
