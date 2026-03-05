@@ -104,6 +104,9 @@ footer a{color:rgba(255,255,255,0.4);text-decoration:none;}
 
 <div class="filters-bar">
   <span class="filter-label">Filter:</span>
+  <select class="select-styled" id="teamFilter" onchange="applyFilters()">
+    <option value="all">All Teams</option>
+  </select>
   <select class="select-styled" id="seasonFilter" onchange="applyFilters()">
     <option value="all">All Seasons</option>
   </select>
@@ -194,11 +197,13 @@ function buildCard(m){
 }
 
 function applyFilters(){
+  const team=document.getElementById('teamFilter').value;
   const season=document.getElementById('seasonFilter').value;
   const tournament=document.getElementById('tournamentFilter').value;
   const result=document.getElementById('resultFilter').value;
 
   const filtered=allMatches.filter(m=>
+    (team==='all'||m.opponent===team)&&
     (season==='all'||m.season===season)&&
     (tournament==='all'||m.tournament===tournament)&&
     (result==='all'||m.result===result)
@@ -225,8 +230,14 @@ function applyFilters(){
 }
 
 function populateFilters(){
+  const opponents=[...new Set(allMatches.map(m=>m.opponent).filter(Boolean))].sort();
   const seasons=[...new Set(allMatches.map(m=>m.season).filter(Boolean))].sort().reverse();
   const tournaments=[...new Set(allMatches.map(m=>m.tournament).filter(Boolean))].sort();
+
+  document.getElementById('teamFilter').innerHTML=
+    '<option value="all">All Teams</option>'+
+    opponents.map(o=>`<option value="${o}">${o}</option>`).join('');
+
   const ss=document.getElementById('seasonFilter'),ts=document.getElementById('tournamentFilter');
   ss.innerHTML='<option value="all">All Seasons</option>'+seasons.map(s=>`<option value="${s}">${s}</option>`).join('');
   ts.innerHTML='<option value="all">All Tournaments</option>'+tournaments.map(t=>`<option value="${t}">${t}</option>`).join('');
