@@ -411,8 +411,98 @@
 
   /* ─── SPONSORS ─── */
   #sponsors { background: var(--cream-mid); }
+  .sponsors-tier-group { max-width: 1100px; margin: 0 auto 2.5rem; padding: 0 2rem; }
+  .sponsors-tier-header {
+    display: flex; align-items: center; gap: 1rem; margin-bottom: 1.25rem;
+  }
+  .sponsors-tier-label {
+    font-family: 'Barlow Condensed', sans-serif; font-size: 0.68rem; font-weight: 700;
+    letter-spacing: 3px; text-transform: uppercase; white-space: nowrap;
+    padding: 0.2rem 0.75rem;
+  }
+  .tier-label-gold { color: var(--gold); border: 1px solid var(--gold); }
+  .tier-label-silver { color: #888; border: 1px solid #bbb; }
+  .tier-label-bronze { color: #a0622a; border: 1px solid #c0894a; }
+  .tier-label-community { color: var(--green); border: 1px solid rgba(26,61,43,0.3); }
+  .sponsors-tier-line { flex: 1; height: 1px; background: var(--cream-dark); }
+  .sponsors-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    gap: 1.25rem;
+  }
+  .sponsor-card {
+    background: var(--white); border: 1px solid var(--cream-dark);
+    padding: 2rem 1.5rem; text-align: center;
+    transition: all 0.2s; box-shadow: var(--shadow); text-decoration: none;
+    display: block;
+  }
+  .sponsor-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: rgba(184,147,42,0.4); }
+  .sponsor-logo {
+    width: 72px; height: 72px; background: var(--cream); border-radius: 50%;
+    margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center;
+    font-size: 1.8rem; border: 1px solid var(--cream-dark);
+  }
 
-  /* ─── DEALS ─── */
+  /* ─── PAST SQUAD MODAL ─── */
+  .squad-modal-overlay {
+    display: none; position: fixed; inset: 0; z-index: 3000;
+    background: rgba(13,31,22,0.75); backdrop-filter: blur(6px);
+    align-items: center; justify-content: center;
+  }
+  .squad-modal-overlay.open { display: flex; }
+  .squad-modal {
+    background: var(--white); width: 90%; max-width: 860px;
+    max-height: 88vh; display: flex; flex-direction: column;
+    box-shadow: var(--shadow-lg); animation: fadeUp 0.3s ease;
+  }
+  .squad-modal-header {
+    padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--cream-dark);
+    display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+  }
+  .squad-modal-title {
+    font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; letter-spacing: 2px; color: var(--green);
+  }
+  .squad-modal-nav {
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .squad-nav-btn {
+    background: var(--green); color: var(--white); border: none;
+    width: 32px; height: 32px; cursor: pointer; font-size: 1rem;
+    display: flex; align-items: center; justify-content: center; transition: background 0.2s;
+  }
+  .squad-nav-btn:hover { background: var(--green-mid); }
+  .squad-nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  .squad-year-display {
+    font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; letter-spacing: 2px;
+    color: var(--gold); min-width: 60px; text-align: center;
+  }
+  .squad-modal-body { padding: 1.25rem 1.5rem; overflow-y: auto; flex: 1; }
+  .squad-modal-label {
+    font-family: 'Barlow Condensed', sans-serif; font-size: 0.72rem; font-weight: 700;
+    letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted);
+    margin-bottom: 1rem;
+  }
+  .squad-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.85rem;
+  }
+  .squad-mini-card {
+    background: var(--cream); border: 1px solid var(--cream-dark); padding: 0.85rem 0.65rem;
+    text-align: center;
+  }
+  .squad-mini-avatar {
+    width: 52px; height: 52px; border-radius: 50%; overflow: hidden; margin: 0 auto 0.5rem;
+    background: var(--green); display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem;
+  }
+  .squad-mini-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .squad-mini-name {
+    font-family: 'Barlow Condensed', sans-serif; font-size: 0.82rem; font-weight: 700;
+    letter-spacing: 0.5px; color: var(--text-dark); line-height: 1.2; margin-bottom: 0.2rem;
+  }
+  .squad-mini-role {
+    font-size: 0.66rem; color: var(--text-muted); font-family: 'Barlow Condensed', sans-serif;
+    letter-spacing: 1px; text-transform: uppercase;
+  }
   #deals { background: var(--green); }
   #deals .section-label { color: rgba(255,255,255,0.5); }
   #deals .section-title { color: var(--gold-light); }
@@ -741,7 +831,7 @@
     <li><a href="#contact">Contact</a></li>
   </ul>
   <div style="display:flex;align-items:center;gap:1rem;">
-    <!-- <a href="admin.html" class="nav-admin-btn">⚙ Admin</a> -->
+    <a href="admin.html" class="nav-admin-btn">⚙ Admin</a>
     <div class="hamburger" id="hamburger" onclick="toggleMenu()">
       <span></span><span></span><span></span>
     </div>
@@ -768,7 +858,7 @@
 <!-- ROSTER -->
 <section id="roster">
   <div class="section-header">
-    <p class="section-label">The Squad</p>
+    <p class="section-label">2026 Squad</p>
     <h2 class="section-title">Player Roster</h2>
     <div class="section-line"></div>
   </div>
@@ -780,6 +870,9 @@
     <button class="filter-btn" data-filter="Wicket-Keeper">Wicket-Keepers</button>
   </div>
   <div class="roster-grid" id="rosterGrid"></div>
+  <div id="pastSquadLinkWrap" style="display:none;text-align:center;padding:1.5rem 2rem 2.5rem;">
+    <button onclick="openSquadModal()" style="background:none;border:1px solid var(--cream-dark);color:var(--text-muted);font-family:'Barlow Condensed',sans-serif;font-size:0.75rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;padding:0.45rem 1.25rem;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--green)';this.style.color='var(--green)'" onmouseout="this.style.borderColor='var(--cream-dark)';this.style.color='var(--text-muted)'">← Past Squads</button>
+  </div>
 </section>
 
 <!-- MATCHES -->
@@ -827,7 +920,7 @@
     <h2 class="section-title">Sponsors</h2>
     <div class="section-line"></div>
   </div>
-  <div class="sponsors-grid" id="sponsorsGrid"></div>
+  <div id="sponsorsGrid"></div>
 </section>
 
 <!-- DEALS (hidden until deals exist) -->
@@ -852,20 +945,20 @@
       <div class="contact-item">
         <div class="contact-icon">📍</div>
         <h4>Location</h4>
-        <p class="hero-badge">Prince Edward Island</p>
+        <p>Charlottetown<br>Prince Edward Island<br>Canada</p>
       </div>
       <div class="contact-item">
         <div class="contact-icon">📧</div>
         <h4>Email</h4>
-        <p><a class="hero-badge" href="/" target="_blank">Email</a></p>
+        <p><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b9d0d7dfd6f9dacdd6ced7d5d0d6d7ca97dad8">[email&#160;protected]</a></p>
       </div>
       <div class="contact-item">
         <div class="contact-icon">📱</div>
         <h4>Follow Us</h4>
-        <p><a class="hero-badge" href="https://www.instagram.com/ctown_lions/" target="_blank">Instagram</a></p>
+        <p>@ctownlions<br>Instagram · Facebook</p>
       </div>
     </div>
-    <!-- <form class="contact-form" onsubmit="submitContact(event)">
+    <form class="contact-form" onsubmit="submitContact(event)">
       <div class="form-row">
         <div class="form-group">
           <label>Your Name</label>
@@ -885,7 +978,7 @@
         <textarea id="cMessage" placeholder="Tell us more…" required></textarea>
       </div>
       <button type="submit" class="btn-primary" style="align-self:flex-start;">Send Message</button>
-    </form> -->
+    </form>
   </div>
 </section>
 
@@ -899,6 +992,27 @@
   </p>
   <p style="margin-top:1rem;font-size:0.75rem;opacity:0.5;">© <span id="year"></span> C-Town Lions Cricket Club. All rights reserved.</p>
 </footer>
+
+<!-- PAST SQUAD MODAL -->
+<div class="squad-modal-overlay" id="squadModal">
+  <div class="squad-modal">
+    <div class="squad-modal-header">
+      <div class="squad-modal-title">Past Squads</div>
+      <div style="display:flex;align-items:center;gap:1rem;">
+        <div class="squad-modal-nav">
+          <button class="squad-nav-btn" id="squadPrevBtn" onclick="navSquad(-1)">‹</button>
+          <div class="squad-year-display" id="squadYearDisplay">—</div>
+          <button class="squad-nav-btn" id="squadNextBtn" onclick="navSquad(1)">›</button>
+        </div>
+        <button onclick="closeSquadModal()" style="background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--text-muted);padding:0.25rem;">✕</button>
+      </div>
+    </div>
+    <div class="squad-modal-body">
+      <div class="squad-modal-label" id="squadModalLabel"></div>
+      <div class="squad-grid" id="squadModalGrid"></div>
+    </div>
+  </div>
+</div>
 
 <!-- PLAYER PROFILE MODAL -->
 <div class="modal-overlay" id="playerModal">
@@ -930,11 +1044,11 @@ const NAT_FLAGS = {
 };
 
 const ROLE_ICONS = {
-  'Batsman':'🏏','Bowler':'🎾','Wicket-Keeper':'🧤','All-Rounder':'🏏' 
+  'Batsman':'🪃','Bowler':'🎳','Wicket-Keeper':'🧤','All-Rounder':'🏏'
 };
 
 // ─── STATE ───────────────────────────────────────────────────────
-let allPlayers = [], allMatches = [], allGallery = [], allSponsors = [], allDeals = [];
+let allPlayers = [], allMatches = [], allGallery = [], allSponsors = [], allDeals = [], allSquads = [];
 
 // ─── MAP DB ROW → APP OBJECT ─────────────────────────────────────
 function mapPlayer(r) {
@@ -945,32 +1059,34 @@ function mapPlayer(r) {
 }
 function mapMatch(r) {
   return { id:r.id, opponent:r.opponent, date:r.date, venue:r.venue, result:r.result,
-    ourScore:r.our_score, theirScore:r.their_score, season:r.season,
-    tournament:r.tournament, players:r.players };
+    ourTeam:r.our_team, ourScore:r.our_score, theirScore:r.their_score, season:r.season,
+    tournament:r.tournament, players:r.players, motm:r.motm, noResultReason:r.no_result_reason };
 }
 function mapGallery(r) {
   return { id:r.id, url:r.url, caption:r.caption, album:r.album, players:r.players };
 }
 function mapSponsor(r) {
-  return { id:r.id, name:r.name, tier:r.tier, url:r.url, icon:r.icon, logo:r.logo };
+  return { id:r.id, name:r.name, tier:r.tier, url:r.url, icon:r.icon, logo:r.logo, sortOrder:r.sort_order||0 };
 }
 
 // ─── LOAD FROM SUPABASE ──────────────────────────────────────────
 async function loadData() {
   showLoading(true);
   try {
-    const [p, m, g, s, d] = await Promise.all([
+    const [p, m, g, s, d, sq] = await Promise.all([
       sb.from('players').select('*').order('id'),
       sb.from('matches').select('*').order('date', {ascending: false}),
       sb.from('gallery').select('*').order('id'),
-      sb.from('sponsors').select('*').order('id'),
+      sb.from('sponsors').select('*').order('sort_order', {ascending: true}),
       sb.from('deals').select('*,sponsors(name,logo,icon,url)').order('expiry',{ascending:true}),
+      sb.from('past_squads').select('*').order('year',{ascending:false}),
     ]);
     allPlayers  = (p.data || []).map(mapPlayer);
     allMatches  = (m.data || []).map(mapMatch);
     allGallery  = (g.data || []).map(mapGallery);
     allSponsors = (s.data || []).map(mapSponsor);
     allDeals    = (d.data || []).map(r=>({id:r.id,sponsorId:r.sponsor_id,sponsorName:r.sponsors?.name||'',sponsorLogo:r.sponsors?.logo||null,sponsorIcon:r.sponsors?.icon||null,sponsorUrl:r.sponsors?.url||null,title:r.title,description:r.description,code:r.code,expiry:r.expiry}));
+    allSquads   = (sq.data || []);
   } catch(e) {
     showToast('⚠️ Could not connect to database');
     console.error(e);
@@ -991,7 +1107,11 @@ function showLoading(on) {
 }
 
 // ─── RENDER ALL ──────────────────────────────────────────────────
-function renderAll() { renderRoster(); renderMatches(); renderGalleryPreview(); renderSponsors(); renderDeals(); populateMatchFilters(); }
+function renderAll() {
+  renderRoster(); renderMatches(); renderGalleryPreview(); renderSponsors(); renderDeals(); populateMatchFilters();
+  // Show past squad link if any squads exist
+  document.getElementById('pastSquadLinkWrap').style.display = allSquads.length ? 'block' : 'none';
+}
 
 // ─── ROSTER ─────────────────────────────────────────────────────
 function renderRoster(filter='all') {
@@ -999,6 +1119,21 @@ function renderRoster(filter='all') {
   const grid = document.getElementById('rosterGrid');
   grid.innerHTML = filtered.length ? filtered.map(p => {
     const flag = NAT_FLAGS[p.nat] || '🌍';
+    // Role-specific stats on card
+    let statsHtml = '';
+    if(p.role==='Batsman'||p.role==='Wicket-Keeper'){
+      statsHtml = `
+        ${p.batAvg ? `<span><strong>${p.batAvg}</strong>Bat Avg</span>` : ''}
+        ${p.sr ? `<span><strong>${p.sr}</strong>S/R</span>` : ''}`;
+    } else if(p.role==='All-Rounder'){
+      statsHtml = `
+        ${p.batAvg ? `<span><strong>${p.batAvg}</strong>Bat Avg</span>` : ''}
+        ${p.econ ? `<span><strong>${p.econ}</strong>Economy</span>` : ''}`;
+    } else if(p.role==='Bowler'){
+      statsHtml = `
+        ${p.econ ? `<span><strong>${p.econ}</strong>Economy</span>` : ''}
+        ${p.bowlAvg ? `<span><strong>${p.bowlAvg}</strong>Bowl Avg</span>` : ''}`;
+    }
     return `
     <div class="player-card" onclick="openPlayerModal(${p.id})">
       <div class="player-avatar">
@@ -1009,11 +1144,7 @@ function renderRoster(filter='all') {
       <div class="player-info">
         <div class="player-name">${p.name}</div>
         <div class="player-role">${p.role}</div>
-        <div class="player-stats">
-          ${p.runs ? `<span><strong>${p.runs}</strong>Runs</span>` : ''}
-          ${p.wickets ? `<span><strong>${p.wickets}</strong>Wkts</span>` : ''}
-          ${p.batAvg && p.batAvg!=='-' ? `<span><strong>${p.batAvg}</strong>Bat Avg</span>` : ''}
-        </div>
+        <div class="player-stats">${statsHtml}</div>
       </div>
       <div class="player-card-footer">View Full Profile →</div>
     </div>`;
@@ -1160,15 +1291,41 @@ function renderGalleryPreview() {
 }
 
 function renderSponsors() {
-  const order={Gold:0,Silver:1,Bronze:2,Community:3};
-  const sorted=[...allSponsors].sort((a,b)=>(order[a.tier]||9)-(order[b.tier]||9));
-  document.getElementById('sponsorsGrid').innerHTML = sorted.map(s=>`
-    <a href="${s.url||'#'}" target="_blank" class="sponsor-card">
-      <div class="sponsor-logo">${s.logo ? `<img src="${s.logo}" alt="${s.name}" style="max-width:80px;max-height:60px;object-fit:contain;" onerror="this.parentElement.textContent='${(s.icon||'🏢').replace(/'/g,"\\'")}'">`  : (s.icon||'🏢')}</div>
-      <div class="sponsor-name">${s.name}</div>
-      <div class="sponsor-tier">${s.tier} Sponsor</div>
-    </a>
-  `).join('');
+  const tierOrder = ['Gold','Silver','Bronze','Community'];
+  const tierClasses = {Gold:'gold',Silver:'silver',Bronze:'bronze',Community:'community'};
+  // allSponsors already sorted by sort_order from DB
+  const byTier = {};
+  allSponsors.forEach(s => {
+    if(!byTier[s.tier]) byTier[s.tier] = [];
+    byTier[s.tier].push(s);
+  });
+  const grid = document.getElementById('sponsorsGrid');
+  grid.innerHTML = '';
+  let hasAny = false;
+  tierOrder.forEach(tier => {
+    const group = byTier[tier];
+    if(!group || !group.length) return;
+    hasAny = true;
+    const cls = tierClasses[tier] || 'community';
+    const wrap = document.createElement('div');
+    wrap.className = 'sponsors-tier-group';
+    wrap.innerHTML = `
+      <div class="sponsors-tier-header">
+        <div class="sponsors-tier-line"></div>
+        <span class="sponsors-tier-label tier-label-${cls}">${tier}</span>
+        <div class="sponsors-tier-line"></div>
+      </div>
+      <div class="sponsors-grid">
+        ${group.map(s=>`
+        <a href="${s.url||'#'}" target="_blank" class="sponsor-card">
+          <div class="sponsor-logo">${s.logo ? `<img src="${s.logo}" alt="${s.name}" style="max-width:64px;max-height:48px;object-fit:contain;" onerror="this.parentElement.textContent='${(s.icon||'🏢').replace(/'/g,"\\'")}'">`  : (s.icon||'🏢')}</div>
+          <div class="sponsor-name">${s.name}</div>
+          <div class="sponsor-tier">${s.tier} Sponsor</div>
+        </a>`).join('')}
+      </div>`;
+    grid.appendChild(wrap);
+  });
+  if(!hasAny) grid.innerHTML = '<p style="text-align:center;color:var(--text-muted);padding:2rem;">No sponsors yet.</p>';
 }
 
 // ─── DEALS ───────────────────────────────────────────────────────
@@ -1229,6 +1386,45 @@ function copyDealCode(btn, code) {
     btn.textContent = code; // fallback: just show the code
   });
 }
+// ─── PAST SQUAD MODAL ────────────────────────────────────────────
+let squadModalIdx = 0;
+
+function openSquadModal() {
+  if(!allSquads.length) return;
+  squadModalIdx = 0;
+  renderSquadModal();
+  document.getElementById('squadModal').classList.add('open');
+}
+function closeSquadModal() {
+  document.getElementById('squadModal').classList.remove('open');
+}
+function navSquad(dir) {
+  squadModalIdx = Math.max(0, Math.min(allSquads.length - 1, squadModalIdx + dir));
+  renderSquadModal();
+}
+function renderSquadModal() {
+  const sq = allSquads[squadModalIdx];
+  if(!sq) return;
+  document.getElementById('squadYearDisplay').textContent = sq.year;
+  document.getElementById('squadModalLabel').textContent = sq.label || `${sq.year} Season Squad`;
+  document.getElementById('squadPrevBtn').disabled = squadModalIdx >= allSquads.length - 1;
+  document.getElementById('squadNextBtn').disabled = squadModalIdx <= 0;
+  const players = sq.players_json || [];
+  document.getElementById('squadModalGrid').innerHTML = players.length
+    ? players.map(p => `
+      <div class="squad-mini-card">
+        <div class="squad-mini-avatar">
+          ${p.photo ? `<img src="${p.photo}" alt="${p.name}" onerror="this.parentElement.textContent='${ROLE_ICONS[p.role]||'🏏'}'">` : (ROLE_ICONS[p.role]||'🏏')}
+        </div>
+        <div class="squad-mini-name">${p.name}</div>
+        <div class="squad-mini-role">${p.role}</div>
+      </div>`).join('')
+    : '<p style="color:var(--text-muted);grid-column:1/-1;">No player data saved.</p>';
+}
+document.getElementById('squadModal').addEventListener('click', e => {
+  if(e.target === e.currentTarget) closeSquadModal();
+});
+
 function submitContact(e) {
   e.preventDefault();
   showToast("Message sent! We'll be in touch soon. 🏏");
@@ -1252,6 +1448,7 @@ document.getElementById('year').textContent = new Date().getFullYear();
 
 window.openPlayerModal=openPlayerModal; window.closePlayerModal=closePlayerModal;
 window.renderMatches=renderMatches; window.submitContact=submitContact; window.toggleMenu=toggleMenu;
+window.openSquadModal=openSquadModal; window.closeSquadModal=closeSquadModal; window.navSquad=navSquad;
 
 // ─── INIT ────────────────────────────────────────────────────────
 loadData();
