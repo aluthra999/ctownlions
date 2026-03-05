@@ -393,13 +393,13 @@ tr.drag-over{border-top:2px solid var(--gold);}
                 </select>
                 <input type="text" id="mNoResultReason" placeholder="Custom reason…" style="width:100%;background:var(--cream);border:1.5px solid var(--cream-dark);padding:0.55rem 0.85rem;font-family:'Barlow',sans-serif;font-size:0.88rem;outline:none;" value="Match cancelled due to rain">
               </div>
-              <!-- <div class="form-group full"><label>Man of the Match</label>
+              <div class="form-group full"><label>Man of the Match</label>
                 <div class="tag-input-wrap" id="motmTagWrap" onclick="document.getElementById('motmTagInput').focus()">
                   <input type="text" class="tag-inline-input" id="motmTagInput" placeholder="Type player name…" autocomplete="off" oninput="showMotmSuggestions(this.value)" onkeydown="handleTagKey(event,'matchMotm','motmTagWrap','motmTagInput')">
                 </div>
                 <div class="autocomplete-wrap"><div class="autocomplete-dropdown" id="motmDropdown"></div></div>
                 <input type="hidden" id="matchMotm" value="">
-              </div> -->
+              </div>
               <div class="form-group full"><label>Players in This Match</label>
                 <div class="tag-input-wrap" id="matchPlayerTagWrap" onclick="document.getElementById('matchPlayerTagInput').focus()">
                   <input type="text" class="tag-inline-input" id="matchPlayerTagInput" placeholder="Type player name…" autocomplete="off" oninput="showPlayerSuggestions(this.value)" onkeydown="handleTagKey(event,'matchPlayerTags','matchPlayerTagWrap','matchPlayerTagInput')">
@@ -436,8 +436,8 @@ tr.drag-over{border-top:2px solid var(--gold);}
                     ['H','Opponent Score','empty'],
                     ['I','Season','Current year'],
                     ['J','Tournament *','—'],
-                    <!-- ['K','Man of the Match','empty (auto-validated against Players list)'], -->
-                    ['K','Players in This Match * (comma separated)','—'],
+                    ['K','Man of the Match','empty (auto-validated against Players list)'],
+                    ['L','Players in This Match * (comma separated)','—'],
                   ].map(([col,hdr,def],i)=>`<tr style="background:${i%2?'var(--cream)':'var(--off-white)'}">
                     <td style="padding:0.3rem 0.6rem;font-family:'Barlow Condensed',sans-serif;font-weight:700;color:var(--gold);">${col}</td>
                     <td style="padding:0.3rem 0.6rem;">${hdr}</td>
@@ -1065,7 +1065,7 @@ async function saveMatch(){
     their_score:document.getElementById('mTheirScore').value||null,
     season:document.getElementById('mSeason').value||null,
     tournament:document.getElementById('mTournament').value||null,
-    // motm:document.getElementById('matchMotm').value||null,
+    motm:document.getElementById('matchMotm').value||null,
     players:document.getElementById('matchPlayerTags').value||null
   };
   if(!row.opponent)return toast('Enter opponent name','error');
@@ -1091,7 +1091,7 @@ function editMatch(id){
   document.getElementById('mTheirScore').value=m.theirScore||'';
   document.getElementById('mSeason').value=m.season||'';
   document.getElementById('mTournament').value=m.tournament||'';
-  // setTagsFromString('matchMotm','motmTagWrap','motmTagInput',m.motm||'');
+  setTagsFromString('matchMotm','motmTagWrap','motmTagInput',m.motm||'');
   setTagsFromString('matchPlayerTags','matchPlayerTagWrap','matchPlayerTagInput',m.players||'');
   // No result reason
   toggleNoResultReason();
@@ -1129,7 +1129,7 @@ function clearMatchForm(){
   document.getElementById('noResultWrap').style.display='none';
   document.getElementById('mNoResultPreset').value='Match cancelled due to rain';
   document.getElementById('mNoResultReason').value='Match cancelled due to rain';
-  // clearTags('matchMotm','motmTagWrap','motmTagInput');
+  clearTags('matchMotm','motmTagWrap','motmTagInput');
   clearTags('matchPlayerTags','matchPlayerTagWrap','matchPlayerTagInput');
 }
 
@@ -1653,14 +1653,15 @@ function previewExcel(input){
         const oppScore   = get(7) || null;
         const season     = get(8) || currentYear;
         const tournament = get(9);
-        const playersRaw = get(10);
+        const motmRaw    = get(10);
+        const playersRaw = get(11);
 
         const errors = [];
 
         // Required field validation
         if(!opponent)   errors.push('Opponent missing');
         if(!dateRaw)    errors.push('Date missing');
-        if(result !== 'Upcoming' && !time) errors.push('Time missing');
+        if(!time)       errors.push('Time missing');
         if(!venue)      errors.push('Venue missing');
         if(!tournament) errors.push('Tournament missing');
         if(!playersRaw) errors.push('Players missing');
@@ -1672,21 +1673,10 @@ function previewExcel(input){
         // Result — default Upcoming, validate if provided
         let result = 'Upcoming';
         let noResultReason = null;
-        
         if(resultRaw){
           const matched = VALID_RESULTS.find(v => v.toLowerCase() === resultRaw.toLowerCase());
-          if(matched){
-            result = matched;
-          } else {
-            errors.push(`Result "${resultRaw}" not valid — use: ${VALID_RESULTS.join(', ')}`);
-          }
-        }
-        
-        // Only require reason when result is No Result
-        if(result === 'No Result'){
-          noResultReason = 'Match cancelled';
-        }else{
-          noResultReason = null;
+          if(matched){ result = matched; }
+          else { errors.push(`Result "${resultRaw}" not valid — use: ${VALID_RESULTS.join(', ')}`); }
         }
 
         // MOTM — only valid if match has a result AND player is in the players list
@@ -1796,7 +1786,7 @@ async function importExcelMatches(){
     their_score:      r.oppScore || null,
     season:           r.season || new Date().getFullYear().toString(),
     tournament:       r.tournament || null,
-    // motm:             r.motm || null,
+    motm:             r.motm || null,
     players:          r.players || null,
   }));
   const {error} = await sb.from('matches').insert(rows);
