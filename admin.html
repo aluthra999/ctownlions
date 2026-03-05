@@ -481,6 +481,38 @@ tr.drag-over{border-top:2px solid var(--gold);}
         </div>
       </div>
 
+      <!-- TEAM LOGOS -->
+      <div class="section-panel" id="section-teamlogos">
+        <div id="teamlogoFormWrap">
+          <div class="form-card">
+            <h3>🛡️ Team Logos</h3>
+            <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:1rem;line-height:1.6;">Upload a logo once per team name. It will automatically appear on any match card where that team is the opponent. Matching is case-insensitive.</p>
+            <div class="form-grid">
+              <div class="form-group"><label>Team Name *</label><input type="text" id="tlName" placeholder="e.g. Halifax CC"></div>
+            </div>
+            <div style="margin-bottom:1rem;">
+              <div class="form-group" style="margin-bottom:0.5rem;"><label>Logo Image</label></div>
+              <div class="avatar-tabs">
+                <button class="avatar-tab active" data-target="tlUpload" onclick="switchTab(this,'tl')">📁 Upload</button>
+                <button class="avatar-tab" data-target="tlUrl" onclick="switchTab(this,'tl')">🔗 URL</button>
+              </div>
+              <div class="avatar-panel active" id="tlUpload">
+                <div class="photo-upload-area"><input type="file" id="tlLogoFile" accept="image/*" onchange="previewFile(this,'tlLogoPreview')"><div class="upload-icon">🛡️</div><div class="upload-text">Click or drag logo</div><div class="upload-sub">PNG preferred</div><img class="photo-preview" id="tlLogoPreview" src="" alt=""></div>
+              </div>
+              <div class="avatar-panel" id="tlUrl">
+                <input type="text" id="tlLogoUrl" placeholder="https://example.com/logo.png" style="width:100%;background:var(--cream);border:1.5px solid var(--cream-dark);padding:0.55rem 0.85rem;font-family:'Barlow',sans-serif;font-size:0.88rem;outline:none;" oninput="previewUrl(this.value,'tlUrlPreview')">
+                <img class="photo-preview" id="tlUrlPreview" src="" alt="" style="margin-top:0.5rem;">
+              </div>
+            </div>
+            <div class="btn-row"><button class="btn btn-save" onclick="saveTeamLogo()">💾 Save Logo</button><button class="btn btn-clear" onclick="clearTeamLogoForm()">Clear</button></div>
+          </div>
+        </div>
+        <div class="table-card">
+          <div class="table-header"><h3>Team Logos (<span id="teamlogoCount">0</span>)</h3></div>
+          <div style="overflow-x:auto;"><table class="data-table"><thead><tr><th>Logo</th><th>Team Name</th><th>Actions</th></tr></thead><tbody id="teamlogosBody"></tbody></table></div>
+        </div>
+      </div>
+
       <!-- GALLERY -->
       <div class="section-panel" id="section-gallery">
         <div id="galleryFormWrap">
@@ -532,6 +564,7 @@ tr.drag-over{border-top:2px solid var(--gold);}
               <div class="form-group"><label>Tier</label><select id="sTier"><option>Gold</option><option>Silver</option><option>Bronze</option><option>Community</option></select></div>
               <div class="form-group"><label>Website URL</label><input type="text" id="sUrl" placeholder="https://…"></div>
               <div class="form-group"><label>Emoji Icon (fallback)</label><input type="text" id="sIcon" placeholder="e.g. 🍺"></div>
+              <div class="form-group full"><label>Address</label><input type="text" id="sAddress" placeholder="e.g. 123 Main St, Charlottetown, PE"></div>
             </div>
             <div style="margin-bottom:1rem;">
               <div class="form-group" style="margin-bottom:0.5rem;"><label>Sponsor Logo</label></div>
@@ -677,7 +710,7 @@ const CAN_EDIT=['Admin','Captain','Vice-Captain'];
 const CAN_DELETE=['Admin'];
 const CAN_REQUEST=['Captain','Vice-Captain'];
 
-let allPlayers=[],allMatches=[],allGallery=[],allSponsors=[],allUsers=[],allDeals=[],allSquads=[];
+let allPlayers=[],allMatches=[],allGallery=[],allSponsors=[],allUsers=[],allDeals=[],allSquads=[],allTeamLogos=[];
 let currentUser=null,currentRole=null;
 let galleryUploadFiles=[];
 let playerAvatarMode='upload',sponsorLogoMode='upload';
@@ -685,9 +718,9 @@ let excelParsedRows=[];
 
 // ── MAP ──
 const mapPlayer=r=>({id:r.id,name:r.name,number:r.number,role:r.role,nat:r.nat,runs:r.runs,batAvg:r.bat_avg,sr:r.sr,hs:r.hs,fifties:r.fifties,hundreds:r.hundreds,wickets:r.wickets,hatTricks:r.hat_tricks,bowlAvg:r.bowl_avg,econ:r.econ,matches:r.matches,photo:r.photo});
-const mapMatch=r=>({id:r.id,opponent:r.opponent,date:r.date,venue:r.venue,result:r.result,ourTeam:r.our_team,ourScore:r.our_score,theirScore:r.their_score,season:r.season,tournament:r.tournament,players:r.players,noResultReason:r.no_result_reason,motm:r.motm});
+const mapMatch=r=>({id:r.id,opponent:r.opponent,date:r.date,time:r.time,venue:r.venue,result:r.result,ourTeam:r.our_team,ourScore:r.our_score,theirScore:r.their_score,season:r.season,tournament:r.tournament,players:r.players,noResultReason:r.no_result_reason,motm:r.motm});
 const mapGallery=r=>({id:r.id,url:r.url,caption:r.caption,album:r.album,players:r.players});
-const mapSponsor=r=>({id:r.id,name:r.name,tier:r.tier,url:r.url,icon:r.icon,logo:r.logo,sortOrder:r.sort_order||0});
+const mapSponsor=r=>({id:r.id,name:r.name,tier:r.tier,url:r.url,icon:r.icon,logo:r.logo,sortOrder:r.sort_order||0,address:r.address||null});
 const mapDeal=r=>({id:r.id,sponsorId:r.sponsor_id,sponsorName:r.sponsors?.name||'',title:r.title,description:r.description,code:r.code,expiry:r.expiry});
 
 // ── UTILS ──
@@ -770,6 +803,7 @@ function buildSidebarNav(){
     <div class="sidebar-section-label">Manage</div>
     ${lk('players','🏏','Players',canEdit)}
     ${lk('matches','🏆','Matches',canEdit)}
+    ${lk('teamlogos','🛡️','Team Logos',canEdit)}
     ${lk('gallery','📸','Gallery',canEdit)}
     ${lk('sponsors','🤝','Sponsors',isAdmin)}
     <div class="sidebar-section-label">Admin</div>
@@ -809,13 +843,14 @@ async function logout(){
 async function loadAll(){
   loading(true);
   try{
-    const [p,m,g,s,d,sq]=await Promise.all([
+    const [p,m,g,s,d,sq,tl]=await Promise.all([
       sb.from('players').select('*').order('id'),
       sb.from('matches').select('*').order('date',{ascending:false}),
       sb.from('gallery').select('*').order('id'),
       sb.from('sponsors').select('*').order('sort_order',{ascending:true}),
       sb.from('deals').select('*,sponsors(name)').order('expiry',{ascending:true}),
       sb.from('past_squads').select('*').order('year',{ascending:false}),
+      sb.from('team_logos').select('*').order('team_name'),
     ]);
     allPlayers=(p.data||[]).map(mapPlayer);
     allMatches=(m.data||[]).map(mapMatch);
@@ -823,10 +858,11 @@ async function loadAll(){
     allSponsors=(s.data||[]).map(mapSponsor);
     allDeals=(d.data||[]).map(mapDeal);
     allSquads=(sq.data||[]);
+    allTeamLogos=(tl.data||[]);
     if(currentRole==='Admin'){const {data:u}=await sb.from('club_users').select('*').order('created_at');allUsers=u||[];}
   }catch(e){toast('DB error: '+e.message,'error');}
   loading(false);
-  renderDashboard();renderPlayersTable();renderMatchesTable();renderGalleryGrid();renderSponsorsTable();renderDealsTable();
+  renderDashboard();renderPlayersTable();renderMatchesTable();renderGalleryGrid();renderSponsorsTable();renderDealsTable();renderTeamLogosTable();
   if(currentRole==='Admin'){renderUsersTable();renderDeleteRequests();renderSquadsTable();}
   applyRoleUI();
 }
@@ -926,6 +962,7 @@ function switchTab(btn,group){
   document.getElementById(target).classList.add('active');
   if(group==='player') playerAvatarMode=target==='avatarUpload'?'upload':'url';
   if(group==='sponsor') sponsorLogoMode=target==='sponsorAvatarUpload'?'upload':'url';
+  if(group==='tl') tlLogoMode=target==='tlUpload'?'upload':'url';
 }
 
 // ── PLAYERS ──
@@ -1277,13 +1314,13 @@ async function saveSponsor(){
     logoUrl=document.getElementById('sLogoUrl').value.trim()||null;
     if(editId&&!logoUrl)logoUrl=allSponsors.find(s=>s.id===editId)?.logo||null;
   }
-  const row={name:document.getElementById('sName').value.trim(),tier:document.getElementById('sTier').value,url:document.getElementById('sUrl').value||null,icon:document.getElementById('sIcon').value||null,logo:logoUrl};
+  const row={name:document.getElementById('sName').value.trim(),tier:document.getElementById('sTier').value,url:document.getElementById('sUrl').value||null,icon:document.getElementById('sIcon').value||null,logo:logoUrl,address:document.getElementById('sAddress').value.trim()||null};
   if(!row.name)return toast('Enter sponsor name','error');
   loading(true);
   const res=editId?await sb.from('sponsors').update(row).eq('id',editId).select():await sb.from('sponsors').insert(row).select();
   loading(false);
   if(res.error)return toast('Error: '+res.error.message,'error');
-  const {data}=await sb.from('sponsors').select('*').order('id');
+  const {data}=await sb.from('sponsors').select('*').order('sort_order',{ascending:true});
   allSponsors=(data||[]).map(mapSponsor);clearSponsorForm();renderSponsorsTable();renderDashboard();
   toast(editId?'Sponsor updated ✓':'Sponsor added ✓');
 }
@@ -1294,6 +1331,7 @@ function editSponsor(id){
   document.getElementById('sponsorLogoRemoved').value='false';
   document.getElementById('sName').value=s.name;document.getElementById('sTier').value=s.tier;
   document.getElementById('sUrl').value=s.url||'';document.getElementById('sIcon').value=s.icon||'';
+  document.getElementById('sAddress').value=s.address||'';
   const currentDiv=document.getElementById('sponsorCurrentLogo');
   if(s.logo){
     document.getElementById('sponsorCurrentThumb').src=s.logo;
@@ -1312,14 +1350,14 @@ async function deleteSponsor(id){
   const ok=await confirmDialog(`Delete sponsor "${s.name}"?`,'Delete Sponsor','🗑️','Delete');
   if(!ok)return;
   loading(true);await sb.from('sponsors').delete().eq('id',id);loading(false);
-  const {data}=await sb.from('sponsors').select('*').order('id');
+  const {data}=await sb.from('sponsors').select('*').order('sort_order',{ascending:true});
   allSponsors=(data||[]).map(mapSponsor);renderSponsorsTable();renderDashboard();toast('Sponsor deleted');
 }
 
 function clearSponsorForm(){
   document.getElementById('editSponsorId').value='';document.getElementById('sponsorFormTitle').textContent='Add New Sponsor';
   document.getElementById('sponsorLogoRemoved').value='false';
-  ['sName','sUrl','sIcon','sLogoUrl'].forEach(id=>document.getElementById(id).value='');
+  ['sName','sUrl','sIcon','sLogoUrl','sAddress'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('sTier').value='Gold';
   document.getElementById('sponsorLogoFile').value='';
   document.getElementById('sponsorLogoPreview').classList.remove('show');
@@ -1523,6 +1561,65 @@ async function checkSession(){
   if(session?.user)await enterDashboard(session.user);
 }
 
+// ── TEAM LOGOS ──
+let tlLogoMode='upload';
+function renderTeamLogosTable(){
+  document.getElementById('teamlogoCount').textContent=allTeamLogos.length;
+  const canEdit=CAN_EDIT.includes(currentRole);
+  document.getElementById('teamlogosBody').innerHTML=allTeamLogos.length?allTeamLogos.map(tl=>`
+    <tr>
+      <td>${tl.logo_url?`<img src="${tl.logo_url}" style="width:40px;height:40px;object-fit:contain;background:white;border:1px solid var(--cream-dark);" onerror="this.style.display='none'">`:`<div style="width:40px;height:40px;background:var(--green);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:0.75rem;color:white;letter-spacing:1px;">${tl.team_name.split(' ').map(w=>w[0]).join('').slice(0,3).toUpperCase()}</div>`}</td>
+      <td><strong>${tl.team_name}</strong></td>
+      <td style="white-space:nowrap;">
+        ${canEdit?`<button class="btn-sm btn-sm-edit" onclick="editTeamLogo(${tl.id})" style="margin-right:4px;">Edit</button><button class="btn-sm btn-sm-del" onclick="deleteTeamLogo(${tl.id})">Delete</button>`:''}
+      </td>
+    </tr>`).join(''):'<tr><td colspan="3" style="text-align:center;color:var(--text-muted);padding:1.5rem;">No team logos yet.</td></tr>';
+}
+
+async function saveTeamLogo(){
+  if(!CAN_EDIT.includes(currentRole))return toast('No permission','error');
+  const name=document.getElementById('tlName').value.trim();
+  if(!name)return toast('Enter team name','error');
+  let logoUrl=null;
+  if(tlLogoMode==='upload'){
+    const file=document.getElementById('tlLogoFile').files[0];
+    if(file){try{loading(true);logoUrl=await uploadPhoto(file,'teamlogos');}catch(e){toast('Upload failed: '+e.message,'error');loading(false);return;}loading(false);}
+  }else{
+    logoUrl=document.getElementById('tlLogoUrl').value.trim()||null;
+  }
+  loading(true);
+  const {error}=await sb.from('team_logos').upsert({team_name:name,logo_url:logoUrl},{onConflict:'team_name'});
+  loading(false);
+  if(error)return toast('Error: '+error.message,'error');
+  const {data}=await sb.from('team_logos').select('*').order('team_name');
+  allTeamLogos=data||[];clearTeamLogoForm();renderTeamLogosTable();toast('Team logo saved ✓');
+}
+
+function editTeamLogo(id){
+  const tl=allTeamLogos.find(t=>t.id===id);if(!tl)return;
+  document.getElementById('tlName').value=tl.team_name;
+  if(tl.logo_url){document.getElementById('tlLogoUrl').value=tl.logo_url;previewUrl(tl.logo_url,'tlUrlPreview');}
+  showSection('teamlogos',document.querySelector('.sidebar-link[onclick*="teamlogos"]'));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+async function deleteTeamLogo(id){
+  const tl=allTeamLogos.find(t=>t.id===id);if(!tl)return;
+  const ok=await confirmDialog(`Delete logo for "${tl.team_name}"?`,'Delete Logo','🗑️','Delete');
+  if(!ok)return;
+  loading(true);await sb.from('team_logos').delete().eq('id',id);loading(false);
+  const {data}=await sb.from('team_logos').select('*').order('team_name');
+  allTeamLogos=data||[];renderTeamLogosTable();toast('Logo deleted');
+}
+
+function clearTeamLogoForm(){
+  document.getElementById('tlName').value='';
+  document.getElementById('tlLogoFile').value='';
+  document.getElementById('tlLogoUrl').value='';
+  document.getElementById('tlLogoPreview').classList.remove('show');
+  document.getElementById('tlUrlPreview').classList.remove('show');
+}
+
 // ── DEALS ──
 function renderDealsTable(){
   document.getElementById('dealCount').textContent=allDeals.length;
@@ -1602,7 +1699,9 @@ function clearDealForm(){
 const VALID_RESULTS=['Win','Loss','Draw','Upcoming','No Result'];
 
 function normaliseDate(raw){
-  const s=String(raw||'').trim();
+  if(!raw)return null;
+  if(raw instanceof Date)return raw.toISOString().slice(0,10);
+  const s=String(raw).trim();
   if(!s)return null;
   if(/^\d{4}-\d{2}-\d{2}$/.test(s))return s;
   const parts=s.split(/[\/\-\.]/);
@@ -1624,13 +1723,23 @@ function previewExcel(input){
   const reader=new FileReader();
   reader.onload=e=>{
     try{
-      const wb=XLSX.read(new Uint8Array(e.target.result),{type:'array',cellDates:true});
+      const wb=XLSX.read(new Uint8Array(e.target.result),{type:'array',cellDates:true,cellText:false});
       const ws=wb.Sheets[wb.SheetNames[0]];
-      const rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:'',raw:false});
+      const rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:'',raw:true});
       if(rows.length<2){toast('File has no data rows','error');return;}
 
       const currentYear=new Date().getFullYear().toString();
-      const get=(r,col)=>String(r[col]||'').trim();
+      // Helper: get cell as clean string
+      const get=(r,col)=>{
+        const v=r[col];
+        if(v===undefined||v===null||v==='')return '';
+        // Date object (from cellDates:true)
+        if(v instanceof Date){
+          // Check if it looks like a time-only value (Excel stores as fraction of day)
+          return v.toTimeString().slice(0,5); // HH:MM
+        }
+        return String(v).trim();
+      };
 
       // Columns: A=0 OurTeam, B=1 Opponent, C=2 Date, D=3 Time, E=4 Venue,
       //          F=5 Result, G=6 OurScore, H=7 OppScore, I=8 Season,
@@ -1648,15 +1757,15 @@ function previewExcel(input){
             rowNum:idx+2,
             ourTeam:   get(r,0)||'C-Town Lions',
             opponent,
-            date:      normaliseDate(get(r,2)),
-            time:      get(r,3)||null,
+            date:      normaliseDate(r[2]),
+            time:      (t=>{if(!t)return null;const m=t.match(/^(\d{1,2}:\d{2})/);return m?m[1]:t;})(get(r,3)),
             venue:     get(r,4)||null,
             result,
             ourScore:  get(r,6)||null,
             oppScore:  get(r,7)||null,
             season:    get(r,8)||currentYear,
             tournament:get(r,9)||null,
-            motm:      get(r,10)||null,   // stored as-is, no validation
+            motm:      get(r,10)||null,
             players:   get(r,11)||null,
           };
         })
@@ -1717,7 +1826,12 @@ async function importExcelMatches(){
     players:     r.players||null,
     no_result_reason: null,
   }));
-  const{error}=await sb.from('matches').insert(rows);
+
+  // Upsert: if opponent+date+tournament match an existing row, update it instead of inserting
+  const{error}=await sb.from('matches').upsert(rows,{
+    onConflict:'opponent,date,tournament',
+    ignoreDuplicates:false
+  });
   loading(false);
   if(error){toast('Import error: '+error.message,'error');console.error(error);return;}
   const{data}=await sb.from('matches').select('*').order('date',{ascending:false});
@@ -1725,7 +1839,7 @@ async function importExcelMatches(){
   clearExcelImport();
   renderMatchesTable();
   renderDashboard();
-  toast(`${rows.length} match${rows.length!==1?'es':''} imported ✓`);
+  toast(`${rows.length} match${rows.length!==1?'es':''} imported / updated ✓`);
 }
 
 function clearExcelImport(){
@@ -1774,6 +1888,7 @@ window.saveGalleryUrl=saveGalleryUrl;window.deleteGalleryItem=deleteGalleryItem;
 window.showAlbumSuggestions=showAlbumSuggestions;window.showPlayerSuggestions=showPlayerSuggestions;window.showGalleryPlayerSuggestions=showGalleryPlayerSuggestions;
 window.handleTagKey=handleTagKey;window.removeTag=removeTag;window.addTag=addTag;
 window.saveSponsor=saveSponsor;window.editSponsor=editSponsor;window.deleteSponsor=deleteSponsor;window.clearSponsorForm=clearSponsorForm;
+window.saveTeamLogo=saveTeamLogo;window.editTeamLogo=editTeamLogo;window.deleteTeamLogo=deleteTeamLogo;window.clearTeamLogoForm=clearTeamLogoForm;
 window.toggleNoResultReason=toggleNoResultReason;window.handleNoResultPreset=handleNoResultPreset;
 window.showMotmSuggestions=showMotmSuggestions;
 window.saveSquadSnapshot=saveSquadSnapshot;window.deleteSquad=deleteSquad;
