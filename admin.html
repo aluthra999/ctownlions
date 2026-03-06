@@ -1829,7 +1829,7 @@ async function importExcelMatches(){
 
   // Upsert: if opponent+date+tournament match an existing row, update it instead of inserting
   const{error}=await sb.from('matches').upsert(rows,{
-    onConflict:'opponent,date,tournament',
+    onConflict:'opponent,date,time,venue,tournament',
     ignoreDuplicates:false
   });
   loading(false);
