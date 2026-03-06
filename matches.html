@@ -207,6 +207,23 @@ function buildCard(m){
   </div>`;
 }
 
+function sortKey(m) {
+  // Build a sortable string: date + time converted to 24h for correct ordering
+  const date = m.date || '9999-99-99';
+  const t = m.time || '';
+  // Convert "10:30 PM" -> "22:30", "9:00 AM" -> "09:00" for correct string sort
+  const tm = t.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
+  if(tm) {
+    let h = parseInt(tm[1]);
+    const min = tm[2];
+    const ampm = tm[3].toUpperCase();
+    if(ampm === 'PM' && h !== 12) h += 12;
+    if(ampm === 'AM' && h === 12) h = 0;
+    return `${date}T${String(h).padStart(2,'0')}:${min}`;
+  }
+  return `${date}T${t||'00:00'}`;
+}
+
 function applyFilters(){
   const team=document.getElementById('teamFilter').value;
   const season=document.getElementById('seasonFilter').value;
@@ -214,7 +231,8 @@ function applyFilters(){
   const result=document.getElementById('resultFilter').value;
 
   const filtered=allMatches.filter(m=>
-    (team==='all'||m.opponent===team)&&
+    // Match team on EITHER side of the match
+    (team==='all'||m.opponent===team||m.ourTeam===team)&&
     (season==='all'||m.season===season)&&
     (tournament==='all'||m.tournament===tournament)&&
     (result==='all'||m.result===result)
@@ -222,8 +240,9 @@ function applyFilters(){
 
   document.getElementById('matchCount').textContent=`${filtered.length} match${filtered.length!==1?'es':''}`;
 
-  const upcoming=filtered.filter(m=>m.result==='Upcoming').sort((a,b)=>(a.date||'').localeCompare(b.date||''));
-  const past=filtered.filter(m=>m.result!=='Upcoming').sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  // Sort by date+time properly
+  const upcoming=filtered.filter(m=>m.result==='Upcoming').sort((a,b)=>sortKey(a).localeCompare(sortKey(b)));
+  const past=filtered.filter(m=>m.result!=='Upcoming').sort((a,b)=>sortKey(b).localeCompare(sortKey(a)));
 
   const main=document.getElementById('matchesMain');
   if(!filtered.length){main.innerHTML='<div class="empty-state">No matches found</div>';return;}
@@ -241,13 +260,20 @@ function applyFilters(){
 }
 
 function populateFilters(){
-  const opponents=[...new Set(allMatches.map(m=>m.opponent).filter(Boolean))].sort();
+  // Collect ALL team names from both sides of every match
+  const teamSet=new Set();
+  allMatches.forEach(m=>{
+    if(m.opponent) teamSet.add(m.opponent);
+    if(m.ourTeam)  teamSet.add(m.ourTeam);
+  });
+  const teams=[...teamSet].sort();
+
   const seasons=[...new Set(allMatches.map(m=>m.season).filter(Boolean))].sort().reverse();
   const tournaments=[...new Set(allMatches.map(m=>m.tournament).filter(Boolean))].sort();
 
   document.getElementById('teamFilter').innerHTML=
     '<option value="all">All Teams</option>'+
-    opponents.map(o=>`<option value="${o}">${o}</option>`).join('');
+    teams.map(t=>`<option value="${t}">${t}</option>`).join('');
 
   const ss=document.getElementById('seasonFilter'),ts=document.getElementById('tournamentFilter');
   ss.innerHTML='<option value="all">All Seasons</option>'+seasons.map(s=>`<option value="${s}">${s}</option>`).join('');
