@@ -164,12 +164,23 @@ function teamBadge(name,size=40){
   return `<div class="mc-team-initials" style="width:${size}px;height:${size}px;background:${bg};font-size:${Math.max(size*0.28,8)}px;">${initials}</div>`;
 }
 
+function formatTime(t) {
+  if(!t) return '';
+  if(/\b(AM|PM)\b/i.test(t)) return t;
+  const m = t.match(/^(\d{1,2}):(\d{2})/);
+  if(!m) return t;
+  let h = parseInt(m[1]), min = m[2];
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  h = h % 12 || 12;
+  return `${h}:${min} ${ampm}`;
+}
+
 function buildCard(m){
   const resultClass={Win:'win',Loss:'loss',Draw:'draw',Upcoming:'upcoming','No Result':'draw'}[m.result]||'upcoming';
   const bc={Win:'badge-win',Loss:'badge-loss',Draw:'badge-draw',Upcoming:'badge-upcoming','No Result':'badge-draw'}[m.result]||'badge-upcoming';
   const ourTeam=m.ourTeam||'C-Town Lions';
   const d=m.date?new Date(m.date+'T12:00:00').toLocaleDateString('en-CA',{weekday:'short',day:'numeric',month:'short',year:'numeric'}):'—';
-  const timeStr=m.time?` · ${m.time}`:'';
+  const timeStr=m.time?` · ${formatTime(m.time)}`:'';
   return `<div class="match-card ${resultClass}">
     <div class="mc-tournament">
       <span>${m.tournament||'Friendly'}</span>
