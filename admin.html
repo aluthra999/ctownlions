@@ -1733,12 +1733,27 @@ function previewExcel(input){
       const get=(r,col)=>{
         const v=r[col];
         if(v===undefined||v===null||v==='')return '';
-        // Date object (from cellDates:true)
-        if(v instanceof Date){
-          // Check if it looks like a time-only value (Excel stores as fraction of day)
-          return v.toTimeString().slice(0,5); // HH:MM
-        }
+        if(v instanceof Date) return v.toTimeString().slice(0,5); // HH:MM from excel date obj
         return String(v).trim();
+      };
+      // Normalise time to 12-hour format with AM/PM stored in DB
+      const normaliseTime=(raw)=>{
+        if(!raw)return null;
+        const s=raw.trim();
+        // Already has AM/PM — keep as-is (e.g. "10:30 PM")
+        if(/\b(AM|PM)\b/i.test(s)){
+          const m=s.match(/(\d{1,2}:\d{2})\s*(AM|PM)/i);
+          return m?`${m[1]} ${m[2].toUpperCase()}`:s;
+        }
+        // 24-hour "HH:MM" — convert to 12-hour
+        const m=s.match(/^(\d{1,2}):(\d{2})$/);
+        if(m){
+          let h=parseInt(m[1]),min=m[2];
+          const ampm=h>=12?'PM':'AM';
+          h=h%12||12;
+          return `${h}:${min} ${ampm}`;
+        }
+        return s;
       };
 
       // Columns: A=0 OurTeam, B=1 Opponent, C=2 Date, D=3 Time, E=4 Venue,
@@ -1758,7 +1773,7 @@ function previewExcel(input){
             ourTeam:   get(r,0)||'C-Town Lions',
             opponent,
             date:      normaliseDate(r[2]),
-            time:      (t=>{if(!t)return null;const m=t.match(/^(\d{1,2}:\d{2})/);return m?m[1]:t;})(get(r,3)),
+            time:      normaliseTime(get(r,3)),
             venue:     get(r,4)||null,
             result,
             ourScore:  get(r,6)||null,
