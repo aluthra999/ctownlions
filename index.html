@@ -1267,6 +1267,19 @@ function closePlayerModal() { document.getElementById('playerModal').classList.r
 // ─── MATCHES CAROUSEL ────────────────────────────────────────────
 let carouselOffset = 0;
 
+function formatTime(t) {
+  if(!t) return '';
+  // Already has AM/PM
+  if(/\b(AM|PM)\b/i.test(t)) return t;
+  // Convert HH:MM 24h to 12h
+  const m = t.match(/^(\d{1,2}):(\d{2})/);
+  if(!m) return t;
+  let h = parseInt(m[1]), min = m[2];
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  h = h % 12 || 12;
+  return `${h}:${min} ${ampm}`;
+}
+
 function getTeamLogo(teamName) {
   if(!teamName) return null;
   const tl = allTeamLogos.find(t => t.team_name.toLowerCase() === teamName.toLowerCase());
@@ -1292,7 +1305,7 @@ function buildMatchCard(m, highlight=false) {
   const bc = {Win:'badge-win',Loss:'badge-loss',Draw:'badge-draw',Upcoming:'badge-upcoming','No Result':'badge-draw'}[m.result]||'badge-upcoming';
   const ourTeam = m.ourTeam || 'C-Town Lions';
   const d = m.date ? new Date(m.date+'T12:00:00').toLocaleDateString('en-CA',{day:'numeric',month:'short'}) : '—';
-  const timeStr = m.time ? ` · ${m.time}` : '';
+  const timeStr = m.time ? ` · ${formatTime(m.time)}` : '';
 
   return `<div class="match-card-new ${resultClass}${highlight?' highlight':''}">
     <div class="mc-tournament">
